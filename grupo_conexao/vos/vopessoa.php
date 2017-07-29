@@ -136,7 +136,7 @@ class vopessoa extends voentidade {
 		
 		if($imagem != null) {			
 			
-			$extensao = strtolo(substr($imagem['name'], -4));
+			//$extensao = strtolower(substr($imagem['name'], -4));
 			
 			$nomeFinal = time().'.jpg';
 			if (move_uploaded_file($imagem['tmp_name'], $nomeFinal)) {
