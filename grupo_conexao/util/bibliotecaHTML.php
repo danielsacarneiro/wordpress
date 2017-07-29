@@ -149,7 +149,7 @@ function getOrdemAtributos() {
 	);
 	return $varAtributos;
 }
-function incluirUsuarioDataHoraDetalhamento($voEntidade) {
+function incluirUsuarioDataHoraDetalhamento($voEntidade, $colspan = null) {
 	$USUARIO_BATCH = "IMPORT.PLANILHA";
 	$nmusuinclusao = $voEntidade->nmUsuarioInclusao;
 	$nmusualteracao = $voEntidade->nmUsuarioUltAlteracao;
@@ -173,7 +173,7 @@ function incluirUsuarioDataHoraDetalhamento($voEntidade) {
 		            			maxlength='10' readonly>
 					</TD>
 		            <TH class='campoformulario' width='1%' nowrap>Usuário Inclusão:</TH>
-		            <TD class='campoformulario'>
+		            <TD class='campoformulario' colspan=$colspan>
 		            	<INPUT type='text' 
 		            	       id='" . voentidade::$nmAtrCdUsuarioInclusao . "' 
 		            	       name='" . voentidade::$nmAtrCdUsuarioInclusao . "' 
@@ -201,7 +201,7 @@ function incluirUsuarioDataHoraDetalhamento($voEntidade) {
 	            					
 				</TD>
 	            <TH class='campoformulario' nowrap>Usuário Ult.Alteração:</TH>
-	            <TD class='campoformulario'>
+	            <TD class='campoformulario' colspan=$colspan>
 	            	<INPUT type='text' 
 	            	       id='" . voentidade::$nmAtrCdUsuarioUltAlteracao . "' 
 	            	       name='" . voentidade::$nmAtrCdUsuarioUltAlteracao . "' 
@@ -231,7 +231,7 @@ function incluirUsuarioDataHoraDetalhamento($voEntidade) {
 		            			maxlength='10' readonly>
 					</TD>
 		            <TH class='campoformulario' nowrap>Usuário:</TH>
-		            <TD class='campoformulario'>
+		            <TD class='campoformulario' colspan=$colspan>
 		            	<INPUT type='text'
 		            	       id='" . voentidade::$nmAtrCdUsuarioOperacao . "'
 		            	       name='" . voentidade::$nmAtrCdUsuarioOperacao . "'
