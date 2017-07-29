@@ -5,8 +5,12 @@
 class excecaoGenerica extends Exception
 {
     // Redefine a exceção de forma que a mensagem não seja opcional
-    public function __construct($message = "Exceção Genérica.", $code = 0, Exception $previous = null) {
-        // código
+    public function __construct($message, $code = 0, Exception $previous = null) {
+    	if($message == null || $message == ""){
+    		$message = "Exceção Genérica.";
+    	}
+    	
+    	echo $message;
     
         // garante que tudo está corretamente inicializado
         parent::__construct(get_class($this). ":". $message, $code, $previous);

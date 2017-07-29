@@ -1,11 +1,10 @@
 <?php
 include_once (caminho_util . "DocumentoPessoa.php");
-include_once(caminho_util."dominioEstados.php");
-include_once(caminho_lib. "voentidade.php");
-
+include_once (caminho_util . "dominioEstados.php");
+include_once (caminho_lib . "voentidade.php");
 class vopessoa extends voentidade {
 	static $NM_DIV_FOTO = "NM_DIV_FOTO";
-	
+	static $NM_PASTA_DESTINO_FOTOS = "fotos/";
 	static $nmAtrCd = "pe_cd";
 	static $nmAtrNome = "pe_nome";
 	static $nmAtrResponsavel = "pe_responsavel";
@@ -37,12 +36,16 @@ class vopessoa extends voentidade {
 	var $uf = "";
 	var $foto = "";
 	var $cdVinculo = "";
+	var $dbprocesso = null;
 	
 	// ...............................................................
 	// FunÃ§Ãµes ( Propriedades e mÃ©todos da classe )
 	function __construct() {
 		parent::__construct ();
 		$this->temTabHistorico = true;
+		
+		$class = self::getNmClassProcesso ();
+		$this->dbprocesso = new $class ();
 	}
 	public static function getTituloJSP() {
 		return "PESSOA";
@@ -132,33 +135,16 @@ class vopessoa extends voentidade {
 		$this->cidade = @$_POST [vopessoa::$nmAtrCidade];
 		$this->uf = @$_POST [vopessoa::$nmAtrUF];
 		
-		$imagem = @$_FILES[vopessoa::$nmAtrFoto];
-		
-		if($imagem != null) {			
-			
-			//$extensao = strtolower(substr($imagem['name'], -4));
-			
-			$nomeFinal = time().'.jpg';
-			if (move_uploaded_file($imagem['tmp_name'], $nomeFinal)) {
-				$tamanhoImg = filesize($nomeFinal);				
-				//$this->foto = base64_encode(addslashes(fread(fopen($nomeFinal, "r"), $tamanhoImg)));				
-				$this->foto = addslashes(fread(fopen($nomeFinal, "r"), $tamanhoImg));
-				//unlink($nomeFinal);
-			}
-		}
-		else {
-			echo "Você não realizou o upload de forma satisfatória.";
-		} 
-		
+		$this->setFoto( vopessoa::$nmAtrFoto );
 		
 		if ($this->docCPF != null) {
 			$this->docCPF = documentoPessoa::getNumeroDocSemMascara ( $this->docCPF );
 		}
 		
-		$this->dhUltAlteracao = @$_POST [vopessoa::$nmAtrDhUltAlteracao];
+		/*$this->dhUltAlteracao = @$_POST [vopessoa::$nmAtrDhUltAlteracao];
 		$this->sqHist = @$_POST [vopessoa::$nmAtrSqHist];
 		// usuario de ultima manutencao sempre sera o id_user
-		$this->cdUsuarioUltAlteracao = id_user;
+		$this->cdUsuarioUltAlteracao = id_user;*/
 		
 		// vinculo
 		$this->cdVinculo = @$_POST [vopessoavinculo::$nmAtrCd];
@@ -180,6 +166,59 @@ class vopessoa extends voentidade {
 	function getMensagemComplementarTelaSucesso() {
 		$retorno = $this->getMensagemComplementarTelaSucessoPadrao ( $this->getTituloJSP (), $this->cd, $this->nome );
 		return $retorno;
+	}
+	function criaPastaFotos() {
+		if (! file_exists ( self::$NM_PASTA_DESTINO_FOTOS )) {
+			mkdir ( self::$NM_PASTA_DESTINO_FOTOS, 0700 );
+		}
+	}
+	function getNmArquivoFotos($nmArquivoBase, $arquivo) {
+		// exemplo de reconhecimento de extensao da imagem
+		$extensao = strtolower ( substr ( $arquivo ['name'], - 4 ) );
+		$nomeFinal = substr ( $nmArquivoBase, 0, 20 );
+		$nomeFinal = str_replace ( " ", "_", $nomeFinal );
+		
+		$nomeFinal .= time () . '.jpg';
+		$this->criaPastaFotos ();
+		
+		return $nomeFinal;
+	}
+	function excluirFoto() {
+		$arquivo = caminho_funcoes . self::getNmTabela () . "/" . self::$NM_PASTA_DESTINO_FOTOS . $this->foto;
+		if (file_exists ( $arquivo)) {
+			unlink ( $arquivo);
+		}
+		// echo (caminho_funcoes.self::getNmTabela()."/".self::$NM_PASTA_DESTINO_FOTOS . $this->foto);
+	}
+	function setFoto($nmAtributoArquivo) {
+		$imagem = @$_FILES [$nmAtributoArquivo];
+		$retorno = null;
+		
+		// verifica se eh uma inclusao ou nao
+		$funcao = @$_POST ["funcao"];
+		$isInclusao = $funcao == constantes::$CD_FUNCAO_INCLUIR;
+		
+		if (isFileUploadValido($imagem)) {
+			echo "tem imagem";
+			var_dump($imagem);
+			
+			$nomeFinal = $this->getNmArquivoFotos ( $this->nome, $imagem );
+			if (move_uploaded_file ( $imagem ['tmp_name'], self::$NM_PASTA_DESTINO_FOTOS . $nomeFinal )) {
+				$retorno = $nomeFinal;
+			}
+		} else {
+			echo "NAO tem imagem";
+			if ($isInclusao) {
+				echo "EH INCLUSAO";
+				// na inclusao a foto eh obrigatoria
+				throw new excecaoGenerica ( "Foto é obrigatória!" );
+			} else {
+				// eh detalhamento, basta pegar o valor da foto
+				$retorno = @$_POST [vopessoa::$nmAtrFoto];
+			}
+		}
+		
+		$this->foto = $retorno;
 	}
 }
 ?>

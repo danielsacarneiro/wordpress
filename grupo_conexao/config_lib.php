@@ -52,7 +52,8 @@ set_exception_handler("pegaExcecaoSemTratamento");
 //função definida pelo usuário para pegar exceções não tratadas
 function pegaExcecaoSemTratamento($exception){	
 	//echo 'Exceção pega sem tratamento:</br>', $exception->getMessage(), '</br></br></br>';
-	throw new Exception($exception->getMessage());
+	//throw new Exception($exception->getMessage());
+	throw $exception;
 }
 
 /*set_error_handler(function($errno, $errstr, $errfile, $errline, array $errcontext) {

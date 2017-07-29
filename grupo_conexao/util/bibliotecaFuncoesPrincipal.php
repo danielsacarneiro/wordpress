@@ -358,4 +358,8 @@ function getAtributoComoBooleano($param) {
 	return $retorno;
 }
 
+function isFileUploadValido($fileUpload){
+	return $fileUpload['name'] != "" && $fileUpload['error'] == 0;
+}
+
 ?>

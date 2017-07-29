@@ -190,7 +190,7 @@ class dbpessoa extends dbprocesso {
 		
 		return $vopessoa;
 	}
-	
+		
 	// o excluir eh implementado para nao usar da voentidade
 	// por ser mais complexo
 	function excluir($vopessoa) {
@@ -200,12 +200,18 @@ class dbpessoa extends dbprocesso {
 			$permiteExcluirPrincipal = $this->permiteExclusaoPrincipal($vopessoa);
 			if($permiteExcluirPrincipal){
 				//echo "excluiu";
-				$this->excluirPessoaVinculo ( $vopessoa );			
+				$this->excluirPessoaVinculo ( $vopessoa );
 			}
 			
-			$vopessoa = parent::excluir ( $vopessoa );
+			parent::excluir ( $vopessoa );			
 			// End transaction
 			$this->cDb->commit ();
+			
+			if($permiteExcluirPrincipal){				
+				//se tudo ocorrer bem, e a exclusao for permitida, remove a foto
+				$vopessoa->excluirFoto();
+			}
+			
 		} catch ( Exception $e ) {
 			$this->cDb->rollback ();
 			throw new Exception ( $e->getMessage () );

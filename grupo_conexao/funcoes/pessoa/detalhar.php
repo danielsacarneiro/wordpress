@@ -164,16 +164,20 @@ function confirmar() {
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Foto:</TH>
                 <TD class="campoformulario" width="1%" colspan=3>
-                	<?php echo "<img src='../imagem.php' \">";?>
-                	<?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $vo->foto).'"/>';?>
-                	<?php echo '<img src="data:image/jpeg;base64,' . $vo->foto. '" />';?>
-                	 
+                	<INPUT type="hidden" id="<?=vopessoa::$nmAtrFoto?>" name="<?=vopessoa::$nmAtrFoto?>"  value="<?php echo($vo->foto);?>">
+                	<?php echo "<img src='".vopessoa::$NM_PASTA_DESTINO_FOTOS. $vo->foto."' height='150'>";?>
 				</TD>
-            </TR>   
+            </TR>
+            <?php
+            $nmREsponsavel = $vo->responsavel;
+            if($nmREsponsavel == null){
+            	$nmREsponsavel = "O PRÓPRIO";            	
+            }
+            ?>              
    			<TR>
                 <TH class="campoformulario" nowrap width=1%>Responsável:</TH>
 				<TD class="campoformulario" colspan=3>
-                <INPUT type="text" id="<?=vopessoa::$nmAtrResponsavel?>" name="<?=vopessoa::$nmAtrResponsavel?>"  value="<?php echo($vo->responsavel);?>"  class="camporeadonly" size="70" readonly>
+                <INPUT type="text" id="<?=vopessoa::$nmAtrResponsavel?>" name="<?=vopessoa::$nmAtrResponsavel?>"  value="<?php echo($nmREsponsavel);?>"  class="camporeadonly" size="70" readonly>
                 </TD>
             </TR>
             

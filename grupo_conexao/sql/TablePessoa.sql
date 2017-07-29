@@ -19,7 +19,7 @@ CREATE TABLE pessoa (
     pe_cidade VARCHAR(50),
     pe_uf CHAR(2),
     pe_obs VARCHAR(300),
-    pe_foto MEDIUMBLOB,
+    pe_foto VARCHAR(155),
     
     dh_inclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
@@ -38,7 +38,6 @@ drop table pessoa_hist;
 CREATE TABLE pessoa_hist (
 	hist INT NOT NULL AUTO_INCREMENT,
 	pe_cd INT NOT NULL,
-	ID BIGINT(20) UNSIGNED,
     pe_nome VARCHAR(150),
 	pe_responsavel VARCHAR(150),
     pe_doc_cpf VARCHAR(30),
@@ -52,7 +51,7 @@ CREATE TABLE pessoa_hist (
     pe_cidade VARCHAR(50),
     pe_uf CHAR(2),    
     pe_obs VARCHAR(300),
-    pe_foto MEDIUMBLOB,
+    pe_foto VARCHAR(155),
     
     dh_inclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
@@ -65,6 +64,23 @@ CREATE TABLE pessoa_hist (
         
     CONSTRAINT pk PRIMARY KEY (hist)
 );
+
+drop table pessoa_vinculo;
+CREATE TABLE pessoa_vinculo (
+	vi_cd INT NOT NULL,
+    pe_cd INT NOT NULL,
+    dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    cd_usuario_ultalt INT,
+
+        
+    CONSTRAINT pk PRIMARY KEY (vi_cd, pe_cd)
+);
+ALTER TABLE pessoa_vinculo ADD CONSTRAINT fk_pessoa_vinculo FOREIGN KEY ( pe_cd ) REFERENCES pessoa (pe_cd) 
+ON DELETE RESTRICT
+ON UPDATE RESTRICT;
+    
+-- ALTER TABLE pessoa_vinculo DROP FOREIGN KEY fk_pessoa_vinculo; 
+
     
  show create table pessoa; 
     
@@ -117,20 +133,3 @@ call importarContratada();
 UPDATE pessoa SET 
 pe_nome = replace(replace(replace(pe_nome,'“','"'),'”','"'),'–','-')
 WHERE pe_cd = 305;
-	
-drop table pessoa_vinculo;
-CREATE TABLE pessoa_vinculo (
-	vi_cd INT NOT NULL,
-    pe_cd INT NOT NULL,
-    dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-    cd_usuario_ultalt INT,
-
-        
-    CONSTRAINT pk PRIMARY KEY (vi_cd, pe_cd)
-);
-ALTER TABLE pessoa_vinculo ADD CONSTRAINT fk_pessoa_vinculo FOREIGN KEY ( pe_cd ) REFERENCES pessoa (pe_cd) 
-ON DELETE RESTRICT
-ON UPDATE RESTRICT;
-    
--- ALTER TABLE pessoa_vinculo DROP FOREIGN KEY fk_pessoa_vinculo; 
-    

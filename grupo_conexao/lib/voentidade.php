@@ -153,6 +153,11 @@ include_once (caminho_util . "multiplosConstrutores.php");
     }    
     
     function getDadosFormularioEntidade(){
+    	
+    	//chama o getdadosformulario do filho
+    	$this->getDadosFormulario();
+    	
+    	//completa com os dados da entidade se existirem
     	$this->dhUltAlteracao = @$_POST[self::$nmAtrDhUltAlteracao];
     	$this->sqHist = @$_POST[self::$nmAtrSqHist];
     	//usuario de ultima manutencao sempre sera o id_user
@@ -294,7 +299,7 @@ include_once (caminho_util . "multiplosConstrutores.php");
     }
     
     function getMensagemComplementarTelaSucessoPadrao($titulo, $cd, $descricao){
-    	$retorno = "$titulo: " . $descricao . " (".complementarCharAEsquerda($cd, "0", TAMANHO_CODIGOS).")";
+    	$retorno = "$titulo: " . $descricao . " (Código: ".complementarCharAEsquerda($cd, "0", TAMANHO_CODIGOS).")";
     	return $retorno;
     }    
     
