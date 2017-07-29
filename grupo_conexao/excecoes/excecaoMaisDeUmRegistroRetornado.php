@@ -1,0 +1,16 @@
+<?php
+/**
+ * Define uma classe de exceção
+ */
+class excecaoMaisDeUmRegistroRetornado extends excecaoGenerica
+{
+    // Redefine a exceção de forma que a mensagem não seja opcional
+    public function __construct($message = "Existe mais de um registro.", $code = 0, Exception $previous = null) {
+        // código
+    
+        // garante que tudo está corretamente inicializado
+        parent::__construct($message, $code, $previous);
+    }
+
+}
+?>
