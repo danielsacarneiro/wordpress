@@ -18,15 +18,15 @@ class select extends multiplosConstrutores {
 		reset ( $this->colecao );
 	}
 	function __construct3($recordSet, $nmColCD, $nmColDS) {
-		$colecao = array();
+		$colecao = array ();
 		
-		for ($i=0; $i<count($recordSet);$i++){			
-			$cd = $recordSet[$i][$nmColCD];
-			$ds = $recordSet[$i][$nmColDS];			
-			$colecao[$cd]=$ds;
+		for($i = 0; $i < count ( $recordSet ); $i ++) {
+			$cd = $recordSet [$i] [$nmColCD];
+			$ds = $recordSet [$i] [$nmColDS];
+			$colecao [$cd] = $ds;
 		}
-
-		self::__construct1($colecao);	
+		
+		self::__construct1 ( $colecao );
 	}
 	
 	// ...............................................................
@@ -50,41 +50,47 @@ class select extends multiplosConstrutores {
 	function getHtmlSelect($idSelect, $nmSelect, $opcaoSelecionada, $comOpcaoSelecione, $class, $isTrazerValuenoOption) {
 		return $this->getHtmlCombo ( $idSelect, $nmSelect, $opcaoSelecionada, $comOpcaoSelecione, $class, $isTrazerValuenoOption, "" );
 	}
-	function getHtmlCombo($idSelect, $nmSelect, $opcaoSelecionada, $comOpcaoSelecione, $class, $isTrazerValuenoOption, $TagEJavaScript) {
+	function getHtmlCombo($idSelect, $nmSelect, $opcaoSelecionada, $comOpcaoSelecione, $class, $isTrazerValuenoOption, $TagEJavaScript, $permitirAlteracaoNoCombo = true) {
 		$html = "";
 		$html = "<select id='$idSelect' name='$nmSelect' class='$class' $TagEJavaScript>\n";
 		
-		// inclui opcao vazio
-		if ($comOpcaoSelecione) {
-			$html .= $this->getOpcao ( "", "-- Selecione --", null );
-			// $html .= $this->getOpcao(constantes::$CD_OPCAO_VAZIO, "-- Selecione --", null);
-		}
-		
-		// var_dump( $this->colecao);
-		// echo $idSelect .":". $opcaoSelecionada;
-		
-		$totalResultado = count ( $this->colecao );
-		$chaves = array_keys ( $this->colecao );
-		
-		for($i = 0; $i < $totalResultado; $i ++) {
-			$cd = $chaves [$i];
-			$ds = $this->colecao [$cd];
+		if ($permitirAlteracaoNoCombo) {
+			// inclui opcao vazio
+			if ($comOpcaoSelecione) {
+				$html .= $this->getOpcao ( "", "-- Selecione --", null );
+				// $html .= $this->getOpcao(constantes::$CD_OPCAO_VAZIO, "-- Selecione --", null);
+			}			
+			// var_dump( $this->colecao);
+			// echo $idSelect .":". $opcaoSelecionada;			
+			$totalResultado = count ( $this->colecao );
+			$chaves = array_keys ( $this->colecao );
 			
-			$html .= $this->getOpcaoValue ( $cd, $ds, $opcaoSelecionada, $isTrazerValuenoOption );
+			for($i = 0; $i < $totalResultado; $i ++) {
+				$cd = $chaves [$i];
+				$ds = $this->colecao [$cd];
+				
+				$html .= $this->getOpcaoValue ( $cd, $ds, $opcaoSelecionada, $isTrazerValuenoOption );
+			}
+		} else {
+			// nao permite alteracao, tera apenas uma option que é a opcao selecionada
+			$html .= $this->getOptionPorOpcaoSelecionada($opcaoSelecionada, $isTrazerValuenoOption);
 		}
 		
 		$html .= "</select>";
 		return $html;
+	}
+	function getOptionPorOpcaoSelecionada($opcaoSelecionada, $isTrazerValuenoOption) {
+		$ds = $this->colecao[$opcaoSelecionada];
+		return $this->getOpcaoValue ( $opcaoSelecionada, $ds, $opcaoSelecionada, $isTrazerValuenoOption);
 	}
 	function getOpcao($cd, $ds, $opcaoSelecionada) {
 		return $this->getOpcaoValue ( $cd, $ds, $opcaoSelecionada, false );
 	}
 	function getOpcaoValue($cd, $ds, $opcaoSelecionada, $isTrazerValuenoOption) {
 		$selected = "";
-		if ($cd!="" && $this->selected ( $cd, $opcaoSelecionada )){
-			$selected = "selected";
-			
-			//echo "selecionado:".$cd;
+		if ($cd != "" && $this->selected ( $cd, $opcaoSelecionada )) {
+			$selected = "selected";			
+			// echo "selecionado:".$cd;
 		}
 		
 		$descricao = $ds;
@@ -121,7 +127,6 @@ class select extends multiplosConstrutores {
 		// reset($this->colecao);
 	}
 	function getHtmlComboMultiplo($pNmSelectOrigem, $pNmSelectDestino, $pColecaoSelecionada, $classDestino, $size, $javaScript) {
-		
 		$dominio = new dominio ();
 		$colecaoOrigem = $this->colecao;
 		if (! isColecaoVazia ( $pColecaoSelecionada )) {
@@ -133,7 +138,7 @@ class select extends multiplosConstrutores {
 		$comboOrigem = new select ( $colecaoOrigem );
 		$comboDestino = new select ( $colecaoDestino );
 		
-		$html .= $this->getJQueryComboMultiplo($pNmSelectOrigem, $pNmSelectDestino);
+		$html .= $this->getJQueryComboMultiplo ( $pNmSelectOrigem, $pNmSelectDestino );
 		$html .= "<TABLE cellpadding='0' cellspacing='0'>";
 		$html .= "<TBODY>";
 		$html .= "<TR>";
@@ -156,8 +161,7 @@ class select extends multiplosConstrutores {
 		return $html;
 	}
 	function getJQueryComboMultiplo($ID_REQ_CDSETOR_ORIGEM, $ID_REQ_CDSETOR_DESTINO) {
-		
-		$html .= "<SCRIPT language='JavaScript' type='text/javascript' src='".caminho_js."jquery.js'></SCRIPT>";
+		$html .= "<SCRIPT language='JavaScript' type='text/javascript' src='" . caminho_js . "jquery.js'></SCRIPT>";
 		$html .= "<SCRIPT language='JavaScript' type='text/javascript'>";
 		// jquery
 		$html .= "$( document ).ready(function() {";
@@ -200,6 +204,9 @@ class select extends multiplosConstrutores {
 		$html .= "</SCRIPT>";
 		
 		return $html;
+	}
+	static function disableSelect($opcaoSelecionada) {
+		return "onChange=\"this.value = '$opcaoSelecionada'\";";
 	}
 }
 ?>

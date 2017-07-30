@@ -35,7 +35,6 @@ define('caminho_excecoes', "$base/excecoes/");
 define('caminho_funcoesHTML', "funcoes/");
 define('caminho_funcoes', "$base/funcoes/");
 
-
 include_once(caminho_lib. "config.obj.php");
 $configBanco = new config();
 define('site_wordpress', "http://" . $configBanco->servidor . "/desenv/wordpress/wp-admin/");

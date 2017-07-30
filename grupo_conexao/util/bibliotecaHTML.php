@@ -97,7 +97,7 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
                         <TBODY>
                                 <TR>
                                 <TH class=headertabeladados colspan=2>
-                                    <a href='".site_cliente."' ><img id=imgLogotipoSefaz src='" . $pastaImagens . "bg_topo_trapezio.gif' alt='SEFAZ-PE'> </a>" . $diaExtenso . "
+                                    <a href='".site_cliente."' ><img id=imgLogotipoSefaz src='" . $pastaImagens . "bg_topo_trapezio.gif' alt='SEFAZ-PE'></a> " . $diaExtenso . "
                                 </TH>
                                 </TR>                                
                                 <TR>

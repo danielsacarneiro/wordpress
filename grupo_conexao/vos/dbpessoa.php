@@ -127,10 +127,10 @@ class dbpessoa extends dbprocesso {
 			$vopessoa = $this->incluirPessoa ( $vopessoa );
 			// echo "<br>incluiu pessoa:" . var_dump($vopessoa);
 			$this->incluirPessoaVinculo ( $vopessoa );
-			
 			// End transaction
 			$this->cDb->commit ();
 		} catch ( Exception $e ) {
+			$vopessoa->excluirFoto();
 			$this->cDb->rollback ();
 			throw new Exception ( $e->getMessage () );
 		}
@@ -262,7 +262,7 @@ class dbpessoa extends dbprocesso {
 		}
 		
 		if ($vo->docRG != null) {
-			$retorno .= $sqlConector . vopessoa::$nmAtrDocCPF . " = " . $this->getVarComoString ( $vo->docRG);
+			$retorno .= $sqlConector . vopessoa::$nmAtrDocRG . " = " . $this->getVarComoString ( $vo->docRG);
 			$sqlConector = ",";
 		}
 		
@@ -306,10 +306,10 @@ class dbpessoa extends dbprocesso {
 			$sqlConector = ",";
 		}
 		
-		if ($vo->foto != null) {
+		/*if ($vo->foto != null) {
 			$retorno .= $sqlConector . vopessoa::$nmAtrFoto . " = " . $this->getVarComoString ( $vo->foto );
 			$sqlConector = ",";
-		}
+		}*/
 		
 		if ($vo->obs != null) {
 			$retorno .= $sqlConector . vopessoa::$nmAtrObservacao . " = " . $this->getVarComoString ( $vo->obs );

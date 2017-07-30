@@ -11,11 +11,15 @@ include_once(caminho_util."dominio.class.php");
 // ...............................................................
 // Construtor
     function __construct () {        
-		$this->colecao = array(
-				self::$CD_VINCULO_ALUNO => self::$DS_VINCULO_ALUNO,
-				self::$CD_VINCULO_PROFESSOR => self::$DS_VINCULO_PROFESSOR				
-		);
+		$this->colecao = self::getColecao();
 	}
+	
+	static function getColecao() {
+		return array (
+				self::$CD_VINCULO_ALUNO => self::$DS_VINCULO_ALUNO,
+				self::$CD_VINCULO_PROFESSOR => self::$DS_VINCULO_PROFESSOR);
+	}
+	
 	
 }
 ?>

@@ -5,6 +5,7 @@ include_once (caminho_lib . "voentidade.php");
 class vopessoa extends voentidade {
 	static $NM_DIV_FOTO = "NM_DIV_FOTO";
 	static $NM_PASTA_DESTINO_FOTOS = "fotos/";
+	static $NM_IMAGEM_SELECIONE_FOTO = "foto_selecione.gif";
 	static $nmAtrCd = "pe_cd";
 	static $nmAtrNome = "pe_nome";
 	static $nmAtrResponsavel = "pe_responsavel";
@@ -35,6 +36,7 @@ class vopessoa extends voentidade {
 	var $cidade = "";
 	var $uf = "";
 	var $foto = "";
+	var $blobImagem = "";
 	var $cdVinculo = "";
 	var $dbprocesso = null;
 	
@@ -135,16 +137,19 @@ class vopessoa extends voentidade {
 		$this->cidade = @$_POST [vopessoa::$nmAtrCidade];
 		$this->uf = @$_POST [vopessoa::$nmAtrUF];
 		
-		$this->setFoto( vopessoa::$nmAtrFoto );
+		// $this->foto = @$_POST [vopessoa::$nmAtrFoto];
+		$this->gravarFoto ();
 		
 		if ($this->docCPF != null) {
 			$this->docCPF = documentoPessoa::getNumeroDocSemMascara ( $this->docCPF );
 		}
 		
-		/*$this->dhUltAlteracao = @$_POST [vopessoa::$nmAtrDhUltAlteracao];
-		$this->sqHist = @$_POST [vopessoa::$nmAtrSqHist];
-		// usuario de ultima manutencao sempre sera o id_user
-		$this->cdUsuarioUltAlteracao = id_user;*/
+		/*
+		 * $this->dhUltAlteracao = @$_POST [vopessoa::$nmAtrDhUltAlteracao];
+		 * $this->sqHist = @$_POST [vopessoa::$nmAtrSqHist];
+		 * // usuario de ultima manutencao sempre sera o id_user
+		 * $this->cdUsuarioUltAlteracao = id_user;
+		 */
 		
 		// vinculo
 		$this->cdVinculo = @$_POST [vopessoavinculo::$nmAtrCd];
@@ -164,7 +169,7 @@ class vopessoa extends voentidade {
 		$this->sqHist = $array [1];
 	}
 	function getMensagemComplementarTelaSucesso() {
-		$retorno = $this->getMensagemComplementarTelaSucessoPadrao ( $this->getTituloJSP (), $this->cd, $this->nome );
+		$retorno = $this->getMensagemComplementarTelaSucessoPadrao ( $this->getTituloJSP (), $this->cd, $this->nome, $this->sqHist );
 		return $retorno;
 	}
 	function criaPastaFotos() {
@@ -172,53 +177,61 @@ class vopessoa extends voentidade {
 			mkdir ( self::$NM_PASTA_DESTINO_FOTOS, 0700 );
 		}
 	}
-	function getNmArquivoFotos($nmArquivoBase, $arquivo) {
+	function getNmArquivoFoto($imagem) {
 		// exemplo de reconhecimento de extensao da imagem
-		$extensao = strtolower ( substr ( $arquivo ['name'], - 4 ) );
-		$nomeFinal = substr ( $nmArquivoBase, 0, 20 );
+		$extensao = strtolower ( substr ( $imagem ['name'], - 4 ) );
+		$nomeFinal = substr ( $this->nome, 0, 20 );
 		$nomeFinal = str_replace ( " ", "_", $nomeFinal );
-		
-		$nomeFinal .= time () . '.jpg';
-		$this->criaPastaFotos ();
-		
+		$nomeFinal .= time () . $extensao;
 		return $nomeFinal;
 	}
 	function excluirFoto() {
+		
+		/*
+		 * $endereco = caminho_funcoes . self::getNmTabela () . "/" . self::$NM_PASTA_DESTINO_FOTOS;
+		 * //$itens = glob('../fotos/*.jpg');
+		 * //busca as varias fotos que possam existir para essa pessoa
+		 * $itens = glob($endereco . self::getCodigoFormatado($this->cd) . "*.*");
+		 *
+		 * if($itens !== false){
+		 * foreach ($itens as $item){
+		 * echo $item . "<br>";
+		 * }
+		 * }
+		 */
 		$arquivo = caminho_funcoes . self::getNmTabela () . "/" . self::$NM_PASTA_DESTINO_FOTOS . $this->foto;
-		if (file_exists ( $arquivo)) {
-			unlink ( $arquivo);
-		}
+		self::excluirArquivo ( $arquivo );
 		// echo (caminho_funcoes.self::getNmTabela()."/".self::$NM_PASTA_DESTINO_FOTOS . $this->foto);
 	}
-	function setFoto($nmAtributoArquivo) {
-		$imagem = @$_FILES [$nmAtributoArquivo];
-		$retorno = null;
+	
+	/**
+	 * grava e seta o nome correto da foto no banco
+	 * 
+	 * @throws excecaoGenerica
+	 */
+	function gravarFoto() {
+		$this->criaPastaFotos ();
+		$imagem = @$_FILES [vopessoa::$nmAtrFoto];
 		
-		// verifica se eh uma inclusao ou nao
 		$funcao = @$_POST ["funcao"];
 		$isInclusao = $funcao == constantes::$CD_FUNCAO_INCLUIR;
 		
-		if (isFileUploadValido($imagem)) {
-			echo "tem imagem";
-			var_dump($imagem);
-			
-			$nomeFinal = $this->getNmArquivoFotos ( $this->nome, $imagem );
-			if (move_uploaded_file ( $imagem ['tmp_name'], self::$NM_PASTA_DESTINO_FOTOS . $nomeFinal )) {
-				$retorno = $nomeFinal;
+		if ($isInclusao) {
+			if (isFileUploadValido ( $imagem )) {
+				echo "tem arquivo";
+				var_dump ( $imagem );
+				$nomeFinal = $this->getNmArquivoFoto ( $imagem );
+				if (! move_uploaded_file ( $imagem ['tmp_name'], self::$NM_PASTA_DESTINO_FOTOS . $nomeFinal )) {
+					throw new excecaoGenerica ( "Erro na gravação da foto! Nome da foto:" . $nomeFinal . " | Nome do arquivo:" . $imagem ['name'] );
+				}
+			} else {
+				throw new excecaoGenerica ( "Foto é obrigatória!" );
 			}
 		} else {
-			echo "NAO tem imagem";
-			if ($isInclusao) {
-				echo "EH INCLUSAO";
-				// na inclusao a foto eh obrigatoria
-				throw new excecaoGenerica ( "Foto é obrigatória!" );
-			} else {
-				// eh detalhamento, basta pegar o valor da foto
-				$retorno = @$_POST [vopessoa::$nmAtrFoto];
-			}
+			$nomeFinal = @$_POST [vopessoa::$nmAtrFoto];
 		}
 		
-		$this->foto = $retorno;
+		$this->foto = $nomeFinal;
 	}
 }
 ?>

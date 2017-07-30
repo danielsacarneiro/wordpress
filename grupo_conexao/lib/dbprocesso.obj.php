@@ -174,7 +174,7 @@ class dbprocesso {
 	
 	/**
 	 * removido ultimo parametro
-	 * */
+	 */
 	// function consultarMontandoQueryUsuarioFiltro($vo, $nmTabelaACompararCdUsuario, $arrayColunasRetornadas, $queryJoin, $filtro, $isConsultaPorChave, $validaConsulta) {
 	function consultarMontandoQueryUsuarioFiltro($vo, $nmTabelaACompararCdUsuario, $arrayColunasRetornadas, $queryJoin, $filtro, $isConsultaPorChave) {
 		$isHistorico = $filtro->isHistorico;
@@ -254,13 +254,13 @@ class dbprocesso {
 	function consultarTelaConsulta($filtro, $querySelect, $queryFrom) {
 		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, true );
 	}
-	function consultarFiltroManter($filtro, $validaConsulta) {		
-		return $this->consultarFiltro($filtro, $filtro->getQuerySelect(), $filtro->getQueryFromJoin(), $validaConsulta);
+	function consultarFiltroManter($filtro, $validaConsulta) {
+		return $this->consultarFiltro ( $filtro, $filtro->getQuerySelect (), $filtro->getQueryFromJoin (), $validaConsulta );
 	}
 	function consultarFiltro($filtro, $querySelect, $queryFrom, $validaConsulta) {
 		$retorno = "";
 		$isHistorico = ("S" == $filtro->cdHistorico);
-				
+		
 		// flag que diz se pode consultar ou nao
 		$consultar = @$_GET ["consultar"];
 		
@@ -271,10 +271,10 @@ class dbprocesso {
 			$filtroSQL = $filtro->getSQLWhere ( true );
 			// echo $filtroSQL. "<br>";
 			
-			//para os casos em que o filtro passa conter o sql de consulta internamente
-			if($filtro->temQueryPadrao()){
-				$queryFrom = $filtro->getQueryFromJoin();
-			}				
+			// para os casos em que o filtro passa conter o sql de consulta internamente
+			if ($filtro->temQueryPadrao ()) {
+				$queryFrom = $filtro->getQueryFromJoin ();
+			}
 			
 			// verifica se tem paginacao
 			$limite = "";
@@ -419,13 +419,13 @@ class dbprocesso {
 		return $retorno;
 	}
 	function desativarOuExcluirPrincipal($voEntidade) {
-		//exclui o principal em caso de nao ter historico ou, ainda que tenha, nao implementa a desativacao
-		//a desativacao soh eh necessaria quando ha tabelas de relacionamento que impedem a exclusao direta
-		if (! $voEntidade->temTabHistorico () || !$voEntidade->temTabsRelacionamentoQueImpedemExclusaoDireta()) {
+		// exclui o principal em caso de nao ter historico ou, ainda que tenha, nao implementa a desativacao
+		// a desativacao soh eh necessaria quando ha tabelas de relacionamento que impedem a exclusao direta
+		if (! $voEntidade->temTabHistorico () || ! $voEntidade->temTabsRelacionamentoQueImpedemExclusaoDireta ()) {
 			// exclusao simples
 			$query = $this->excluirSQL ( $voEntidade, $isHistorico );
 		} else {
-				$query = $this->excluirDesativandoSQL ( $voEntidade );
+			$query = $this->excluirDesativandoSQL ( $voEntidade );
 		}
 		// echo $query;
 		$retorno = $this->cDb->atualizar ( $query );
@@ -446,12 +446,12 @@ class dbprocesso {
 		// se eh o registro de historico, deve verificar se pode excluir o registro desativado na tabela principal
 		// so pode excluir o registro principal se eh o ultimo historico e nao ha outro registro ativo
 		// a validacao so eh feita se o voentidade implementa a desativacao (quando tem tabelas relacionadas que nao permitem exclusao direta)
-		if ($voEntidade->temTabsRelacionamentoQueImpedemExclusaoDireta() && $this->permiteExclusaoPrincipal ( $voEntidade )) {
+		if ($voEntidade->temTabsRelacionamentoQueImpedemExclusaoDireta () && $this->permiteExclusaoPrincipal ( $voEntidade )) {
 			// echo "entrou aqui permiteExclusaoPrincipal";
 			// exclui o registro desativado na tabela principal
 			$query = $this->excluirHistoricoEPrincipalSQL ( $voEntidade );
 		}
-
+		
 		// echo $query;
 		$retorno = $this->cDb->atualizar ( $query );
 		return $retorno;
@@ -503,16 +503,16 @@ class dbprocesso {
 	}
 	function excluirHistoricoEPrincipalSQL($voEntidade) {
 		$nmTabela = $voEntidade->getNmTabelaEntidade ( false );
-		$nmTabelaHist = $voEntidade->getNmTabelaEntidade ( true );		
-	
+		$nmTabelaHist = $voEntidade->getNmTabelaEntidade ( true );
+		
 		$query = " DELETE FROM ";
 		$query .= "$nmTabela,$nmTabelaHist";
 		$query .= " USING ";
 		$query .= " $nmTabela,$nmTabelaHist ";
 		$query .= " WHERE ";
 		$query .= $voEntidade->getValoresWhereSQLChave ( false );
-		//so permite excluir o registro desativado
-		$query .= " AND $nmTabela." . voentidade::$nmAtrInDesativado . " = '" . constantes::$CD_SIM . "'";		
+		// so permite excluir o registro desativado
+		$query .= " AND $nmTabela." . voentidade::$nmAtrInDesativado . " = '" . constantes::$CD_SIM . "'";
 		$query .= " AND ";
 		$query .= $voEntidade->getValoresWhereSQLChave ( true );
 		
@@ -618,8 +618,8 @@ class dbprocesso {
 			$retorno = $registro [0] [$nmColunaSq];
 		else
 			$retorno = 1;
-			
-			// echo $retorno;
+		
+		// echo $retorno;
 		
 		return $retorno;
 	}
@@ -650,6 +650,7 @@ class dbprocesso {
 		$querySelect .= " FROM " . $nmTabela;
 		$querySelect .= " WHERE ";
 		$querySelect .= $vo->getValoresWhereSQLChave ( false );
+		$querySelect .= " AND $nmTabela." . voentidade::$nmAtrInDesativado . " = '" . constantes::$CD_SIM . "'";
 		
 		// acrescenta o atributo de historico pra trazer no union
 		$arrayColunasRetornadas [] = voentidade::$nmAtrSqHist;
@@ -663,11 +664,13 @@ class dbprocesso {
 		// echo $querySelect;
 		try {
 			$colecao = $this->consultarEntidadeComValidacao ( $querySelect, false, true );
+			$retorno = count ( $colecao );
 		} catch ( excecaoConsultaVazia $ex ) {
-			throw new excecaoGenerica ( "Erro ao excluir histórico. Inexiste histórico a ser excluído." );
+			//throw new excecaoGenerica ( "Erro ao excluir histórico. Inexiste histórico a ser excluído." );
+			$retorno = 0;
 		}
 		// se consulta vazia levanta excecao
-		$retorno = count ( $colecao );
+
 		// echo "valor do parametro de permissao de exclusao principal:".$retorno;
 		return $retorno;
 	}
@@ -676,7 +679,7 @@ class dbprocesso {
 		
 		// se a qtd de registro for igual a 2, eh o proprio registro consultado, temos o registro de historico + o registro desativado
 		// eh essa situacao que permite a exclusao do principal quando a desativacao eh implementada
-		$retorno = ($vo->isHistorico() && $countColecao == 2);
+		$retorno = ($vo->isHistorico () && $countColecao == 2);
 		
 		// echo "<br> valor retorno booleano:". $retorno;
 		return $retorno;

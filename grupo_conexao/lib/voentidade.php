@@ -1,7 +1,9 @@
 <?php
 include_once (caminho_util . "multiplosConstrutores.php");
+include_once (caminho_util . "bibliotecaFuncoesPrincipal.php");
 
   Class voentidade extends multiplosConstrutores{
+  	
   		var $NM_METODO_RETORNO_CONFIRMAR;
   	
 		var $varChaves;
@@ -12,7 +14,7 @@ include_once (caminho_util . "multiplosConstrutores.php");
         //atributo que indica se a entidade implementa a desativacao
         //a desativacao soh eh necessaria quando ha tabelas de relacionamento que impedem a exclusao direta        
         var $temTabsRelacionamentoQueImpedemExclusaoDireta;
-        
+    
         static $nmTabelaSufixoHistorico   =  	"_hist";
         static $nmTabelaSufixoSequencial   =  	"_seq";
         static $nmAtrSqHist   =  	"hist";
@@ -298,8 +300,11 @@ include_once (caminho_util . "multiplosConstrutores.php");
     	return "";    	
     }
     
-    function getMensagemComplementarTelaSucessoPadrao($titulo, $cd, $descricao){
+    function getMensagemComplementarTelaSucessoPadrao($titulo, $cd, $descricao, $sqHistorico = null){
     	$retorno = "$titulo: " . $descricao . " (Código: ".complementarCharAEsquerda($cd, "0", TAMANHO_CODIGOS).")";
+    	if($sqHistorico != null){
+    		$retorno .= "<br>" . "Histórico: " . complementarCharAEsquerda($sqHistorico, "0", TAMANHO_CODIGOS);
+    	}
     	return $retorno;
     }    
     
@@ -318,6 +323,16 @@ include_once (caminho_util . "multiplosConstrutores.php");
     function getValoresWhereSQLChaveSemNomeTabela($isHistorico) {    	
     	return str_replace ( $this->getNmTabelaEntidade($isHistorico) . ".", "", $this->getValoresWhereSQLChave($isHistorico) );    	
     }
+    
+    static function getCodigoFormatado($codigo){
+    	return 	complementarCharAEsquerda($codigo, "0", TAMANHO_CODIGOS);
+    }
+    static function excluirArquivo($enderecoArquivo) {
+    	if (file_exists ( $enderecoArquivo)) {
+    		unlink ( $enderecoArquivo);
+    	}
+    }
+    
     /*function validaExclusaoRelacionamentoHistorico(){
     	$retorno = false;
     	//so exclui os relacionamentos se a exclusao for de registro historico

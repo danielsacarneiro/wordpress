@@ -59,16 +59,6 @@ $cdUsuarioUltAlteracao = $vo->cdUsuarioUltAlteracao;
 
 <SCRIPT language="JavaScript" type="text/javascript">
 
-function transferirDadosOrgaoGestor(cdGestor, dsGestor) {
-	document.getElementsByName("<?=vogestor::$nmAtrCd?>").item(0).value = completarNumeroComZerosEsquerda(cdGestor, <?=TAMANHO_CODIGOS?>);
-	document.getElementsByName("<?=vogestor::$nmAtrDescricao?>").item(0).value = dsGestor;
-}
-
-function limpaCampoGestor() {		   
-	document.getElementsByName("<?=vogestor::$nmAtrCd?>").item(0).value = "";
-	document.getElementsByName("<?=vogestor::$nmAtrDescricao?>").item(0).value = "";
-}
-
 // Verifica se o formulario esta valido para alteracao, exclusao ou detalhamento
 function isFormularioValido() {
 	
@@ -77,10 +67,14 @@ function isFormularioValido() {
 		return false;	
 	}
 
-	if (!validaFoto()){
-		exibirMensagem("Selecione uma foto!");
-		return false;	
-	}
+	<?php 
+	if($isInclusao){?>
+		if (!validaFoto()){
+			exibirMensagem("Selecione uma foto!");
+			return false;	
+		}
+	<?php
+	}?>
 		
 	return true;
 }
@@ -127,32 +121,6 @@ function validaMaiorIdade(){
 	return true;
 }
 
-/*function validaVinculo(){
-	vinculo = document.frm_principal.<?=vopessoavinculo::$nmAtrCd?>.value;
-	if(vinculo == ''){
-		
-		if (!isCampoTextoValido(document.frm_principal.<?=vogestor::$nmAtrCd?>, true, 1, <?=TAMANHO_CODIGOS?>, true)){
-			exibirMensagem("Selecione o Órgão Gestor!");
-		    return false;
-		}
-
-	}
-	
-	return true;
-}
-
-function verificaVinculo(){
-	vinculo = document.frm_principal.<?=vopessoavinculo::$nmAtrCd?>.value;
-	campo = document.getElementById("<?=vogestor::getNmTabela()?>");
-	if(vinculo == ''){
-		campo.style.display = "";		
-	}
-	else{ 
-		campo.style.display = "none";
-		limpaCampoGestor();
-	}	
-}*/
-
 function checkResponsabilidade() {
 	campoResponsabilidade = document.frm_principal.checkBoxREsponsabilidade;
 	campoResponsavel = document.frm_principal.<?=vopessoa::$nmAtrResponsavel?>;
@@ -172,11 +140,8 @@ function checkResponsabilidade() {
 
 
 function iniciar(){
-	//verificaVinculo();	
-}
-
-function abrirJanelaAuxiliarGestor(){
-	//abrirJanelaAuxiliar('".$link."',true, false, false);\" "		
+	//verificaVinculo();
+	checkResponsabilidade();	
 }
 
 </SCRIPT>
@@ -204,14 +169,15 @@ function abrirJanelaAuxiliarGestor(){
 	        	<TH class="campoformulario" nowrap width=1%>Código:</TH>
 	        	<TD class="campoformulario" colspan=3><INPUT type="text" value="<?php echo(complementarCharAEsquerda($vo->cd, "0", TAMANHO_CODIGOS));?>"  class="camporeadonlyalinhadodireita" size="5" readonly></TD>
 	        	</TR>        	 
-	        <?php }?>            
+	        <?php			
+				}?>            
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Vínculo:</TH>
                 <TD class="campoformulario" colspan=3>
                      <?php
-                    include_once("biblioteca_htmlPessoa.php");
-                    echo getComboPessoaVinculo(vopessoavinculo::$nmAtrCd, vopessoavinculo::$nmAtrCd, $colecao[vopessoavinculo::$nmAtrCd], "camponaoobrigatorio", " required ");                    
-                    ?>                
+                     $selectVinculo = new select ( dominioVinculoPessoa::getColecao() );
+                     echo $selectVinculo->getHtmlCombo ( vopessoavinculo::$nmAtrCd, vopessoavinculo::$nmAtrCd, $colecao[vopessoavinculo::$nmAtrCd], true, "camponaoobrigatorio", true, " required ", $isInclusao);
+                     ?>                
             </TR>
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Nome:</TH>
@@ -222,7 +188,7 @@ function abrirJanelaAuxiliarGestor(){
                 <TH class="campoformulario" nowrap width=1%>RG/Órgão.Exp.:</TH>
                 <TD class="campoformulario" width="1%"><INPUT type="text" id="<?=vopessoa::$nmAtrDocRG?>" name="<?=vopessoa::$nmAtrDocRG?>"  value="<?php echo($vo->docRG);?>"  class="camponaoobrigatorio" size="30" required></TD>
                 <TH class="campoformulario" width="1%" nowrap>CPF:</TH>
-                <TD class="campoformulario" ><INPUT type="text" id="<?=vopessoa::$nmAtrDocCPF?>" name="<?=vopessoa::$nmAtrDocCPF?>" onkeyup="formatarCampoCNPFouCNPJ(this, event);" value="<?php echo(documentoPessoa::getNumeroDocFormatado($doc));?>" class="camponaoobrigatorio" size="20" maxlength="18" required></TD>
+                <TD class="campoformulario" ><INPUT type="text" id="<?=vopessoa::$nmAtrDocCPF?>" name="<?=vopessoa::$nmAtrDocCPF?>" onkeyup="formatarCampoCNPFouCNPJ(this, event);" value="<?php echo(documentoPessoa::getNumeroDocFormatado($vo->docCPF));?>" class="camponaoobrigatorio" size="20" maxlength="18" required></TD>
             </TR>
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Email:</TH>
@@ -256,7 +222,7 @@ function abrirJanelaAuxiliarGestor(){
                 				<br>
                 				Bairro <INPUT type="text" id="<?=vopessoa::$nmAtrBairro?>" name="<?=vopessoa::$nmAtrBairro?>"  value="<?php echo($vo->bairro);?>"  class="camponaoobrigatorio" size="30" maxlength="50">
                 				Cidade <INPUT type="text" id="<?=vopessoa::$nmAtrCidade?>" name="<?=vopessoa::$nmAtrCidade?>"  value="<?php echo($vo->cidade);?>"  class="camponaoobrigatorio" size="30" maxlength="50">
-                				Estado: <?= $comboEstados->getHtmlCombo(vopessoa::$nmAtrUF, vopessoa::$nmAtrUF, $vo->uf, true, "camponaoobrigatorio", false, " ");?>
+                   				Estado: <?= $comboEstados->getHtmlCombo(vopessoa::$nmAtrUF, vopessoa::$nmAtrUF, $vo->uf, true, "camponaoobrigatorio", false, " ");?>
 				</TD>
             </TR>     
 			<TR>
@@ -266,15 +232,22 @@ function abrirJanelaAuxiliarGestor(){
 				</TD>
             </TR>     
             
+            <?php
+            $nmCampoFoto = vopessoa::$nmAtrFoto;
+            if(!$isInclusao){
+            	$foto = vopessoa::$NM_PASTA_DESTINO_FOTOS. $vo->foto;
+            }else{
+            	$foto = pasta_imagens . vopessoa::$NM_IMAGEM_SELECIONE_FOTO;
+            	?>
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Foto:</TH>
                 <TD class="campoformulario" width="1%" colspan=3>
 					
-					<?php 
-					$nmCampoFoto = vopessoa::$nmAtrFoto;
-					?>					
 					<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
-					<input type="file" id="<?=$nmCampoFoto?>" name="<?=$nmCampoFoto?>">
+					<?php 
+					echo "<input type='file' id='$nmCampoFoto' name='$nmCampoFoto'>";
+					echo getBorrachaJS("document.frm_principal.$nmCampoFoto.value = '';document.frm_principal.preview_foto.src = ' " . pasta_imagens . vopessoa::$NM_IMAGEM_SELECIONE_FOTO . "';");
+					?>
 					<script>
 					$("#<?=$nmCampoFoto?>").change(function(){
 					    if (this.files && this.files[0]) {
@@ -289,21 +262,30 @@ function abrirJanelaAuxiliarGestor(){
 					</script>
 															
 				</TD>
-            </TR>                 
+            </TR>
+            	
+            	<?php 
+            }
+            
+            ?>                 
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Preview:</TH>
                 <TD class="campoformulario" width="1%" colspan=3>
-                	<img id="preview_foto" src="<?php echo pasta_imagens?>foto_selecione.gif" height="150">
-                	<?php                	
-                	echo getBorrachaJS("document.frm_principal.$nmCampoFoto.value = '';document.frm_principal.preview_foto.src = ' " . pasta_imagens . "foto_selecione.gif';");
-                	?>
+                	<img id="preview_foto" src="<?php echo $foto?>" height="150">
 				</TD>
             </TR>   
+            <?php 
+            $nmREsponsavel = $vo->responsavel;
+            if($nmREsponsavel == null && !$isInclusao){
+            	$checked = "checked";
+            }
+            
+            ?>
    			<TR>
                 <TH class="campoformulario" nowrap width=1%>Responsável:</TH>
 				<TD class="campoformulario" colspan=3>
                 <INPUT type="text" id="<?=vopessoa::$nmAtrResponsavel?>" name="<?=vopessoa::$nmAtrResponsavel?>"  value="<?php echo($vo->responsavel);?>"  class="camponaoobrigatorio" size="70" required>
-                <INPUT type="checkbox" name="checkBoxREsponsabilidade" value="" onClick="checkResponsabilidade();"> *O próprio.
+                <INPUT type="checkbox" name="checkBoxREsponsabilidade" value="" onClick="checkResponsabilidade();" <?=$checked?>> *O próprio.
                 </TD>
             </TR>
               

@@ -9,8 +9,6 @@ class excecaoGenerica extends Exception
     	if($message == null || $message == ""){
     		$message = "Exceção Genérica.";
     	}
-    	
-    	echo $message;
     
         // garante que tudo está corretamente inicializado
         parent::__construct(get_class($this). ":". $message, $code, $previous);

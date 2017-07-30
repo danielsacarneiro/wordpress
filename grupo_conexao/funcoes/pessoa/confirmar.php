@@ -10,6 +10,8 @@ try {
 	
 	putObjetoSessao ( "vo", $vo );
 	
+	//$vo->excluirFoto();
+	
 	header("Location: ../confirmar.php?class=".$vo->getNmClassProcesso(),TRUE,307);
 } catch ( Exception $ex ) {
 	putObjetoSessao ( "vo", $vo );
