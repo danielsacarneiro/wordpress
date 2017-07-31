@@ -1,28 +1,29 @@
 <?php
 include_once(caminho_util."bibliotecaSQL.php");
-include_once(caminho_vos ."vopessoa.php");
-include_once(caminho_vos ."vopessoavinculo.php");
 include_once(caminho_lib ."filtroManter.php");
 
-class filtroManterPessoa extends filtroManter{
+class filtroManterPessoaTurma extends filtroManter{
     
-    var $nmFiltro = "filtroManterPessoa";
-    static $ID_REQ_DT_REFERENCIA = "filtroManterPessoa_ID_REQ_DT_REFERENCIA";
+    var $nmFiltro = "filtroManterPessoaTurma";
     
     // ...............................................................
 	// construtor
-    var $cd;
-    var $colecaoCd;
+    var $cdPessoa;
+    var $cdTurma;
     var $doc="";
     var $nome="";
+    var $dsTurma="";
+    var $dsMateria="";
     var $cdvinculo="";
-    var $dtReferenciaContrato ="";
-	
+    	
 	function getFiltroFormulario(){		
-		$this->cd = @$_POST[vopessoa::$nmAtrCd];
+		$this->cdPessoa = @$_POST[vopessoaturma::$nmAtrCdPessoa];
+		$this->cdTurma = @$_POST[vopessoaturma::$nmAtrCdTurma];
 		//$this->cdGestor = @$_POST[vopessoa::$nmAtrCdGestor];
 		$this->doc = @$_POST[vopessoa::$nmAtrDocCPF];
 		$this->nome = @$_POST[vopessoa::$nmAtrNome];
+		$this->dsTurma = @$_POST[voturma::$nmAtrDescricao];
+		$this->dsMateria= @$_POST[vomateria::$nmAtrDescricao];
 		$this->cdvinculo = @$_POST[vopessoavinculo::$nmAtrCd];
 	}
 	
@@ -43,23 +44,44 @@ class filtroManterPessoa extends filtroManter{
             ;                        
 		}
             		
-		if($this->colecaoCd != null){
+		if($this->cdPessoa != null){
 			$filtro = $filtro . $conector
-						. $nmTabela. "." .vopessoa::$nmAtrCd
-						. " IN ("
-						. getSQLStringFormatadaColecaoIN($this->colecaoCd, false)
-						. ")";
+						. $nmTabela. "." .vopessoaturma::$nmAtrCdPessoa
+						. " = "
+						. $this->cdPessoa;
 			
 			$conector  = "\n AND ";
 		}
         
-		if($this->cd != null){
+		if($this->cdTurma != null){
 			$filtro = $filtro . $conector
-			. $nmTabela. "." .vopessoa::$nmAtrCd
+			. $nmTabela. "." .vopessoaturma::$nmAtrCdTurma
 			. " = "
-					. $this->cd;
+					. $this->cdTurma;
 					
 					$conector  = "\n AND ";
+		}
+		
+		if($this->dsTurma != null){
+			$filtro = $filtro . $conector
+			. $nmTabela. "." .voturma::$nmAtrDescricao
+			. " LIKE '%"
+					//. utf8_encode($this->nome)
+					. $this->dsTurma
+					. "%'";
+					
+					$conector  = "\n AND ";
+		}
+		
+		if($this->dsMateria != null){
+			$filtro = $filtro . $conector
+			. $nmTabela. "." .vomateria::$nmAtrDescricao
+			. " LIKE '%"
+					//. utf8_encode($this->nome)
+			. $this->dsMateria
+			. "%'";
+			
+			$conector  = "\n AND ";
 		}
 		
 		if($this->cdvinculo != null){
@@ -113,10 +135,11 @@ class filtroManterPessoa extends filtroManter{
 	
 	function getAtributosOrdenacao(){
 		$varAtributos = array(
+				vopessoaturma::$nmAtrCdTurma => "Turma",
+				vopessoavinculo::$nmAtrCd=> "Vinculo",
 				vopessoa::$nmAtrNome => "Nome",
-				vopessoavinculo::$nmAtrCd=> "Vinculo",				
 				vopessoa::$nmAtrDhUltAlteracao=> "Data.Alteração",
-				vopessoa::$nmAtrCd => "Código"
+				vopessoa::$nmAtrCd => "Cd.Pessoa"
 		);
 		return $varAtributos;
 	}

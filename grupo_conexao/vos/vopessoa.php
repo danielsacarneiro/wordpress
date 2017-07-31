@@ -4,7 +4,6 @@ include_once (caminho_util . "dominioEstados.php");
 include_once (caminho_lib . "voentidade.php");
 class vopessoa extends voentidade {
 	static $NM_DIV_FOTO = "NM_DIV_FOTO";
-	static $NM_PASTA_DESTINO_FOTOS = "fotos/";
 	static $NM_IMAGEM_SELECIONE_FOTO = "foto_selecione.gif";
 	static $nmAtrCd = "pe_cd";
 	static $nmAtrNome = "pe_nome";
@@ -20,6 +19,7 @@ class vopessoa extends voentidade {
 	static $nmAtrCidade = "pe_cidade";
 	static $nmAtrUF = "pe_uf";
 	static $nmAtrObservacao = "pe_obs";
+	static $nmAtrInDocumentacaoEmDia= "pe_in_todosdocs";
 	static $nmAtrFoto = "pe_foto";
 	var $cd = "";
 	var $nome = "";
@@ -36,6 +36,7 @@ class vopessoa extends voentidade {
 	var $cidade = "";
 	var $uf = "";
 	var $foto = "";
+	var $inDocumentacaoEmdia = "";
 	var $blobImagem = "";
 	var $cdVinculo = "";
 	var $dbprocesso = null;
@@ -57,6 +58,15 @@ class vopessoa extends voentidade {
 	}
 	public function getNmClassProcesso() {
 		return "dbpessoa";
+	}
+	
+	static function getNMPastaDestinoFotos($isHTML = false){
+		$retorno = caminho_funcoes. self::getNmTabela() . "/fotos/";
+		
+		if($isHTML){
+			$retorno = "fotos/";
+		}
+		return $retorno;
 	}
 	function getValoresWhereSQLChave($isHistorico) {
 		$nmTabela = $this->getNmTabelaEntidade ( $isHistorico );
@@ -83,7 +93,8 @@ class vopessoa extends voentidade {
 				self::$nmAtrCidade,
 				self::$nmAtrUF,
 				self::$nmAtrFoto,
-				self::$nmAtrObservacao 
+				self::$nmAtrObservacao,
+				self::$nmAtrInDocumentacaoEmDia
 		);
 		
 		return $retorno;
@@ -116,6 +127,7 @@ class vopessoa extends voentidade {
 		$this->uf = $registrobanco [vopessoa::$nmAtrUF];
 		
 		$this->foto = $registrobanco [vopessoa::$nmAtrFoto];
+		$this->inDocumentacaoEmdia = $registrobanco [vopessoa::$nmAtrInDocumentacaoEmDia];
 		
 		$this->cdVinculo = $registrobanco [vopessoavinculo::$nmAtrCd];
 	}
@@ -139,6 +151,7 @@ class vopessoa extends voentidade {
 		
 		// $this->foto = @$_POST [vopessoa::$nmAtrFoto];
 		$this->gravarFoto ();
+		$this->inDocumentacaoEmdia = @$_POST[vopessoa::$nmAtrInDocumentacaoEmDia];
 		
 		if ($this->docCPF != null) {
 			$this->docCPF = documentoPessoa::getNumeroDocSemMascara ( $this->docCPF );
@@ -173,8 +186,8 @@ class vopessoa extends voentidade {
 		return $retorno;
 	}
 	function criaPastaFotos() {
-		if (! file_exists ( self::$NM_PASTA_DESTINO_FOTOS )) {
-			mkdir ( self::$NM_PASTA_DESTINO_FOTOS, 0700 );
+		if (! file_exists ( self::getNMPastaDestinoFotos())) {
+			mkdir ( self::getNMPastaDestinoFotos(), 0700 );
 		}
 	}
 	function getNmArquivoFoto($imagem) {
@@ -188,7 +201,7 @@ class vopessoa extends voentidade {
 	function excluirFoto() {
 		
 		/*
-		 * $endereco = caminho_funcoes . self::getNmTabela () . "/" . self::$NM_PASTA_DESTINO_FOTOS;
+		 * $endereco = caminho_funcoes . self::getNmTabela () . "/" . self::getNMPastaDestinoFotos();
 		 * //$itens = glob('../fotos/*.jpg');
 		 * //busca as varias fotos que possam existir para essa pessoa
 		 * $itens = glob($endereco . self::getCodigoFormatado($this->cd) . "*.*");
@@ -199,9 +212,9 @@ class vopessoa extends voentidade {
 		 * }
 		 * }
 		 */
-		$arquivo = caminho_funcoes . self::getNmTabela () . "/" . self::$NM_PASTA_DESTINO_FOTOS . $this->foto;
+		$arquivo = self::getNMPastaDestinoFotos() . $this->foto;
 		self::excluirArquivo ( $arquivo );
-		// echo (caminho_funcoes.self::getNmTabela()."/".self::$NM_PASTA_DESTINO_FOTOS . $this->foto);
+		// echo (caminho_funcoes.self::getNmTabela()."/".self::getNMPastaDestinoFotos() . $this->foto);
 	}
 	
 	/**
@@ -210,7 +223,6 @@ class vopessoa extends voentidade {
 	 * @throws excecaoGenerica
 	 */
 	function gravarFoto() {
-		$this->criaPastaFotos ();
 		$imagem = @$_FILES [vopessoa::$nmAtrFoto];
 		
 		$funcao = @$_POST ["funcao"];
@@ -218,10 +230,11 @@ class vopessoa extends voentidade {
 		
 		if ($isInclusao) {
 			if (isFileUploadValido ( $imagem )) {
-				echo "tem arquivo";
-				var_dump ( $imagem );
+				$this->criaPastaFotos ();
+				//echo "tem arquivo";
+				//var_dump ( $imagem );
 				$nomeFinal = $this->getNmArquivoFoto ( $imagem );
-				if (! move_uploaded_file ( $imagem ['tmp_name'], self::$NM_PASTA_DESTINO_FOTOS . $nomeFinal )) {
+				if (! move_uploaded_file ( $imagem ['tmp_name'], self::getNMPastaDestinoFotos() . $nomeFinal )) {
 					throw new excecaoGenerica ( "Erro na gravação da foto! Nome da foto:" . $nomeFinal . " | Nome do arquivo:" . $imagem ['name'] );
 				}
 			} else {

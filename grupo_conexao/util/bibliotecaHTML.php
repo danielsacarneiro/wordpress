@@ -159,7 +159,12 @@ function incluirUsuarioDataHoraDetalhamento($voEntidade, $colspan = null) {
 	if ($voEntidade->cdUsuarioUltAlteracao == null)
 		$nmusualteracao = $USUARIO_BATCH;
 	
-	$retorno = "";
+	$retorno =  "<TR>
+				<TD halign='left' colspan='4'>
+				<DIV class='textoseparadorgrupocampos'>&nbsp;</DIV>
+				</TD>
+				</TR>";
+	
 	if ($voEntidade->dhInclusao != null) {
 		$retorno .= "<TR>
 		            <TH class='campoformulario' nowrap>Data Inclusão:</TH>
@@ -436,7 +441,7 @@ function getImagemLink($href, $nmImagem) {
 	return $html;
 }
 function getBorrachaJS($js) {	
-	$html = "&nbsp;&nbsp;<a onClick=\"javascript:" . $js . "\" ><img  title='Limpar' src='" . caminho_imagens . "borracha.jpg' width='15' height='15' A style='CURSOR: POINTER'></a>\n";	
+	$html = "&nbsp;&nbsp;<a onClick=\"javascript:" . $js . "\" ><img  title='Limpar' src='" . caminho_imagens . "borracha.gif' width='15' height='15' A style='CURSOR: POINTER'></a>\n";	
 	return $html;
 }
 function getBorracha($nmCampos) {
@@ -448,7 +453,7 @@ function getBorracha($nmCampos) {
 		$js .= "document.frm_principal." . $nmCampoAtual . ".value='';";
 	}
 	
-	$html = "&nbsp;&nbsp;<a onClick=\"javascript:" . $js . "\" ><img  title='Limpar' src='" . caminho_imagens . "borracha.jpg' width='15' height='15' A style='CURSOR: POINTER'></a>\n";
+	$html = "&nbsp;&nbsp;<a onClick=\"javascript:" . $js . "\" ><img  title='Limpar' src='" . caminho_imagens . "borracha.gif' width='15' height='15' A style='CURSOR: POINTER'></a>\n";
 	
 	return $html;
 }
@@ -499,8 +504,7 @@ function getComponenteConsultaPaginacao($comboOrdenacao, $cdAtrOrdenacao, $cdOrd
 	$html = "";
 	
 	$objetosPorPagina = new dominioQtdObjetosPagina ();
-	$comboQtdRegistros = new select ( $objetosPorPagina->colecao );
-	$comboOrdem = new select ( getOrdemAtributos () );	
+	$comboQtdRegistros = new select ( $objetosPorPagina->colecao );	
 	$radioHistorico = new radiobutton ( dominioSimNao::getColecao());
 	
 	if($cdHistorico == null){
@@ -514,6 +518,7 @@ function getComponenteConsultaPaginacao($comboOrdenacao, $cdAtrOrdenacao, $cdOrd
 	// var_dump($comboOrdenacao);
 	if ($comboOrdenacao != null && $comboOrdenacao != "") {
 		// echo $cdOrdenacao;
+		$comboOrdem = new select ( getOrdemAtributos () );
 		$html .= "Coluna:" . $comboOrdenacao->getHtmlOpcao ( "cdAtrOrdenacao", "cdAtrOrdenacao", $cdAtrOrdenacao, false ) . " Ordem: " . $comboOrdem->getHtmlOpcao ( "cdOrdenacao", "cdOrdenacao", $cdOrdenacao, false );
 	}
 	
@@ -525,13 +530,19 @@ function getComponenteConsultaPaginacao($comboOrdenacao, $cdAtrOrdenacao, $cdOrd
 		$html .= " &nbsp;Histórico: " . $radioHistorico->getHtmlRadio ( "cdHistorico", "cdHistorico", $cdHistorico, false, false );
 	
 	$html .= "&nbsp;<button id='localizar' class='botaoconsulta' type='submit'>Consultar</button>\n";
-	$html .= "&nbsp;&nbsp;&nbsp;<a href='javascript:limparFormularioGeral();' ><img  title='Limpar' src='" . caminho_imagens . "borracha.jpg' width='20' height='20'></a></TD>\n
+	$html .= "&nbsp;&nbsp;&nbsp;<a href='javascript:limparFormularioGeral();' ><img  title='Limpar' src='" . caminho_imagens . "borracha.gif' width='20' height='20'></a></TD>\n
                     </TR>";
 	// $html .= "<imput type='hidden' id='javascript:ID_REQ_DT_HOJE' name='javascript:ID_REQ_DT_HOJE'>\n";
 	
 	return $html;
 }
 function getHTMLRadioButtonConsulta($nmRadio, $idRadio, $voAtualOuChaveString) {
+	return getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, false);
+}
+function getHTMLCheckBoxConsulta($nmRadio, $idRadio, $voAtualOuChaveString) {
+	return getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, true);
+}
+function getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, $isCheckBox) {
 	$isSelecionado = false;
 	
 	$ID = "";
@@ -558,7 +569,12 @@ function getHTMLRadioButtonConsulta($nmRadio, $idRadio, $voAtualOuChaveString) {
 	if ($isSelecionado)
 		$checked = "checked";
 	
-	$retorno = "<INPUT type='radio' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $checked . ">";
+	$tipoComponente = "radio";
+	if($isCheckBox){
+		$tipoComponente = "checkbox";
+	}
+	
+	$retorno = "<INPUT type='$tipoComponente' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $checked . ">";
 	// echo $chave;
 	
 	return $retorno;

@@ -13,30 +13,35 @@ class dominio extends multiplosConstrutores {
 		return self::getDescricaoStatic ( $chave, $this->colecao );
 	}
 	
-	static function getDescricaoStaticTeste($chave) {
-		$retorno = $chave;
-		$colecao = static::getColecao();
-		if ($colecao != null) {
-			$totalResultado = count ( $colecao );
-			$chaves = array_keys ( $colecao );
-				
-			// echo "chave selecionada: ". $chave. "<br>";
-				
-			for($i = 0; $i < $totalResultado; $i ++) {
-				$cd = $chaves [$i];
-				// echo "chave: ". $cd . "<br>";
-		
-				if ($cd == $chave) {
-					$retorno = $colecao [$cd];
-					break;
-				}
-			}
+	/*
+	 * static function getDescricaoStatic($chave) {
+	 * $retorno = $chave;
+	 * $colecao = static::getColecao();
+	 * if ($colecao != null) {
+	 * $totalResultado = count ( $colecao );
+	 * $chaves = array_keys ( $colecao );
+	 *
+	 * // echo "chave selecionada: ". $chave. "<br>";
+	 *
+	 * for($i = 0; $i < $totalResultado; $i ++) {
+	 * $cd = $chaves [$i];
+	 * // echo "chave: ". $cd . "<br>";
+	 *
+	 * if ($cd == $chave) {
+	 * $retorno = $colecao [$cd];
+	 * break;
+	 * }
+	 * }
+	 * }
+	 *
+	 * return $retorno;
+	 * }
+	 */
+	static function getDescricaoStatic($chave, $colecao = null) {
+		if ($colecao == null) {
+			$colecao = static::getColecao ();
 		}
 		
-		return $retorno;		
-	}
-	
-	static function getDescricaoStatic($chave, $colecao) {
 		$retorno = $chave;
 		if ($colecao != null) {
 			$totalResultado = count ( $colecao );
@@ -79,9 +84,9 @@ class dominio extends multiplosConstrutores {
 		
 		return $retorno;
 	}
-	static function getColecaoComElementosARemover($chaveARemover, $colecao=null) {
-		//usado para o caso de um dominio que tenha a colecao chamar sem o 2 argumento
-		if($colecao == null){
+	static function getColecaoComElementosARemover($chaveARemover, $colecao = null) {
+		// usado para o caso de um dominio que tenha a colecao chamar sem o 2 argumento
+		if ($colecao == null) {
 			$colecao = static::getColecao ();
 		}
 		
@@ -103,9 +108,9 @@ class dominio extends multiplosConstrutores {
 		}
 		return $retorno;
 	}
-	static function getColecaoApenasComElementos($chaves, $colecao=null) {	
-		//usado para o caso de um dominio que tenha a colecao chamar sem o 2 argumento
-		if($colecao == null){
+	static function getColecaoApenasComElementos($chaves, $colecao = null) {
+		// usado para o caso de um dominio que tenha a colecao chamar sem o 2 argumento
+		if ($colecao == null) {
 			$colecao = static::getColecao ();
 		}
 		
@@ -113,9 +118,9 @@ class dominio extends multiplosConstrutores {
 		$retorno = $colecao;
 		if ($chaves != null) {
 			
-			foreach ( array_keys($colecao) as $chave ) {
+			foreach ( array_keys ( $colecao ) as $chave ) {
 				
-				if(!in_array($chave, $chaves)){				
+				if (! in_array ( $chave, $chaves )) {
 					$retorno = self::removeElementoStatic ( $chave, $retorno );
 				}
 			}

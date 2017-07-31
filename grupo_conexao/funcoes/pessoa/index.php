@@ -9,7 +9,7 @@ include_once(caminho_filtros . "filtroManterPessoa.php");
 try{
 inicio();
 
-$titulo = "CONSULTAR PESSOAS";
+$titulo = "CONSULTAR " . vopessoa::getTituloJSP();
 setCabecalho($titulo);
 $vo = new vopessoa();
 
@@ -38,7 +38,6 @@ $numTotalRegistros = $filtro->numTotalRegistros;
 <!DOCTYPE html>
 <HTML>
 <HEAD>
-
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_datahora.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_cnpfcnpj.js"></SCRIPT>
@@ -96,9 +95,24 @@ function alterar() {
 
 }
 
+//Transfere dados selecionados para a janela principal
+function selecionar(isMultiplaSelecao) {
+	if (!isMultiplaSelecao && !isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
+		return;
+		
+	if (window.opener != null) {
+		array = retornarValorRadioButtonSelecionadoComoArray("document.frm_principal.rdb_consulta", "<?=CAMPO_SEPARADOR?>");
+
+		cdPessoa = array[0];
+		
+		window.opener.transferirDadosPessoa(cdPessoa);
+		window.close();
+	}
+}
+
 </SCRIPT>
-<?=setTituloPagina(null)?>
 </HEAD>
+<?=setTituloPagina($vo->getTituloJSP())?>
 <BODY class="paginadados" onload="">
 	  
 <FORM name="frm_principal" method="post" action="index.php?consultar=S">
@@ -131,8 +145,7 @@ function alterar() {
                 <TH class="campoformulario" nowrap>Vínculo:</TH>
                 <TD class="campoformulario" colspan="1">
                      <?php
-                    include_once("biblioteca_htmlPessoa.php");
-                    include_once(caminho_vos . "vopessoavinculo.php");
+                    include_once("bibliotecaPessoa.php");
                     echo getComboPessoaVinculo(vopessoavinculo::$nmAtrCd, vopessoavinculo::$nmAtrCd, $filtro->cdvinculo, "camponaoobrigatorio", "");                                        
                     ?>
             </TR>
@@ -164,6 +177,7 @@ function alterar() {
                     <TH class="headertabeladados">Vínculo</TH>
                     <TH class="headertabeladados" width="1%">Email</TH>
                     <TH class="headertabeladados" width="10%">Telefone</TH>
+                    <TH class="headertabeladados" width="1%">Doc.OK</TH>
                 </TR>
                 <?php								
                 if (is_array($colecao))
@@ -175,7 +189,7 @@ function alterar() {
 				if($isHistorico){
 					$colspan++;
 				}
-                        
+                				
                 $domVinculo = new dominioVinculoPessoa();
                 for ($i=0;$i<$tamanho;$i++) {
                         $voAtual = new vopessoa();
@@ -185,6 +199,11 @@ function alterar() {
                         $vinculo = $domVinculo->getDescricao($vinculo);
                                                
                         $docFormatado = documentoPessoa::getNumeroDocFormatado($voAtual->docCPF);
+                        
+                        $classColuna = "tabeladados";
+                        
+                        if($voAtual->inDocumentacaoEmdia == constantes::$CD_NAO)
+                        		$classColuna = "tabeladadosdestacadovermelho";                        
                         
                 ?>
                 <TR class="dados">
@@ -204,6 +223,7 @@ function alterar() {
                     <TD class="tabeladados"><?php echo $vinculo;?></TD>
                     <TD class="tabeladados"><?php echo $colecao[$i][vopessoa::$nmAtrEmail];?></TD>
                     <TD class="tabeladados"><?php echo $colecao[$i][vopessoa::$nmAtrTel]?></TD>
+                    <TD class="<?=$classColuna?>"><?php echo dominioSimNao::getDescricaoStatic($voAtual->inDocumentacaoEmdia)?></TD>
                 </TR>					
                 <?php
 				}				
@@ -230,11 +250,8 @@ function alterar() {
                        <TD>
                         <TABLE class="barraacoesaux" cellpadding="0" cellspacing="0">
 	                   	<TR> 
-                            <TD class="botaofuncao"><button id="bttdetalhar" class="botaofuncaop" type="button" onClick="javascript:detalhar(false);" accesskey="d">Detalhar</button></TD>
-                            <TD class="botaofuncao"><?=getBotaoIncluir()?></TD>
-                            <TD class="botaofuncao"><?=getBotaoAlterar()?></TD>
-                            <TD class="botaofuncao"><?=getBotaoExcluir()?></TD>                            
-                         </TR>
+						<?=getBotoesRodape();?>
+						</TR>
                          </TABLE>
 	                   </TD>
                     </TR>  

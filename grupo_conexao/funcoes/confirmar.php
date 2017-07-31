@@ -4,7 +4,6 @@ include_once(caminho_util."bibliotecaHTML.php");
 //define a classe do vo que chamou
 $class = @$_GET["class"];
 //echo $class;
-include_once(caminho_vos.$class.".php");
 
 /*a funcao abaixo serve para incluir a classe usada na confirmacao
  * o session precisa identificar qual classe ele serializa
@@ -36,16 +35,10 @@ $msgErro = "";
 $nmFuncao = "";
 
 try{
-    
-    session_start();
-    if(!isset($_SESSION["vo"])){
-        throw new Exception("Sessão expirada. Realize nova consulta.");
-    }
-    
-    //$vo = $_SESSION["vo"];
-    $vo = getObjetoSessao("vo");
-    $dbprocesso = new $class(null);
-    //session_destroy();
+    $vo = new $class();
+    $dbprocesso = $vo->dbprocesso;
+    $vo->getDadosFormularioEntidade ();    
+    putObjetoSessao ( "vo", $vo );
     
     //var_dump($vo);
     

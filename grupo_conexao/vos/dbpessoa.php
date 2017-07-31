@@ -22,8 +22,7 @@ class dbpessoa extends dbprocesso {
 		return $retorno;
 	}
 	
-	function consultarPessoaContratoFiltro($filtro) {
-		$nmTabelaContrato = vocontrato::getNmTabela ();
+	function consultarFiltroManterPessoa($filtro) {
 		$nmTabela = vopessoa::getNmTabela ();
 		$nmTabelaPessoaVinculo = vopessoavinculo::getNmTabela ();
 		
@@ -39,8 +38,6 @@ class dbpessoa extends dbprocesso {
 		$queryFrom .= "\n INNER JOIN " . $nmTabelaPessoaVinculo;
 		$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCdPessoa;
 		
-		$queryFrom .= "\n LEFT JOIN " . $nmTabelaContrato;
-		$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaContrato . "." . vocontrato::$nmAtrCdPessoaContratada;
 		// echo $querySelect."<br>";
 		// echo $queryFrom;
 		
@@ -53,6 +50,7 @@ class dbpessoa extends dbprocesso {
 		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrDocCPF;
 		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrEmail;
 		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrTel;
+		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrInDocumentacaoEmDia;
 		$atributosConsulta .= "," . vopessoavinculo::getNmTabela () . "." . vopessoavinculo::$nmAtrCd;
 		
 		if($filtro->isHistorico()){
@@ -94,28 +92,6 @@ class dbpessoa extends dbprocesso {
 		$queryFrom .= vopessoa::getNmTabela () . "." . vopessoa::$nmAtrCd . "=" . vocontrato::getNmTabela () . "." . vocontrato::$nmAtrCdPessoaContratada;
 		
 		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, false );
-	}
-	public function consultarPessoaPorGestor($cdGestor) {
-		$vo = new vopessoa ();
-		$nmTabela = $vo->getNmTabelaEntidade ( false );
-		$query = "SELECT * FROM " . $nmTabela;
-		
-		if ($cdGestor != null)
-			$query .= " WHERE " . vogestor::$nmAtrCd . "=" . $cdGestor;
-			
-			// echo $query;
-		return $this->consultarEntidade ( $query, false );
-	}
-	public function consultarGestorPorParam($cdGestor) {
-		$vo = new vogestor ();
-		$nmTabela = $vo->getNmTabelaEntidade ( false );
-		$query = "SELECT * FROM " . $nmTabela;
-		
-		if ($cdGestor != null)
-			$query .= " WHERE " . vogestor::$nmAtrDescricao . " LIKE '%" . $cdGestor . "%'";
-			
-			// echo $query;
-		return $this->consultarEntidade ( $query, false );
 	}
 	
 	// o incluir eh implementado para nao usar da voentidade
@@ -236,7 +212,8 @@ class dbpessoa extends dbprocesso {
 		$retorno .= $this->getVarComoString ( $vopessoa->cidade ) . ",";
 		$retorno .= $this->getVarComoString ( strtoupper($vopessoa->uf) ) . ",";
 		$retorno .= $this->getVarComoString ( $vopessoa->foto) . ",";
-		$retorno .= $this->getVarComoString ( $vopessoa->obs );
+		$retorno .= $this->getVarComoString ( $vopessoa->obs ) . ",";
+		$retorno .= $this->getVarComoString ( $vopessoa->inDocumentacaoEmdia);
 		
 		$retorno .= $vopessoa->getSQLValuesInsertEntidade ();
 		
@@ -313,6 +290,11 @@ class dbpessoa extends dbprocesso {
 		
 		if ($vo->obs != null) {
 			$retorno .= $sqlConector . vopessoa::$nmAtrObservacao . " = " . $this->getVarComoString ( $vo->obs );
+			$sqlConector = ",";
+		}
+		
+		if ($vo->inDocumentacaoEmdia!= null) {
+			$retorno .= $sqlConector . vopessoa::$nmAtrInDocumentacaoEmDia . " = " . $this->getVarComoString ( $vo->inDocumentacaoEmdia);
 			$sqlConector = ",";
 		}
 		

@@ -246,7 +246,7 @@ function getColecaoEntreSeparadorAspas($colecaoAtributos, $separador, $comAspas)
 		for($i = 0; $i <= $tamanho; $i ++) {
 			$atrib = $colecaoAtributos [$i];
 			
-			if ($atrib != null) {
+			if ($atrib != null && $atrib != "") {
 				
 				if ($comAspas)
 					$atrib = $aspas . $atrib . $aspas;
@@ -316,7 +316,7 @@ function isPastaRaiz() {
 	
 	//echo "$nmPasta<br>";
 	$indice = getIndiceBarraOuPonto ( $nmPasta );
-	$nmPasta = substr ( $nmPasta, 0, $indice ) . "/" . pasta_aplicacao;
+	$nmPasta = substr ( $nmPasta, 0, $indice ) . pasta_aplicacao;
 	 //echo "|$nmPasta<br>";
 	 //echo "|$pastaRaiz<br>";
 	

@@ -10,13 +10,12 @@
 
  
  /**
-  * Função gestorPessoa
+  * Função get aluno 
   */
- function getDadosGestorPessoa(idCampoGestor, idDivResultado) {
+ function getDadosAlunoAjax(pCdPessoa, pFuncao, idDivResultado) {
      // Declaração de Variáveis
-     var cdGestor   = document.getElementById(idCampoGestor).value;
      var result = document.getElementById(idDivResultado);
-     imprimeResultado(result, "../gestor_pessoa/comboGestorPessoaAjax.php?" + idCampoGestor + "=" + cdGestor);     
+     imprimeResultado(result, "../pessoa/campoDadosPessoaAjax.php?chave=" + pCdPessoa + "&funcao=" + pFuncao);     
  }
  
  /**

@@ -9,29 +9,20 @@ include_once(caminho_util."dominio.class.php");
   	static $ENDERECO_PASTABASE = "ASSESSORIA JURÍDICA\ATJA";
   	static $ENDERECO_PASTABASE_UNCT = "UNCT";
   	
-  	static $ENDERECO_PASTA_DOCUMENTOS = "\Documentos";
+  	static $ENDERECO_PASTA_DOCUMENTOS = "Documentos";
   	  	  	
-  	static $CD_TP_DOC_OFICIO = "OF";
-  	static $CD_TP_DOC_CI= "CI";
-  	static $CD_TP_DOC_NOTA_TECNICA = "NT";
-  	static $CD_TP_DOC_NOTA_IMPUTACAO = "NI";
-  	static $CD_TP_DOC_NOTIFICACAO = "NO";
-  	static $CD_TP_DOC_OUTROS = "OT";
-  	static $CD_TP_DOC_PLANILHA_CUSTOS = "PC";
-  	static $CD_TP_DOC_PARECER = "PA";
-  	static $CD_TP_DOC_APOSTILAMENTO = "AP";  	
-
-  	static $DS_TP_DOC_OFICIO = "Ofício";
-  	static $DS_TP_DOC_CI= "CI";
-  	static $DS_TP_DOC_NOTA_TECNICA = "Nota Técnica";
-  	static $DS_TP_DOC_NOTA_IMPUTACAO = "Nota Imputação";
-  	static $DS_TP_DOC_NOTIFICACAO = "Notificação";
-  	static $DS_TP_DOC_OUTROS = "Outros";
-  	static $DS_TP_DOC_PLANILHA_CUSTOS = "Planilha de Custos";
-  	static $DS_TP_DOC_PARECER = "Parecer";
-  	static $DS_TP_DOC_APOSTILAMENTO = "Apostilamento";
+  	static $CD_TP_DOC_RG= 1;
+  	static $CD_TP_DOC_CPF= 2;
+  	static $CD_TP_DOC_MOTORISTA= 3;
+  	static $CD_TP_DOC_COMPROV_RESIDENCIA= 4;
+  	static $CD_TP_DOC_FOTO= 5;
   	 
-// ...............................................................
+  	static $DS_TP_DOC_RG= "RG";
+  	static $DS_TP_DOC_CPF= "CPF";
+  	static $DS_TP_DOC_MOTORISTA= "CNH";
+  	static $DS_TP_DOC_COMPROV_RESIDENCIA= "Comprov.Residência";
+  	static $DS_TP_DOC_FOTO= "Foto";
+  	// ...............................................................
 // Construtor
     function __construct () {        
 		$this->colecao = self::getColecao();
@@ -39,16 +30,13 @@ include_once(caminho_util."dominio.class.php");
 	
 	static function getColecao(){
 		return array(
-				self::$CD_TP_DOC_OFICIO => self::$DS_TP_DOC_OFICIO,
-				self::$CD_TP_DOC_CI => self::$DS_TP_DOC_CI,
-				self::$CD_TP_DOC_NOTA_TECNICA => "Nota Técnica",
-				self::$CD_TP_DOC_PARECER => self::$DS_TP_DOC_PARECER,
-				self::$CD_TP_DOC_NOTA_IMPUTACAO => "Nota Imputação",
-				self::$CD_TP_DOC_NOTIFICACAO => self::$DS_TP_DOC_NOTIFICACAO,
-				self::$CD_TP_DOC_PLANILHA_CUSTOS => self::$DS_TP_DOC_PLANILHA_CUSTOS,
-				self::$CD_TP_DOC_APOSTILAMENTO => self::$DS_TP_DOC_APOSTILAMENTO,
-				self::$CD_TP_DOC_OUTROS => self::$DS_TP_DOC_OUTROS
-				);
+				self::$CD_TP_DOC_RG=> self::$DS_TP_DOC_RG,
+				self::$CD_TP_DOC_CPF=> self::$DS_TP_DOC_CPF,
+				self::$CD_TP_DOC_MOTORISTA=> self::$DS_TP_DOC_MOTORISTA,
+				self::$CD_TP_DOC_COMPROV_RESIDENCIA=> self::$DS_TP_DOC_COMPROV_RESIDENCIA,
+				self::$CD_TP_DOC_FOTO=> self::$DS_TP_DOC_FOTO
+				
+		);
 	}	
 	
 	static function getEnderecoPastaBase() {
@@ -57,15 +45,6 @@ include_once(caminho_util."dominio.class.php");
 	static function getEnderecoPastaBaseUNCT() {
 		return self::$ENDERECO_DRIVE . "\\" . self::$ENDERECO_PASTABASE_UNCT;
 	}
-	
-	static function getEnderecoPastaBasePorTpDocumento($tpDoc) {
-		$retorno = self::getDescricaoStatic($tpDoc, self::getColecao());
-		if($tpDoc == self::$CD_TP_DOC_APOSTILAMENTO){
-			$retorno = "Apostilamentos";
-		}
 		
-		return $retorno;
-	}
-	
 }
 ?>

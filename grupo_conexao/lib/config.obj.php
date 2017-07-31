@@ -14,7 +14,7 @@ Class config {
          // Construtor
 
       Function config (){
-                 $this->db        = "grupo_conexao";
+                 $this->db        = "wordpress";
                  $this->login     = "root";
                  $this->senha     = "";
                  $this->odbc      = "";

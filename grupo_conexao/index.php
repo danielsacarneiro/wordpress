@@ -23,11 +23,11 @@ setCabecalho(constantes::$tituloSistema);
 	f1 = new Tree('Serviço 01 (Tabelas)');	
     f1.adicionarItem(new Link('Documentos', '<?=caminho_funcoesHTML?>documento', ''));
     f1.adicionarItem(new Link('Pessoas', '<?=caminho_funcoesHTML?>pessoa', ''));
+    f1.adicionarItem(new Link('Matérias', '<?=caminho_funcoesHTML?>materia', ''));
 	f.adicionarItem(f1);
 	
-	f2 = new Tree('Serviço 02 (Contratos)');
-	f2.adicionarItem(new Link("Contratos-Planilha", "<?=caminho_funcoesHTML?>contrato", ""));
-	f2.adicionarItem(new Link("Contratos-Informações Adicionais", "<?=caminho_funcoesHTML?>contrato_info", ""));	
+	f2 = new Tree('Serviço 02 (Relacionamentos)');
+    f2.adicionarItem(new Link('Turmas', '<?=caminho_funcoesHTML?>turma', ''));	
 	f.adicionarItem(f2);
 	
 	<?php if(isUsuarioAdmin()){?>

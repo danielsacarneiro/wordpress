@@ -2,7 +2,7 @@
 include_once(caminho_lib."voentidade.php");
 
 Class vousuario extends voentidade{
-        static $nmEntidade = "gc_users";	
+        static $nmEntidade = "wp_users";	
         static $nmAtrID  = "ID";
         static $nmAtrLogin  = "user_login";
         static $nmAtrName  = "display_name";

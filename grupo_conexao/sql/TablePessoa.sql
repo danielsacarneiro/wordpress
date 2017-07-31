@@ -2,7 +2,6 @@ ALTER DATABASE unct CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 -- ALTER TABLE pessoa DROP FOREIGN KEY fk_pessoa_usuario;
 drop table pessoa_vinculo;
-drop table pessoa_gestor;
 drop table pessoa;
 CREATE TABLE pessoa (
 	pe_cd INT NOT NULL AUTO_INCREMENT,
@@ -18,7 +17,8 @@ CREATE TABLE pessoa (
 	pe_bairro VARCHAR(50),
     pe_cidade VARCHAR(50),
     pe_uf CHAR(2),
-    pe_obs VARCHAR(300),
+    pe_obs TEXT,
+    pe_in_todosdocs CHAR(2) NOT NULL,
     pe_foto VARCHAR(155),
     
     dh_inclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -50,7 +50,8 @@ CREATE TABLE pessoa_hist (
 	pe_bairro VARCHAR(30),
     pe_cidade VARCHAR(50),
     pe_uf CHAR(2),    
-    pe_obs VARCHAR(300),
+    pe_obs TEXT,
+    pe_in_todosdocs CHAR(2) DEFAULT 'S',
     pe_foto VARCHAR(155),
     
     dh_inclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,

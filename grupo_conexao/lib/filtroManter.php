@@ -30,10 +30,8 @@ class filtroManter extends multiplosConstrutores {
 	var $isValidarConsulta;
 	var $inDesativado;
 	var $groupby;
-	
 	private $QUERY_SELECT;
 	private $QUERY_FROM;
-	
 	var $voPrincipal;
 	function __construct0() {
 		// echo "teste0";
@@ -90,7 +88,7 @@ class filtroManter extends multiplosConstrutores {
 	function setQueryFromJoin($query) {
 		$this->QUERY_FROM = $query;
 	}
-	function getQueryFromJoin(){
+	function getQueryFromJoin() {
 		return $this->QUERY_FROM;
 	}
 	function setQuerySelect($query) {
@@ -151,17 +149,17 @@ class filtroManter extends multiplosConstrutores {
 		
 		// complementa com algum filtro do pai
 		// se o inDesativado for null, eh porque nao tem desativacao
-		//echo "desativado: ". $this->inDesativado;
-		//so tem desativado quando a consulta NAO eh por historico
-		if (!$this->isHistorico() && $this->voPrincipal != null) {
+		// echo "desativado: ". $this->inDesativado;
+		// so tem desativado quando a consulta NAO eh por historico
+		if (! $this->isHistorico () && $this->voPrincipal != null) {
 			
-			if($this->voPrincipal->temTabHistorico() && $this->inDesativado == null){				
-				//seta para nao, para nao trazer os desativados como default
+			if ($this->voPrincipal->temTabHistorico () && $this->inDesativado == null) {
+				// seta para nao, para nao trazer os desativados como default
 				$this->inDesativado = constantes::$CD_NAO;
 			}
-				
-			if($this->inDesativado != null && $this->inDesativado != constantes::$CD_OPCAO_TODOS){
-				$strFiltro = $strFiltro . $conector . $this->voPrincipal->getNmTabela() . "." . voentidade::$nmAtrInDesativado . " = '" . $this->inDesativado . "'";
+			
+			if ($this->inDesativado != null && $this->inDesativado != constantes::$CD_OPCAO_TODOS) {
+				$strFiltro = $strFiltro . $conector . $this->voPrincipal->getNmTabela () . "." . voentidade::$nmAtrInDesativado . " = '" . $this->inDesativado . "'";
 				$conector = "\n AND ";
 			}
 		}
@@ -190,7 +188,7 @@ class filtroManter extends multiplosConstrutores {
 		if ($this->cdAtrOrdenacao != null) {
 			
 			$atributoOrdenacao = $this->cdAtrOrdenacao;
-			$ordem = $this->cdOrdenacao;			
+			$ordem = $this->cdOrdenacao;
 			
 			if ($this->cdAtrOrdenacaoConsulta != null) {
 				// atributo que serve para formatar o atributo de ordenacao de acordo com a tabela que deve ser consultada
@@ -204,21 +202,21 @@ class filtroManter extends multiplosConstrutores {
 		
 		$ordenacaoFinal = "";
 		$conectorOrdem = "";
-		//concatena as ordenacoes que existirem
-		if($atributoOrdenacao != ""){
+		// concatena as ordenacoes que existirem
+		if ($atributoOrdenacao != "") {
 			$ordenacaoFinal = $atributoOrdenacao;
 			$conectorOrdem = ",";
 		}
-
-		if($strOrdemDefault != ""){
-			$ordenacaoFinal = $atributoOrdenacao . $conectorOrdem. $strOrdemDefault;
+		
+		if ($strOrdemDefault != "") {
+			$ordenacaoFinal = $atributoOrdenacao . $conectorOrdem . $strOrdemDefault;
 		}
 		
 		if ($comAtributoOrdenacao && $ordenacaoFinal != "") {
 			$strFiltro = $strFiltro . "\n ORDER BY $ordenacaoFinal ";
 		}
-			
-		//echo $strFiltro;
+		
+		// echo $strFiltro;
 		
 		return $strFiltro;
 	}
@@ -230,32 +228,12 @@ class filtroManter extends multiplosConstrutores {
 		return $retorno;
 	}
 	
-	// NAO USAR MAIS
-	/*
-	 * function getAtributosOrdenacao(){
-	 * $comboOrdenacao = null;
-	 * if($this->nmEntidadePrincipal != null){
-	 * $voentidade = $this->getVOEntidadePrincipal();
-	 * $comboOrdenacao = new select($voentidade::getAtributosOrdenacao());
-	 * }
-	 * return $comboOrdenacao;
-	 * }
-	 */
 	function getComboOrdenacao() {
 		$comboOrdenacao = null;
-		try {
-			// $comboOrdenacao = new select(static::getAtributosOrdenacao());
+		//metodo a ser implementado nos filtros que tiverem ordenacao
+		if (method_exists ( $this, "getAtributosOrdenacao" )) {
 			$comboOrdenacao = new select ( $this->getAtributosOrdenacao () );
-			
-			// }catch (Throwable $ex){
-		} catch ( Error $ex ) {
-			echo "FiltroManter:Error";
-			$comboOrdenacao = null;
-		} catch ( Throwable $ex ) {
-			echo "FiltroManter:Throwable";
-			$comboOrdenacao = null;
 		}
-		
 		return $comboOrdenacao;
 	}
 	function formataCampoOrdenacao($voEntidade) {
@@ -286,11 +264,10 @@ class filtroManter extends multiplosConstrutores {
 	}
 	function isHistorico() {
 		return $this->isHistorico;
-	}	
-	static function isAtributoArrayVazio($colecao) {		
-		return is_array($colecao) && count($colecao)==1 && $colecao[0]=="";
 	}
-	
+	static function isAtributoArrayVazio($colecao) {
+		return is_array ( $colecao ) && count ( $colecao ) == 1 && $colecao [0] == "";
+	}
 }
 
 /*

@@ -1,10 +1,9 @@
 <?php
 include_once("../../config_lib.php");
 include_once(caminho_util."bibliotecaHTML.php");
-include_once(caminho_vos."dbpessoa.php");
-include_once(caminho_vos . "vopessoavinculo.php");
 include_once("dominioVinculoPessoa.php");
 
+try{
 //inicia os parametros
 inicioComValidacaoUsuario(true);
 
@@ -49,7 +48,6 @@ $cdUsuarioUltAlteracao = $vo->cdUsuarioUltAlteracao;
 <!DOCTYPE html>
 
 <HEAD>
-
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_text.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_datahora.js"></SCRIPT>
@@ -138,18 +136,32 @@ function checkResponsabilidade() {
 	}
 }
 
+function formataFormDocumentacao() {
+	campoObservacao = document.frm_principal.<?=vopessoa::$nmAtrObservacao?>;
+	campoInDoc = document.frm_principal.<?=vopessoa::$nmAtrInDocumentacaoEmDia?>;
+
+	if(campoInDoc.value == "<?=constantes::$CD_SIM?>"){
+		campoObservacao.required = false;
+	}else{
+		campoObservacao.required = true;
+		exibirMensagem("Informe os documentos faltantes no campo observação.");
+		campoObservacao.focus();
+	}
+}
+
 
 function iniciar(){
 	//verificaVinculo();
-	checkResponsabilidade();	
+	checkResponsabilidade();
+	formataFormDocumentacao();	
 }
 
 </SCRIPT>
-<?=setTituloPagina(null)?>
 </HEAD>
+<?=setTituloPagina($vo->getTituloJSP())?>
 <BODY class="paginadados" onload="iniciar();">
 	  
-<FORM name="frm_principal" method="post" action="confirmar.php" onSubmit="return confirmar();" enctype="multipart/form-data">
+<FORM name="frm_principal" method="post" action="../confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();" enctype="multipart/form-data">
 
 <INPUT type="hidden" id="funcao" name="funcao" value="<?=$funcao?>">
 <INPUT type="hidden" id="<?=vopessoa::$nmAtrCd?>" name="<?=vopessoa::$nmAtrCd?>" value="<?=$vo->cd?>">
@@ -224,18 +236,28 @@ function iniciar(){
                 				Cidade <INPUT type="text" id="<?=vopessoa::$nmAtrCidade?>" name="<?=vopessoa::$nmAtrCidade?>"  value="<?php echo($vo->cidade);?>"  class="camponaoobrigatorio" size="30" maxlength="50">
                    				Estado: <?= $comboEstados->getHtmlCombo(vopessoa::$nmAtrUF, vopessoa::$nmAtrUF, $vo->uf, true, "camponaoobrigatorio", false, " ");?>
 				</TD>
-            </TR>     
+            </TR>
+                
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Observação:</TH>
                 <TD class="campoformulario" width="1%" colspan=3>
                 				<textarea rows="2" cols="60" id="<?=vopessoa::$nmAtrObservacao?>" name="<?=vopessoa::$nmAtrObservacao?>" class="camponaoobrigatorio" maxlength="300"><?php echo($vo->obs);?></textarea>
-				</TD>
-            </TR>     
-            
+				<?php 
+	            include_once(caminho_util. "dominioSimNao.php");
+	            $comboSimNao = new select(dominioSimNao::getColecao());	             
+	            echo "&nbsp;Documentação OK?: ";
+	            if($vo->inDocumentacaoEmdia == null){
+	            	$vo->inDocumentacaoEmdia = constantes::$CD_SIM;
+	            }
+	            echo $comboSimNao->getHtmlCombo(vopessoa::$nmAtrInDocumentacaoEmDia,vopessoa::$nmAtrInDocumentacaoEmDia, $vo->inDocumentacaoEmdia, true, "campoobrigatorio", false,
+	            		" onChange='formataFormDocumentacao();' required ");
+	            ?>                				
+				</TD>				
+            </TR>    
             <?php
             $nmCampoFoto = vopessoa::$nmAtrFoto;
             if(!$isInclusao){
-            	$foto = vopessoa::$NM_PASTA_DESTINO_FOTOS. $vo->foto;
+            	$foto = vopessoa::getNMPastaDestinoFotos(true). $vo->foto;
             }else{
             	$foto = pasta_imagens . vopessoa::$NM_IMAGEM_SELECIONE_FOTO;
             	?>
@@ -327,3 +349,9 @@ function iniciar(){
 
 </BODY>
 </HTML>
+<?php 
+}catch(Exception $ex){
+	putObjetoSessao("vo", $vo);
+	tratarExcecaoHTML($ex);	
+}
+?>

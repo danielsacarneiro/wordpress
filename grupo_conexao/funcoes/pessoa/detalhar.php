@@ -29,7 +29,7 @@ $doc  = $vo->doc;
 $email  = $vo->email;
     
 $nmFuncao = "DETALHAR ";
-$titulo = "PESSOA";
+$titulo = $vo->getTituloJSP();
 $complementoTit = "";
 $isExclusao = false;
 if($isHistorico)
@@ -49,7 +49,6 @@ $colspanColunas = 5;
 ?>
 <!DOCTYPE html>
 <HEAD>
-<?=setTituloPagina(null)?>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_cnpfcnpj.js"></SCRIPT>
 
@@ -73,9 +72,10 @@ function confirmar() {
 </SCRIPT>
 
 </HEAD>
+<?=setTituloPagina($vo->getTituloJSP())?>
 <BODY class="paginadados" onload="">
 	  
-<FORM name="frm_principal" method="post" action="confirmar.php" onSubmit="return confirmar();">
+<FORM name="frm_principal" method="post" action="../confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();">
 
 <INPUT type="hidden" id="funcao" name="funcao" value="<?=$funcao?>">
 <INPUT type="hidden" id="<?=vopessoa::$nmAtrCd?>" name="<?=vopessoa::$nmAtrCd?>" value="<?=$vo->cd?>">
@@ -103,14 +103,14 @@ function confirmar() {
                 <TD class="campoformulario" colspan=<?=$colspanColunas-2?>><INPUT type="text" value="<?php echo(complementarCharAEsquerda($vo->cd, "0", TAMANHO_CODIGOS));?>"  class="camporeadonlyalinhadodireita" size="5" readonly></TD>
                  <TD class="campoformulario" width="1%"  rowspan=6>
                 	<INPUT type="hidden" id="<?=vopessoa::$nmAtrFoto?>" name="<?=vopessoa::$nmAtrFoto?>"  value="<?php echo($vo->foto);?>">
-                	<img src='<?=vopessoa::$NM_PASTA_DESTINO_FOTOS. $vo->foto?>' height='150' class='aligncenter'>
+                	<img src='<?=vopessoa::getNMPastaDestinoFotos(true). $vo->foto?>' height='150' class='aligncenter'>
 				</TD>
             </TR>                                            
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Vínculo:</TH>
                 <TD class="campoformulario" colspan=<?=$colspanColunas-2?>>
                      <?php
-                    include_once("biblioteca_htmlPessoa.php");
+                    include_once("bibliotecaPessoa.php");
                     echo getComboPessoaVinculo(vopessoavinculo::$nmAtrCd, vopessoavinculo::$nmAtrCd, $colecao[vopessoavinculo::$nmAtrCd], "camporeadonly", " disabled ");                    
                     ?>
             </TR>
@@ -164,6 +164,13 @@ function confirmar() {
                 <TH class="campoformulario" nowrap width=1%>Observação:</TH>
                 <TD class="campoformulario" width="1%" colspan=<?=$colspanColunas?>>
                 				<textarea rows="2" cols="60" id="<?=vopessoa::$nmAtrObservacao?>" name="<?=vopessoa::$nmAtrObservacao?>" class="camporeadonly" maxlength="300" readonly><?php echo($vo->obs);?></textarea>
+				<?php 
+	            include_once(caminho_util. "dominioSimNao.php");
+	            $comboSimNao = new select(dominioSimNao::getColecao());	             
+	            echo "&nbsp;Documentação OK?: ";
+	            echo $comboSimNao->getHtmlCombo(vopessoa::$nmAtrInDocumentacaoEmDia,vopessoa::$nmAtrInDocumentacaoEmDia, $vo->inDocumentacaoEmdia, true, "campoobrigatorio", false,
+	            		" onChange='formataFormDocumentacao();' disabled ");
+	            ?>                				                				
 				</TD>
             </TR>            
             <?php
