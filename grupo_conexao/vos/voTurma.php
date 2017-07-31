@@ -62,7 +62,12 @@ class voturma extends voentidade {
 		$this->cd = $registrobanco [self::$nmAtrCd];
 		$this->descricao = $registrobanco [self::$nmAtrDescricao];
 		$this->valor = $registrobanco [self::$nmAtrValor];
-		$this->obs = $registrobanco [self::$nmAtrObservacao];
+		$this->obs = $registrobanco [self::$nmAtrObservacao];	
+	}
+	function getDadosRegistroBancoPorChave($registrobanco) {
+		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
+		$this->getDadosRegistroBanco($registrobanco);
+		$this->setColecaoAlunosRegistroBanco($this->dbprocesso->consultarPessoasTurma($this));
 	}
 	function getDadosFormulario() {
 		$this->cd = @$_POST [self::$nmAtrCd];
@@ -77,6 +82,20 @@ class voturma extends voentidade {
 			throw new excecaoGenerica ( "É preciso ter alunos para criar uma turma." ); // echo "NAO tem colecao alunos";
 		}
 	}
+	function setColecaoAlunosRegistroBanco($colecao) {
+		$retorno = null;
+		if ($colecao != null) {
+			$retorno = array ();
+			foreach ( $colecao as $registrobanco ) {
+				$vopessoa = new vopessoa();
+				$vopessoa->getDadosBanco ( $registrobanco );
+				$retorno [] = $vopessoa->cd;
+			}
+		}
+		//var_dump($retorno);
+		$this->colecaoAlunos = $retorno;
+	}
+	
 	function getValorChavePrimaria() {
 		return $this->cd;
 	}

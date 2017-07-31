@@ -10,11 +10,11 @@ class filtroManterPessoaTurma extends filtroManter{
 	// construtor
     var $cdPessoa;
     var $cdTurma;
-    var $doc="";
-    var $nome="";
-    var $dsTurma="";
-    var $dsMateria="";
-    var $cdvinculo="";
+    var $doc;
+    var $nome;
+    var $dsTurma;
+    var $dsMateria;
+    var $cdvinculo;
     	
 	function getFiltroFormulario(){		
 		$this->cdPessoa = @$_POST[vopessoaturma::$nmAtrCdPessoa];
@@ -24,18 +24,18 @@ class filtroManterPessoaTurma extends filtroManter{
 		$this->nome = @$_POST[vopessoa::$nmAtrNome];
 		$this->dsTurma = @$_POST[voturma::$nmAtrDescricao];
 		$this->dsMateria= @$_POST[vomateria::$nmAtrDescricao];
-		$this->cdvinculo = @$_POST[vopessoavinculo::$nmAtrCd];
+		$this->cdvinculo = @$_POST[voPessoaTurma::$nmAtrCd];
 	}
 	
 	function getFiltroConsultaSQL($comAtributoOrdenacao = null){
         $voPessoa= new vopessoa();
-        $voPessoaVinculo= new vopessoavinculo();
+        $voPessoaTurma= new vopessoaturma();
 		$filtro = "";
 		$conector  = "";
 
 		$isHistorico = $this->isHistorico();
         $nmTabela = $voPessoa->getNmTabelaEntidade($isHistorico);
-        $nmTabelaPessoaVinculo = $voPessoaVinculo->getNmTabela();
+        $nmTabelaPessoaTurma = $voPessoaTurma->getNmTabela();
         
 		//seta os filtros obrigatorios        
 		if($this->isSetaValorDefault()){
@@ -46,7 +46,7 @@ class filtroManterPessoaTurma extends filtroManter{
             		
 		if($this->cdPessoa != null){
 			$filtro = $filtro . $conector
-						. $nmTabela. "." .vopessoaturma::$nmAtrCdPessoa
+						. $nmTabelaPessoaTurma. "." .vopessoaturma::$nmAtrCdPessoa
 						. " = "
 						. $this->cdPessoa;
 			
@@ -55,7 +55,7 @@ class filtroManterPessoaTurma extends filtroManter{
         
 		if($this->cdTurma != null){
 			$filtro = $filtro . $conector
-			. $nmTabela. "." .vopessoaturma::$nmAtrCdTurma
+			. $nmTabelaPessoaTurma. "." .vopessoaturma::$nmAtrCdTurma
 			. " = "
 					. $this->cdTurma;
 					
@@ -86,7 +86,7 @@ class filtroManterPessoaTurma extends filtroManter{
 		
 		if($this->cdvinculo != null){
 			$filtro = $filtro . $conector
-					. $nmTabelaPessoaVinculo. "." .vopessoavinculo::$nmAtrCd
+					. $nmTabelaPessoaTurma. "." .voPessoaTurma::$nmAtrCd
 					. " = "
 					. $this->cdvinculo;
 						
@@ -136,7 +136,6 @@ class filtroManterPessoaTurma extends filtroManter{
 	function getAtributosOrdenacao(){
 		$varAtributos = array(
 				vopessoaturma::$nmAtrCdTurma => "Turma",
-				vopessoavinculo::$nmAtrCd=> "Vinculo",
 				vopessoa::$nmAtrNome => "Nome",
 				vopessoa::$nmAtrDhUltAlteracao=> "Data.Alteração",
 				vopessoa::$nmAtrCd => "Cd.Pessoa"

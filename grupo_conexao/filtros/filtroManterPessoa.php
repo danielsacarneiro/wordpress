@@ -13,10 +13,10 @@ class filtroManterPessoa extends filtroManter{
 	// construtor
     var $cd;
     var $colecaoCd;
-    var $doc="";
-    var $nome="";
-    var $cdvinculo="";
-    var $dtReferenciaContrato ="";
+    var $doc;
+    var $nome;
+    var $cdvinculo;
+    var $dtReferenciaContrato;
 	
 	function getFiltroFormulario(){		
 		$this->cd = @$_POST[vopessoa::$nmAtrCd];

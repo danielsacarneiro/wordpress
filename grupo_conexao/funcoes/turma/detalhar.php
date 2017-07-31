@@ -6,6 +6,8 @@ try{
 //inicia os parametros
 inicio();
 
+removeObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS );
+
 $vo = new voturma();
 //var_dump($vo->varAtributos);
 $chave = @$_GET["chave"];
@@ -24,8 +26,10 @@ $nmFuncao = "";
 $readonly = "readonly";
 $dbprocesso = $vo->dbprocesso;					
 $colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
-$vo->getDadosBanco($colecao);
+$vo->getDadosBancoPorChave($colecao);
 putObjetoSessao($vo->getNmTabela(), $vo);
+
+//var_dump($vo->colecaoAlunos);
     
 $dhInclusao = $vo->dhInclusao;
 $dhUltAlteracao = $vo->dhUltAlteracao;
@@ -112,7 +116,32 @@ function confirmar() {
                 <TD class="campoformulario" colspan=3>
                 				<textarea rows="2" cols="60" id="<?=voturma::$nmAtrObservacao?>" name="<?=voturma::$nmAtrObservacao?>" class="camporeadonly" maxlength="300" readonly><?php echo($vo->obs);?></textarea>
 				</TD>
-            </TR>                 
+            </TR>       
+            
+            <TR>
+				<TH class="textoseparadorgrupocampos" halign="left" colspan="4">
+				<DIV class="campoformulario">&nbsp;&nbsp;Alunos na turma&nbsp;&nbsp;
+				</DIV>
+				</TH>
+			</TR>
+			<TR>
+				<TH class="textoseparadorgrupocampos" halign="left" colspan="4">
+					  <div id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
+					  <?php
+					  //include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php?funcao=" . constantes::$CD_FUNCAO_DETALHAR);
+					  $voCamposDadosPessoaAjax = $vo;
+					  include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");
+					  //removeObjetoSessao(voturma::$ID_REQ_COLECAO_ALUNOS);
+					  ?>
+			          </div>	          
+				</TH>
+			</TR>
+				<?php 
+				/*include_once 'bibliotecaTurma.php';
+				$colecaoAlunos = $vo->dbprocesso->consultarDemandaTramitacao($vo);
+				mostrarGridAlunos($colecaoAlunos, true);*/
+				?>			
+                      
             
         <?php if(!$isInclusao){
             echo "<TR>" . incluirUsuarioDataHoraDetalhamento($vo) .  "</TR>";

@@ -228,7 +228,8 @@ function alterar() {
 </HTML>
 <?php 
 } catch ( Exception $ex ) {
-	putObjetoSessao ( "vo", $vo );
-	tratarExcecaoHTML ( $ex );
+	//putObjetoSessao ( "vo", $vo );
+	//tratarExcecaoHTML ( $ex );
+	throw $ex;
 }
 ?>

@@ -16,6 +16,34 @@ class dbturma extends dbprocesso {
 		return $retorno;
 	}
 	
+	function consultarPessoasTurma($voturma) {
+		$nmTabela = vopessoa::getNmTabela ();
+		$nmTabelaPessoaTurma = vopessoaturma::getNmTabela ();
+		
+		$atributosConsulta = $nmTabela . "." . vopessoa::$nmAtrCd;
+		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrNome;
+		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrDocCPF;
+		//$atributosConsulta .= "," . $nmTabelaContrato . "." . vocontrato::$nmAtrCdAutorizacaoContrato;
+		
+		$querySelect = "SELECT " . $atributosConsulta;
+		
+		$queryFrom = "\n FROM " . $nmTabela;
+		$queryFrom .= "\n INNER JOIN " . $nmTabelaPessoaTurma;
+		$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrCdPessoa;
+		
+		$filtro = new filtroManterPessoaTurma(false);
+		$filtro->cdTurma = $voturma->cd;
+		$filtro->setaFiltroConsultaSemLimiteRegistro();
+		$filtro->cdAtrOrdenacao = vopessoa::$nmAtrNome;
+		$filtro->cdOrdenacao = constantes::$CD_ORDEM_CRESCENTE;		
+		
+		//echo $voturma->cd;
+		// echo $querySelect."<br>";
+		// echo $queryFrom;
+		
+		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, false );
+	}
+	
 	// o incluir eh implementado para nao usar da voentidade
 	// por ser mais complexo
 	function incluir($voturma) {

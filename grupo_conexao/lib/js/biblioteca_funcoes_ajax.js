@@ -15,7 +15,8 @@
  function getDadosAlunoAjax(pCdPessoa, pFuncao, idDivResultado) {
      // Declaração de Variáveis
      var result = document.getElementById(idDivResultado);
-     imprimeResultado(result, "../pessoa/campoDadosPessoaAjax.php?chave=" + pCdPessoa + "&funcao=" + pFuncao);     
+     //alert(pCdPessoa);
+     imprimeResultado(result, "../pessoa/campoDadosPessoaAjax.php?chavePessoa=" + pCdPessoa + "&funcao=" + pFuncao);     
  }
  
  /**

@@ -7,7 +7,7 @@
  - biblioteca_funcoes_ajax.js
 */
 
-function carregaDadosAluno(pCdPessoa, pNmCampoDiv){
+function carregarDadosAluno(pCdPessoa, pNmCampoDiv){
 		
 	if(pCdPessoa != null && pCdPessoa != ""){
 		//vai no ajax

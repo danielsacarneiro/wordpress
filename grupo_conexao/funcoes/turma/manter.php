@@ -14,10 +14,10 @@ $funcao = @$_GET["funcao"];
 $readonly = "";
 $isInclusao = $funcao == constantes::$CD_FUNCAO_INCLUIR;
 
+removeObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS );
 $nmFuncao = "";
 if($isInclusao){    
 	$nmFuncao = "INCLUIR ";	
-	removeObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS );
 }else{
     $readonly = "readonly";
 	$chave = @$_GET["chave"];
@@ -29,8 +29,9 @@ if($isInclusao){
 	
 	$dbprocesso = $vo->dbprocesso;					
 	$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
-	$vo->getDadosBanco($colecao);
+	$vo->getDadosBancoPorChave($colecao);
 	putObjetoSessao($vo->getNmTabela(), $vo);
+	putObjetoSessao(voturma::$ID_REQ_COLECAO_ALUNOS, $vo->colecaoAlunos);
 
     $nmFuncao = "ALTERAR ";
 }
@@ -53,7 +54,7 @@ $nome  = $vo->descricao;
 <SCRIPT language="JavaScript" type="text/javascript">
 function transferirDadosPessoa(cdPessoa) {		   
 	//chamar funcao bibliotecafuncoespessoa
-	carregaDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');
+	carregarDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');
 }
 
 function limparDadosPessoa(cdPessoa) {		   
@@ -69,9 +70,10 @@ function isFormularioValido() {
 	return true;
 }
 
-function cancela() {
+function cancelar() {
 	//history.back();
-	location.href="index.php?consultar=S";	
+	lupa = document.frm_principal.lupa.value;	
+	location.href="index.php?consultar=S&lupa="+ lupa;	
 }
 
 function confirmar() {
@@ -84,7 +86,7 @@ function confirmar() {
 </SCRIPT>
 </HEAD>
 <?=setTituloPagina($vo->getTituloJSP())?>
-<BODY class="paginadados" onload="">
+<BODY class="paginadados" onload="transferirDadosPessoa(-2);">
 	  
 <FORM name="frm_principal" method="post" action="../confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();">
 
@@ -137,19 +139,15 @@ function confirmar() {
 				<TH class="textoseparadorgrupocampos" halign="left" colspan="4">
 					  <div id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
 					  <?php
-					  include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");
+					  $voCamposDadosPessoaAjax = $vo;
+					  //include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");					  
 					  ?>
-			          </div>	          
+					  </div>	          
 				</TH>
 			</TR>
-				<?php 
-				/*include_once 'bibliotecaTurma.php';
-				$colecaoAlunos = $vo->dbprocesso->consultarDemandaTramitacao($vo);
-				mostrarGridAlunos($colecaoAlunos, true);*/
-				?>			
                              
         <?php if(!$isInclusao){
-            echo "<TR>" . incluirUsuarioDataHoraDetalhamento($vo) .  "</TR>";
+            echo  incluirUsuarioDataHoraDetalhamento($vo) ;
         }?>
             </TBODY>
             </TABLE>
@@ -164,13 +162,7 @@ function confirmar() {
 						<TD>
                     		<TABLE class="barraacoesaux" cellpadding="0" cellspacing="0">
 	                    	<TR>
-								<?php
-								if($funcao == "I" || $funcao == "A"){
-								?>
-                                    <TD class="botaofuncao"><?=getBotaoConfirmar()?></TD>
-								<?php
-								}?>
-								<TD class="botaofuncao"><button id="cancelar" onClick="javascript:cancela();" class="botaofuncaop" type="button" accesskey="c">Cancelar</button></TD>                                
+							<?=getBotoesRodape();?>
 						    </TR>
 		                    </TABLE>
 	                    </TD>

@@ -6,15 +6,16 @@ class filtroManterTurma extends filtroManter{
     
     public static $nmFiltro = "filtroManterTurma";
     
+    var $descricao;
+    var $cdTurma;
+    
     // ...............................................................
-	// construtor
-	function __construct() {
-        parent::__construct(true);
-        
-        $this->descricao = @$_POST[voturma::$nmAtrDescricao];
-        
+			
+	function getFiltroFormulario(){
+		$this->cdTurma = @$_POST[voturma::$nmAtrCd];
+		$this->descricao = @$_POST[voturma::$nmAtrDescricao];
 	}
-    	
+	
 	function getFiltroConsultaSQL(){
         $voturma= new voturma();
 		$filtro = "";
@@ -30,24 +31,45 @@ class filtroManterTurma extends filtroManter{
             ;                        
 		}
         
-		if($this->descricao != null){
+		if($this->cdTurma != null){
 			$filtro = $filtro . $conector
-						. $nmTabela. "." .voturma::$nmAtrDescricao
-						. " LIKE '%"
-						. utf8_encode($this->descricao)
-						. "%'";
+						. $nmTabela. "." .voturma::$nmAtrCd
+						. " = "
+						. $this->cdTurma
+						;
 			
 			$conector  = "\n AND ";
         
 		}		
 
+		if($this->descricao != null){
+			$filtro = $filtro . $conector
+			. $nmTabela. "." .voturma::$nmAtrDescricao
+			. " LIKE '%"
+					//. utf8_encode($this->descricao)
+			. $this->descricao
+			. "%'";
+			
+			$conector  = "\n AND ";
+			
+		}
+		
 		//finaliza o filtro
 		$filtro = parent::getFiltroConsulta($filtro);
 		
 		//echo "Filtro:$filtro<br>";
 
 		return $filtro;
-	}	
+	}
+	
+	function getAtributosOrdenacao(){
+		$varAtributos = array(
+				voturma::$nmAtrDescricao=> "Descrição",
+				voturma::$nmAtrValor=> "Valor"
+		);
+		return $varAtributos;
+	}
+	
 }
 
 ?>

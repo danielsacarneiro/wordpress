@@ -1,7 +1,6 @@
 <?php
 include_once("../../config_lib.php");
 include_once("dominioVinculoPessoa.php");
-include_once(caminho_filtros. "filtroManterPessoa.php");
 
 function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 	// var_dump($colecaoAlunos);
@@ -24,14 +23,13 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 		$html .= "<TABLE id='table_tabeladados' class='tabeladados' cellpadding='0' cellspacing='0'> \n";
 		$html .= " <TBODY>  \n";
 		$html .= "        <TR>    \n";
-		if (! $isDetalhamento) {
-			$numColunas ++;
-			$html .= "<TH class='headertabeladados' width='1%'>&nbsp;&nbsp;X</TH>  \n";
-		}
+
 		$html .= "<TH class='headertabeladados' width='1%' nowrap>Código</TH>   \n";
 		$html .= "<TH class='headertabeladados' width='90%'>Nome</TH> \n";
 		$html .= "<TH class='headertabeladados' width='1%'>Doc.</TH> \n";
-		$html .= "<TH class='headertabeladados' width='1%'>Excluir</TH> \n";
+		if(!$isDetalhamento){
+			//$html .= "<TH class='headertabeladados' width='1%'>Excluir</TH> \n";
+		}
 		$html .= "</TR> \n";
 		
 		for($i = 0; $i < $tamanho; $i ++) {
@@ -45,11 +43,11 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 				
 				$html .= "<TR class='dados'> \n";
 				
-				if (! $isDetalhamento) {
+				/*if (! $isDetalhamento) {
 					$html .= "<TD class='tabeladados'> \n";
 					$html .= getHTMLRadioButtonConsulta ( "rdb_alunos", "rdb_alunos", $i );
 					$html .= "</TD> \n";
-				}
+				}*/
 				
 				$doc = $voAtual->docCPF;
 				if($doc == null)
@@ -58,14 +56,16 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 					$html .= "<TD class='tabeladados' nowrap>" . complementarCharAEsquerda ( $voAtual->cd, "0", TAMANHO_CODIGOS ) . "</TD> \n";
 					$html .= "<TD class='tabeladados' >" . $voAtual->nome . "</TD> \n";
 					$html .= "<TD class='tabeladados' nowrap>" . documentoPessoa::getNumeroDocFormatado($doc) . "</TD> \n";
-					$html .= "<TD class='tabeladados' nowrap>" .  getBorrachaJS("limparDadosPessoa($voAtual->cd);") . "</TD> \n";
+					if(!$isDetalhamento){
+						$html .= "<TD class='tabeladados' nowrap>" .  getBorrachaJS("limparDadosPessoa($voAtual->cd);") . "</TD> \n";
+					}
 					$html .= "</TR> \n";					
 					
 			}
 		}
 		
 		if($strColecaoAlunos != null){
-			$html .= "<INPUT TYPE='HIDDEN' NAME='".voturma::$ID_REQ_COLECAO_ALUNOS." VALUE='$strColecaoAlunos'> \n";
+			//$html .= "<INPUT TYPE='HIDDEN' NAME='".voturma::$ID_REQ_COLECAO_ALUNOS." VALUE='$strColecaoAlunos'> \n";
 		}
 		$html .= "</TBODY> \n";
 		$html .= "</TABLE> \n";
@@ -75,7 +75,7 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 		
 	}
 	
-	echo $html;
+	return $html;
 }
 
 function getComboPessoaVinculo($idCampo, $nmCampo, $cdOpcaoSelecionada, $classCampo, $tagHtml){
