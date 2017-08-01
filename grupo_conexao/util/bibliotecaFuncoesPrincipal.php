@@ -325,6 +325,15 @@ function isPastaRaiz() {
 	
 	return $retorno;
 }
+function isHospedagem() {
+	$retorno = false;	
+	//constantes definidas em config_lib.php
+	$path = $_SERVER['DOCUMENT_ROOT'];		
+	//echo "$nmPasta<br>";
+	$retorno = mb_stripos($path, nome_hospedagem);
+		
+	return $retorno;
+}
 function subirNivelPasta($pasta, $qtdNiveis) {
 	$retorno = $pasta;
 	$strARemover = "../"; // 3 digitos

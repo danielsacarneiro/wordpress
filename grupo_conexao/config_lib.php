@@ -1,6 +1,8 @@
 <?php
 //configuracao
 define('site_cliente', "http://www.grupoeducacionalconexao.com.br");
+define('nome_hospedagem', "econti.consulting");
+define('site_hospedagem', "http://econti-consulting.umbler.net");
 define('pasta_aplicacao', "/grupo_conexao");
 define('pasta_raiz_wordpress', "/desenv/wordpress");
 define('pasta_raiz_sistema', pasta_raiz_wordpress . pasta_aplicacao);
@@ -38,7 +40,7 @@ define('caminho_funcoes', "$base/funcoes/");
 include_once(caminho_util."constantes.class.php");
 include_once(caminho_lib. "config.obj.php");
 $configBanco = new config();
-define('site_wordpress', "http://" . $configBanco->servidor . "/desenv/wordpress/wp-admin/");
+define('site_wordpress', pasta_raiz_wordpress . "/wp-admin/");
 
 
 //mysqli_report(MYSQLI_REPORT_ALL);

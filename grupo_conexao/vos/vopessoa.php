@@ -1,5 +1,5 @@
 <?php
-include_once (caminho_util . "DocumentoPessoa.php");
+include_once (caminho_util . "documentoPessoa.php");
 include_once (caminho_util . "dominioEstados.php");
 include_once (caminho_lib . "voentidade.php");
 class vopessoa extends voentidade {
@@ -61,10 +61,17 @@ class vopessoa extends voentidade {
 	}
 	
 	static function getNMPastaDestinoFotos($isHTML = false){
-		$retorno = caminho_funcoes. self::getNmTabela() . "/fotos/";
+		$pastaFotos = "fotos/";
+		$pastaPessoa = self::getNmTabela() ."/" . $pastaFotos;
+		$retorno = caminho_funcoes. $pastaPessoa;
 		
 		if($isHTML){
-			$retorno = "fotos/";
+			/*if(isHospedagem()){
+				$retorno = site_hospedagem. pasta_raiz_sistema . "/funcoes/".  $pastaPessoa;
+			}else{*/
+				//local
+				$retorno = $pastaFotos;
+			//}
 		}
 		return $retorno;
 	}
@@ -133,7 +140,7 @@ class vopessoa extends voentidade {
 	}
 	function getDadosFormulario() {
 		$this->cd = @$_POST [vopessoa::$nmAtrCd];
-		$this->nome = @$_POST [vopessoa::$nmAtrNome];
+		$this->nome = strtoupper(@$_POST [vopessoa::$nmAtrNome]);
 		$this->responsavel = @$_POST [vopessoa::$nmAtrResponsavel];
 		$this->email = @$_POST [vopessoa::$nmAtrEmail];
 		$this->tel = @$_POST [vopessoa::$nmAtrTel];
@@ -187,7 +194,8 @@ class vopessoa extends voentidade {
 	}
 	function criaPastaFotos() {
 		if (! file_exists ( self::getNMPastaDestinoFotos())) {
-			mkdir ( self::getNMPastaDestinoFotos(), 0700 );
+			//mkdir ( self::getNMPastaDestinoFotos(), 0700 );
+			mkdir ( self::getNMPastaDestinoFotos(), 0777 );
 		}
 	}
 	function getNmArquivoFoto($imagem) {
@@ -195,7 +203,7 @@ class vopessoa extends voentidade {
 		$extensao = strtolower ( substr ( $imagem ['name'], - 4 ) );
 		$nomeFinal = substr ( $this->nome, 0, 20 );
 		$nomeFinal = str_replace ( " ", "_", $nomeFinal );
-		$nomeFinal .= time () . $extensao;
+		$nomeFinal .= "_" . time () . $extensao;
 		return $nomeFinal;
 	}
 	function excluirFoto() {
