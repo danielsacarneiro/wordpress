@@ -23,7 +23,15 @@ class filtroManterPessoa extends filtroManter{
 		//$this->cdGestor = @$_POST[vopessoa::$nmAtrCdGestor];
 		$this->doc = @$_POST[vopessoa::$nmAtrDocCPF];
 		$this->nome = @$_POST[vopessoa::$nmAtrNome];
-		$this->cdvinculo = @$_POST[vopessoavinculo::$nmAtrCd];
+		
+		if(isLupa() && @$_GET[vopessoavinculo::$nmAtrCd] != null){
+			//eh pq veio de uma requisicao anterior via lupa
+			$this->cdvinculo = @$_GET[vopessoavinculo::$nmAtrCd];
+		}else{
+			//caso contrario pega via post mesmo
+			$this->cdvinculo = @$_POST[vopessoavinculo::$nmAtrCd];
+		}
+		
 	}
 	
 	function getFiltroConsultaSQL($comAtributoOrdenacao = null){

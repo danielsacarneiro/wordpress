@@ -12,14 +12,13 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 	}
 	
 	$html = "";
+	$html .= "<TR>\n";
+	$html .= "<TH class='textoseparadorgrupocampos' halign='left' colspan='4'>\n";
+	
 	if ($tamanho > 0) {
 		
 		$numColunas = 4;
-		
-		$html .= "<TR>\n";
-		$html .= "<TH class='textoseparadorgrupocampos' halign='left' colspan='4'>\n";
-		//$html .= "<DIV class='campoformulario' id='div_tramitacao'>&nbsp;&nbsp;Histórico\n";
-		
+			
 		$html .= "<TABLE id='table_tabeladados' class='tabeladados' cellpadding='0' cellspacing='0'> \n";
 		$html .= " <TBODY>  \n";
 		$html .= "        <TR>    \n";
@@ -69,11 +68,17 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 		}
 		$html .= "</TBODY> \n";
 		$html .= "</TABLE> \n";
-//		$html .= "</DIV> \n";
-		$html .= "</TH>\n";
-		$html .= "</TR>\n";
-		
+//		$html .= "</DIV> \n";		
+	}else{
+		$msg = "&nbsp;Selecione alunos clicando na lupa acima.";
+		if ($isDetalhamento)
+			$msg = "&nbsp;Não há alunos para exibir.";
+			
+		$html .= $msg;			
 	}
+	
+	$html .= "</TH>\n";
+	$html .= "</TR>\n";	
 	
 	return $html;
 }

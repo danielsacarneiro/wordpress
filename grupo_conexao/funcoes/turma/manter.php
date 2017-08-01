@@ -31,7 +31,7 @@ if($isInclusao){
 	$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
 	$vo->getDadosBancoPorChave($colecao);
 	putObjetoSessao($vo->getNmTabela(), $vo);
-	putObjetoSessao(voturma::$ID_REQ_COLECAO_ALUNOS, $vo->colecaoAlunos);
+	//putObjetoSessao(voturma::$ID_REQ_COLECAO_ALUNOS, $vo->colecaoAlunos);
 
     $nmFuncao = "ALTERAR ";
 }
@@ -50,16 +50,37 @@ $nome  = $vo->descricao;
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_ajax.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_pessoa.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>mensagens_globais.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>jquery.js"></SCRIPT>
 
 <SCRIPT language="JavaScript" type="text/javascript">
+
+
+function listarAlunos(cd, funcao) {
+	  $.ajax({
+	    type: "GET",
+	    url: "../pessoa/campoDadosPessoaAjax.php",	    
+	    data: {
+	      //cdPessoa: $('#seu_nome').val()
+	      chavePessoa: cd,
+	      funcao: funcao
+	    },
+	    success: function(data) {
+	      $('#<?=voturma::$NM_DIV_COLECAO_ALUNOS?>').html(data);
+	    }
+	  });
+}
+
 function transferirDadosPessoa(cdPessoa) {		   
 	//chamar funcao bibliotecafuncoespessoa
 	carregarDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');
+
+	//listarAlunos(cdPessoa, "<?=constantes::$CD_FUNCAO_INCLUIR?>");
 }
 
 function limparDadosPessoa(cdPessoa) {		   
 	//chamar funcao bibliotecafuncoespessoa
 	limparDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');
+	//listarAlunos(cdPessoa, "<?=constantes::$CD_FUNCAO_EXCLUIR?>");	
 }
 
 
@@ -83,10 +104,11 @@ function confirmar() {
 	return confirm("Confirmar Alteracoes?");    
 }
 
+
 </SCRIPT>
 </HEAD>
 <?=setTituloPagina($vo->getTituloJSP())?>
-<BODY class="paginadados" onload="transferirDadosPessoa(-2);">
+<BODY class="paginadados" onload="">
 	  
 <FORM name="frm_principal" method="post" action="../confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();">
 
@@ -129,22 +151,28 @@ function confirmar() {
 				<TH class="textoseparadorgrupocampos" halign="left" colspan="4">
 				<DIV class="campoformulario">&nbsp;&nbsp;Alunos na turma&nbsp;&nbsp;
 				<?php 
-				echo getLinkPesquisa("../pessoa");
+				include_once(caminho_funcoes. "pessoa/dominioVinculoPessoa.php");
+				echo getLinkPesquisa("../pessoa?" . vopessoavinculo::$nmAtrCd . "=" . dominioVinculoPessoa::$CD_VINCULO_ALUNO);
 				echo "&nbsp;&nbsp; Limpar tudo" . getBorrachaJS("limparDadosPessoa(-1);");
 				?>
 				</DIV>
 				</TH>
 			</TR>
-			<TR>
-				<TH class="textoseparadorgrupocampos" halign="left" colspan="4">
-					  <div id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
-					  <?php
+						
+					
+            <TD class="conteinerfiltro" colspan="4">            
+            <TABLE cellpadding="0" cellspacing="0" id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
+            <TBODY>
+            					  <?php
 					  $voCamposDadosPessoaAjax = $vo;
-					  //include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");					  
+					  include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");					  
 					  ?>
-					  </div>	          
-				</TH>
-			</TR>
+            
+            </TBODY>
+            </TABLE>
+            </TD>
+            </TR>
+			
                              
         <?php if(!$isInclusao){
             echo  incluirUsuarioDataHoraDetalhamento($vo) ;

@@ -61,16 +61,8 @@ function imprimeGridAlunosTurma($chave, $funcao, $colecaoCdAlunos) {
 	}	
 	//var_dump($recordSet);
 	// var_dump ( $colecaoCdAlunos );
-	
-	if ($recordSet != "") {
-		$html = mostrarGridAlunos ( $recordSet, $isDetalhamento );
-	} else {
-		$msg = "&nbsp;Selecione alunos clicando na lupa acima.";
-		if ($isDetalhamento)
-			$msg = "&nbsp;Não há alunos para exibir.";
 		
-		$html = $msg;
-	}
+	$html = mostrarGridAlunos ( $recordSet, $isDetalhamento );	
 	
 	return $html;
 }
