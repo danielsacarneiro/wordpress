@@ -29,7 +29,7 @@ CREATE TABLE pessoa (
         
     CONSTRAINT pk PRIMARY KEY (pe_cd)
 );    
-
+ALTER TABLE pessoa ADD UNIQUE KEY chave_doc_pessoa (pe_doc_cpf); 
 -- ALTER TABLE pessoa CHANGE COLUMN pe_tel pe_tel VARCHAR(100) NULL DEFAULT NULL ;
     
 -- ALTER TABLE pessoa DROP FOREIGN KEY fk_pessoa_usuario;

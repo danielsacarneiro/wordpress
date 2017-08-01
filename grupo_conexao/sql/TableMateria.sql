@@ -1,6 +1,6 @@
 ALTER DATABASE unct CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-drop table materia;
+DROP TABLE IF EXISTS materia;
 CREATE TABLE materia (
 	ma_cd INT NOT NULL AUTO_INCREMENT,
     ma_ds VARCHAR(150) NOT NULL, 
