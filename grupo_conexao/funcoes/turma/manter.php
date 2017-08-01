@@ -149,7 +149,7 @@ function confirmar() {
             </TR>
 			<TR>
 				<TH class="textoseparadorgrupocampos" halign="left" colspan="4">
-				<DIV class="campoformulario">&nbsp;&nbsp;Alunos na turma&nbsp;&nbsp;
+				<DIV class="campoformulario">&nbsp;&nbsp;Incluir Alunos&nbsp;&nbsp;
 				<?php 
 				include_once(caminho_funcoes. "pessoa/dominioVinculoPessoa.php");
 				echo getLinkPesquisa("../pessoa?" . vopessoavinculo::$nmAtrCd . "=" . dominioVinculoPessoa::$CD_VINCULO_ALUNO);
