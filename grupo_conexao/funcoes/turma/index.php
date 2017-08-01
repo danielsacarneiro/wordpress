@@ -10,7 +10,7 @@ inicio();
 $titulo = "CONSULTAR " . voturma::getTituloJSP();
 setCabecalho($titulo);
 	
-$filtro  = new filtroManterTurma(true);
+$filtro  = new filtroManterTurma();
 $filtro = filtroManter::verificaFiltroSessao($filtro);
 
 $nome = $filtro->descricao;
@@ -20,7 +20,7 @@ $isHistorico = ("S" == $cdHistorico);
 
 $vo = new voturma();
 $dbprocesso = $vo->dbprocesso;
-$colecao = $dbprocesso->consultarComPaginacao($vo, $filtro);
+$colecao = $dbprocesso->consultarFiltroManterTurma($filtro);
 
 if($filtro->temValorDefaultSetado){
 	;
@@ -132,7 +132,7 @@ function alterar() {
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Cd.Turma:</TH>
                 <TD class="campoformulario"  width="1%">
-                	<INPUT type="text" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdTurma, "0", 5));?>"  class="camponaoobrigatorio" size="6" ></TD>                
+                	<INPUT type="text" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdTurma, "0", TAMANHO_CODIGOS));?>"  class="camponaoobrigatorio" size="6" ></TD>                
                 <TH class="campoformulario" nowrap>Descrição:</TH>
                 <TD class="campoformulario">
                 	<INPUT type="text" id="<?=voturma::$nmAtrDescricao?>" name="<?=voturma::$nmAtrDescricao?>"  value="<?php echo($filtro->dsTurma);?>"  class="camponaoobrigatorio" size="50" >
@@ -141,7 +141,7 @@ function alterar() {
 			<TR>
 				<TH class="campoformulario" width="1%" nowrap>Cd.Pessoa:</TH>
                 <TD class="campoformulario"  width="1%">
-					<INPUT type="text" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdPessoa, "0", 5));?>"  class="camponaoobrigatorio" size="6" ></TD>                
+					<INPUT type="text" id="<?=vopessoaturma::$nmAtrCdPessoa?>" name="<?=vopessoaturma::$nmAtrCdPessoa?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdPessoa, "0", TAMANHO_CODIGOS));?>"  class="camponaoobrigatorio" size="6" ></TD>                
                 <TH class="campoformulario" width="1%" nowrap>Nome:</TH>
                 <TD class="campoformulario">
 					<INPUT type="text" id="<?=vopessoa::$nmAtrNome?>" name="<?=vopessoa::$nmAtrNome?>"  value="<?php echo($filtro->nome);?>"  class="camponaoobrigatorio" size="50" ></TD>

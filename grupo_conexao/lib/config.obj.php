@@ -15,8 +15,8 @@ Class config {
 
       Function config (){
                  $this->db        = "wordpress";
-                 $this->login     = "root";
-                 $this->senha     = "";
+                 $this->login     = "grupoconexao";
+                 $this->senha     = "grupoconexao123";
                  $this->odbc      = "";
                  $this->driver    = "";
                  $this->servidor  = "localhost";

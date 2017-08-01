@@ -16,6 +16,31 @@ class dbturma extends dbprocesso {
 		return $retorno;
 	}
 	
+	function consultarFiltroManterTurma($filtro) {
+		$nmTabelaTurma = voturma::getNmTabelaStatic($filtro->isHistorico());
+		$nmTabelaPessoa = vopessoa::getNmTabelaStatic($filtro->isHistorico());
+		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic($filtro->isHistorico());
+		
+		$atributosConsulta = $nmTabelaTurma. "." . voturma::$nmAtrCd;
+		$atributosConsulta .= "," . $nmTabelaTurma. "." . voturma::$nmAtrDescricao;
+		$atributosConsulta .= "," . $nmTabelaTurma. "." . voturma::$nmAtrValor;
+		
+		$querySelect = "SELECT " . $atributosConsulta;
+		
+		$queryFrom = "\n FROM " . $nmTabelaTurma;
+		$queryFrom .= "\n LEFT JOIN " . $nmTabelaPessoaTurma;
+		$queryFrom .= "\n ON " . $nmTabelaTurma. "." . voturma::$nmAtrCd . "=" . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrCdTurma;
+		$queryFrom .= "\n LEFT JOIN " . $nmTabelaPessoa;
+		$queryFrom .= "\n ON " . $nmTabelaPessoa. "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrCdPessoa;
+		
+		$filtro->groupby = $atributosConsulta;
+		
+		// echo $querySelect."<br>";
+		// echo $queryFrom;
+		
+		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, true );
+	}
+	
 	function consultarPessoasTurma($voturma) {
 		$nmTabela = vopessoa::getNmTabela ();
 		$nmTabelaPessoaTurma = vopessoaturma::getNmTabela ();
@@ -54,13 +79,15 @@ class dbturma extends dbprocesso {
 			
 			if ($voturma->colecaoAlunos != null) {
 				$this->incluirPessoaTurma ( $voturma );
-			}
+			}			
 			// End transaction
 			$this->cDb->commit ();
 		} catch ( Exception $e ) {
 			$this->cDb->rollback ();
 			throw new Exception ( $e->getMessage () );
 		}
+		
+		//var_dump($voturma->colecaoAlunos);
 		
 		return $voturma;
 	}
@@ -94,6 +121,47 @@ class dbturma extends dbprocesso {
 		
 		$query = $this->incluirQuery ( $voturma, $arrayAtribRemover );
 		$retorno = $this->cDb->atualizar ( $query );
+		
+		return $voturma;
+	}
+	
+	function alterar($voturma) {
+		// Start transaction
+		$this->cDb->retiraAutoCommit ();
+		try {
+			$this->excluirPessoaTurma( $voturma );
+			$this->incluirPessoaTurma( $voturma );
+			
+			$voturma = parent::alterar ( $voturma );
+			
+			// End transaction
+			$this->cDb->commit ();
+		} catch ( Exception $e ) {
+			$this->cDb->rollback ();
+			throw new Exception ( $e->getMessage () );
+		}
+		
+		return $voturma;
+	}	
+	
+	function excluir($voturma) {
+		// Start transaction
+		$this->cDb->retiraAutoCommit ();
+		try {
+			/*$permiteExcluirPrincipal = $this->permiteExclusaoPrincipal($voturma);
+			if($permiteExcluirPrincipal){
+				//echo "excluiu";
+				$this->excluirPessoaVinculo ( $voturma );
+			}*/
+			$this->excluirPessoaTurma( $voturma );			
+			parent::excluir ( $voturma );
+			// End transaction
+			$this->cDb->commit ();
+			
+		} catch ( Exception $e ) {
+			$this->cDb->rollback ();
+			throw new Exception ( $e->getMessage () );
+		}
 		
 		return $voturma;
 	}

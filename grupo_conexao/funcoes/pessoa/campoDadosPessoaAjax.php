@@ -2,6 +2,7 @@
 include_once ("../../config_lib.php");
 include_once ("bibliotecaPessoa.php");
 include_once (caminho_util. "bibliotecaHTML.php");
+include_once (caminho_funcoes. "turma/bibliotecaTurma.php");
 
 $chave = @$_GET ["chavePessoa"];
 $funcao = @$_GET ["funcao"];
@@ -18,7 +19,7 @@ echo imprimeGridAlunosTurma ( $chave, $funcao, $colecaoCdAlunos );
 function imprimeGridAlunosTurma($chave, $funcao, $colecaoCdAlunos) {
 	$html = "";
 	$isInclusao = $funcao == constantes::$CD_FUNCAO_INCLUIR;
-	$isDetalhamento = $funcao == constantes::$CD_FUNCAO_DETALHAR;
+	$isDetalhamento = $funcao == constantes::$CD_FUNCAO_DETALHAR || $funcao == constantes::$CD_FUNCAO_EXCLUIR;
 	
 	// -1 eh o codigo para limpar o grid
 	$isLimpar = $chave == - 1;

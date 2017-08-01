@@ -7,6 +7,7 @@ class voturma extends voentidade {
 	static $nmAtrDescricao = "tu_ds";
 	static $nmAtrValor = "tu_valor";
 	static $nmAtrObservacao = "tu_obs";
+
 	var $cd = "";
 	var $descricao = "";
 	var $valor = "";
@@ -64,9 +65,8 @@ class voturma extends voentidade {
 		$this->valor = $registrobanco [self::$nmAtrValor];
 		$this->obs = $registrobanco [self::$nmAtrObservacao];	
 	}
-	function getDadosRegistroBancoPorChave($registrobanco) {
+	function getDadosChaveOperacaoMaixComplexa($registrobanco) {
 		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
-		$this->getDadosRegistroBanco($registrobanco);
 		$this->setColecaoAlunosRegistroBanco($this->dbprocesso->consultarPessoasTurma($this));
 	}
 	function getDadosFormulario() {
@@ -75,12 +75,14 @@ class voturma extends voentidade {
 		$this->valor = @$_POST [self::$nmAtrValor];
 		$this->obs = @$_POST [self::$nmAtrObservacao];
 		
-		if (existeObjetoSessao ( self::$ID_REQ_COLECAO_ALUNOS )) {
+		$this->colecaoAlunos = @$_POST [self::$ID_REQ_COLECAO_ALUNOS];
+		
+		/*if (existeObjetoSessao ( self::$ID_REQ_COLECAO_ALUNOS )) {
 			// echo "tem colecao alunos";
 			$this->colecaoAlunos = getObjetoSessao ( self::$ID_REQ_COLECAO_ALUNOS );
 		} else {
 			throw new excecaoGenerica ( "É preciso ter alunos para criar uma turma." ); // echo "NAO tem colecao alunos";
-		}
+		}*/
 	}
 	function setColecaoAlunosRegistroBanco($colecao) {
 		$retorno = null;
@@ -111,5 +113,5 @@ class voturma extends voentidade {
 		}
 		return $retorno;
 	}
-}
+}	
 ?>

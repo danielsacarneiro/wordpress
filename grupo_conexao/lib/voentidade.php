@@ -177,10 +177,16 @@ class voentidade extends multiplosConstrutores {
 		$this->getDadosRegistroBanco ( $registrobanco );
 		$this->getDadosBancoEntidade ( $registrobanco );
 	}
-	//usado para operacoes mais complexas apenas quando se consulta por chave primaria
+	// usado para operacoes mais complexas apenas quando se consulta por chave primaria
 	function getDadosBancoPorChave($registrobanco) {
-		$this->getDadosRegistroBancoPorChave ( $registrobanco );
-		$this->getDadosBancoEntidade ( $registrobanco );
+		$this->getDadosBanco ( $registrobanco );
+		
+		//metodo geralmente usado para exibir o objeto em paginas de detalhamento
+		//quando necessita de consultas maiores
+		//evitando que as consultas nas paginas de consultas sejam pesadas
+		if (method_exists ( $this, "getDadosChaveOperacaoMaixComplexa" )) {
+			$this->getDadosChaveOperacaoMaixComplexa ( $registrobanco );
+		}		
 	}
 	function removeAtributos($arrayAtribRemover) {
 		$this->varAtributos = removeColecaoAtributos ( $this->varAtributos, $arrayAtribRemover );

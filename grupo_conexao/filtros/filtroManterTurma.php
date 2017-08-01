@@ -1,75 +1,75 @@
 <?php
-include_once(caminho_util."bibliotecaSQL.php");
-include_once(caminho_lib ."filtroManter.php");
-
-class filtroManterTurma extends filtroManter{
-    
-    public static $nmFiltro = "filtroManterTurma";
-    
-    var $descricao;
-    var $cdTurma;
-    
-    // ...............................................................
-			
-	function getFiltroFormulario(){
-		$this->cdTurma = @$_POST[voturma::$nmAtrCd];
-		$this->descricao = @$_POST[voturma::$nmAtrDescricao];
-	}
+include_once (caminho_util . "bibliotecaSQL.php");
+include_once (caminho_lib . "filtroManter.php");
+class filtroManterTurma extends filtroManter {
+	public static $nmFiltro = "filtroManterTurma";
+	var $nomePessoa;
+	var $cdPessoa;
+	var $dsTurma;
+	var $cdTurma;
 	
-	function getFiltroConsultaSQL(){
-        $voturma= new voturma();
+	// ...............................................................
+	function getFiltroFormulario() {
+		$this->cdTurma = @$_POST [vopessoaturma::$nmAtrCdTurma];
+		$this->dsTurma = @$_POST [voturma::$nmAtrDescricao];
+		$this->cdPessoa = @$_POST [vopessoaturma::$nmAtrCdPessoa];
+		$this->nomePessoa = @$_POST [vopessoa::$nmAtrNome];
+	}
+	function getFiltroConsultaSQL() {
 		$filtro = "";
-		$conector  = "";
-
-		$isHistorico = $this->isHistorico();
-        $nmTabela = $voturma->getNmTabelaEntidade($isHistorico);
-        
-		//seta os filtros obrigatorios        
-		if($this->isSetaValorDefault()){
-			//anoDefault foi definido como constante na index.php
-            //echo "setou o ano defaul";
-            ;                        
-		}
-        
-		if($this->cdTurma != null){
-			$filtro = $filtro . $conector
-						. $nmTabela. "." .voturma::$nmAtrCd
-						. " = "
-						. $this->cdTurma
-						;
-			
-			$conector  = "\n AND ";
-        
-		}		
-
-		if($this->descricao != null){
-			$filtro = $filtro . $conector
-			. $nmTabela. "." .voturma::$nmAtrDescricao
-			. " LIKE '%"
-					//. utf8_encode($this->descricao)
-			. $this->descricao
-			. "%'";
-			
-			$conector  = "\n AND ";
-			
+		$conector = "";
+		
+		$isHistorico = $this->isHistorico ();
+		$nmTabelaTurma = voturma::getNmTabelaStatic ( $isHistorico );
+		$nmTabelaPessoa = vopessoa::getNmTabelaStatic ( $isHistorico );
+		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic ( $isHistorico );
+		
+		//var_dump($this);
+		// seta os filtros obrigatorios
+		if ($this->isSetaValorDefault ()) {
+			// anoDefault foi definido como constante na index.php
+			// echo "setou o ano defaul";
+			;
 		}
 		
-		//finaliza o filtro
-		$filtro = parent::getFiltroConsulta($filtro);
+		if ($this->cdTurma != null) {
+			$filtro = $filtro . $conector . $nmTabelaTurma . "." . voturma::$nmAtrCd . " = " . $this->cdTurma;
+			
+			$conector = "\n AND ";
+		}
 		
-		//echo "Filtro:$filtro<br>";
-
+		if ($this->dsTurma != null) {
+			$filtro = $filtro . $conector . $nmTabelaTurma . "." . voturma::$nmAtrDescricao . " LIKE '%" . $this->dsTurma . "%'";
+			
+			$conector = "\n AND ";
+		}
+		
+		if ($this->cdPessoa != null) {
+			$filtro = $filtro . $conector . $nmTabelaPessoa. "." . vopessoa::$nmAtrCd . " = " . $this->cdPessoa;
+			
+			$conector = "\n AND ";
+		}
+		
+		if ($this->nomePessoa != null) {
+			$filtro = $filtro . $conector . $nmTabelaPessoa. "." . vopessoa::$nmAtrNome . " LIKE '%" . $this->nomePessoa. "%'";
+			
+			$conector = "\n AND ";
+		}
+		
+		// finaliza o filtro
+		$filtro = parent::getFiltroConsulta ( $filtro );
+		
+		// echo "Filtro:$filtro<br>";
+		
 		return $filtro;
 	}
-	
-	function getAtributosOrdenacao(){
-		$varAtributos = array(
-				voturma::$nmAtrDescricao=> "Descrição",
-				voturma::$nmAtrValor=> "Valor"
+	function getAtributosOrdenacao() {
+		$varAtributos = array (
+				voturma::$nmAtrDescricao => "Descrição",
+				voturma::$nmAtrValor => "Valor" 
 		);
 		return $varAtributos;
 	}
-	
 }
 
 ?>
