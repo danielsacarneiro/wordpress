@@ -42,6 +42,7 @@ $numTotalRegistros = $filtro->numTotalRegistros;
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_datahora.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_cnpfcnpj.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_radiobutton.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_checkbox.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>tooltip.js"></SCRIPT>
 
 <SCRIPT language="JavaScript" type="text/javascript">
@@ -53,64 +54,27 @@ function isFormularioValido() {
 	return true;
 }
 
-function limparFormulario() {	
-
-	for(i=0;i<frm_principal.length;i++){
-		frm_principal.elements[i].value='';
-	}	
-}
-
-function detalhar(isExcluir) {
-    if(isExcluir == null || !isExcluir)
-        funcao = "<?=constantes::$CD_FUNCAO_DETALHAR?>";
-    else
-        funcao = "<?=constantes::$CD_FUNCAO_EXCLUIR?>";
-    
-    if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
-            return;
-    	
-	chave = document.frm_principal.rdb_consulta.value;	
-	lupa = document.frm_principal.lupa.value;
-	location.href="detalhar.php?funcao=" + funcao + "&chave=" + chave + "&lupa="+ lupa;
-}
-
-
-function excluir() {
-    detalhar(true);
-}
-
-function incluir() {
-	location.href="manter.php?funcao=<?=constantes::$CD_FUNCAO_INCLUIR?>";
-}
-
-function alterar() {
-    if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
-            return;
-        
-    <?php
-    if($isHistorico){
-    	echo "exibirMensagem('Registro de historico nao permite alteracao.');return";
-    }?>
-    
-	chave = document.frm_principal.rdb_consulta.value;	
-	location.href="manter.php?funcao=<?=constantes::$CD_FUNCAO_ALTERAR?>&chave=" + chave;
-
-}
-
 //Transfere dados selecionados para a janela principal
 function selecionar(isMultiplaSelecao) {
 	if (!isMultiplaSelecao && !isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
 		return;
 		
 	if (window.opener != null) {
-		array = retornarValorRadioButtonSelecionadoComoArray("document.frm_principal.rdb_consulta", "<?=CAMPO_SEPARADOR?>");
+		if(!<?=booleanToExtenso(isMultiSelecao())?>){
+			array = retornarValorRadioButtonSelecionadoComoArray("document.frm_principal.rdb_consulta", "<?=CAMPO_SEPARADOR?>");
+			array = [array[0]];
+		}else{
+			array = retornarValoresCheckBoxesSelecionadosComoArray("document.frm_principal.rdb_consulta");
+		}
 
-		cdPessoa = array[0];
+		cdPessoa = array;
 		
 		window.opener.transferirDadosPessoa(cdPessoa);
 		window.close();
 	}
 }
+
+<?=getFuncoesJSGenericas("document.frm_principal.rdb_consulta", $isHistorico);?>
 
 </SCRIPT>
 </HEAD>
@@ -165,7 +129,7 @@ function selecionar(isMultiplaSelecao) {
          <TABLE id="table_tabeladados" class="tabeladados" cellpadding="0" cellspacing="0">						
              <TBODY>
                 <TR>
-                  <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
+                  <TH class="headertabeladados" width="1%"><?=getXGridConsulta("rdb_consulta", isMultiSelecao())?></TH>
                   <?php 
                   if($isHistorico){
                   	?>
@@ -210,7 +174,9 @@ function selecionar(isMultiplaSelecao) {
                 ?>
                 <TR class="dados">
                     <TD class="tabeladados">
-                    <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
+                    <?=
+                    getHTMLGridConsulta("rdb_consulta", "rdb_consulta", $voAtual, isMultiSelecao());
+                    ?>					
                     </TD>
                   <?php                  
                   if($isHistorico){                  	

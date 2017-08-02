@@ -54,10 +54,9 @@ function setTituloPaginaPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	$pastaJS = caminho_js;
 	$pastaJS = subirNivelPasta ( $pastaJS, $qtdNiveisAcimaEmSeEncontraPagina );
 	
-	if ($titulo == null){
+	if ($titulo == null) {
 		$titulo = constantes::$nomeSistema;
-	}
-	else{
+	} else {
 		$titulo = constantes::$nomeSistema . " : $titulo";
 	}
 	
@@ -70,34 +69,32 @@ function setTituloPaginaPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	return $html;
 }
 function getPastaImagens() {
-	return getPastaImagensPorNivel(null);
-	
+	return getPastaImagensPorNivel ( null );
 }
 function getPastaImagensPorNivel($qtdNiveisAcimaEmSeEncontraPagina) {
-	$pastaImagens = subirNivelPasta ( caminho_imagens, $qtdNiveisAcimaEmSeEncontraPagina );	
+	$pastaImagens = subirNivelPasta ( caminho_imagens, $qtdNiveisAcimaEmSeEncontraPagina );
 	return $pastaImagens;
 }
-
 function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
-	//se precisar fazer o mesmo para pasta menu
-	$pastaImagens = getPastaImagensPorNivel($qtdNiveisAcimaEmSeEncontraPagina);
+	// se precisar fazer o mesmo para pasta menu
+	$pastaImagens = getPastaImagensPorNivel ( $qtdNiveisAcimaEmSeEncontraPagina );
 	$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
 	
-	//ECHO $pastaMenu;
-		
+	// ECHO $pastaMenu;
+	
 	define ( 'pasta_imagens', $pastaImagens );
-	if ($titulo != null){
+	if ($titulo != null) {
 		$titulo = " - " . $titulo;
 	}
-		
-	$diaExtenso = strftime('%A, %d de %B de %Y', strtotime('today'));	
-	//$diaExtenso = date ( 'l jS \of F Y' );	
+	
+	$diaExtenso = strftime ( '%A, %d de %B de %Y', strtotime ( 'today' ) );
+	// $diaExtenso = date ( 'l jS \of F Y' );
 	
 	$cabecalho = "		<TABLE id='table_conteiner' class='conteiner' cellpadding='0' cellspacing='0'>
                         <TBODY>
                                 <TR>
                                 <TH class=headertabeladados colspan=2>
-                                    <a href='".site_cliente."' ><img id=imgLogotipoSefaz src='" . $pastaImagens . "bg_topo_trapezio.gif' alt='SEFAZ-PE'></a> " . $diaExtenso . "
+                                    <a href='" . site_cliente . "' ><img id=imgLogotipoSefaz src='" . $pastaImagens . "bg_topo_trapezio.gif' alt='SEFAZ-PE'></a> " . $diaExtenso . "
                                 </TH>
                                 </TR>                                
                                 <TR>
@@ -108,7 +105,7 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
                                 <a href='" . $pastaMenu . "login.php?funcao=O' ><img  title='Sair' src='" . $pastaImagens . "logout.gif' width='25' height='20'></a>";
 	
 	if (isUsuarioAdmin ()) {
-		$cabecalho .= "<a href='".site_wordpress."' ><img  title='WORDPRESS' src='" . $pastaImagens . "w-logo-white.png' width='25' height='20'></a>";
+		$cabecalho .= "<a href='" . site_wordpress . "' ><img  title='WORDPRESS' src='" . $pastaImagens . "w-logo-white.png' width='25' height='20'></a>";
 	}
 	
 	$cabecalho .= "\n
@@ -159,7 +156,7 @@ function incluirUsuarioDataHoraDetalhamento($voEntidade, $colspan = null) {
 	if ($voEntidade->cdUsuarioUltAlteracao == null)
 		$nmusualteracao = $USUARIO_BATCH;
 	
-	$retorno =  "<TR>
+	$retorno = "<TR>
 				<TD halign='left' colspan='4'>
 				<DIV class='textoseparadorgrupocampos'>&nbsp;</DIV>
 				</TD>
@@ -221,8 +218,7 @@ function incluirUsuarioDataHoraDetalhamento($voEntidade, $colspan = null) {
 	if ($voEntidade->sqHist != null) {
 		$nmusuHistorico = $voEntidade->nmUsuarioOperacao;
 		
-		$retorno .= "\n<TR>\n" . "<TH class='textoseparadorgrupocampos' halign='left' colspan='4'>" 
-				. "<DIV class='campoformulario' id='div_tramitacao'>&nbsp;&nbsp;Dados do Histórico" . "</DIV>" . "</TH>" . "</TR>";
+		$retorno .= "\n<TR>\n" . "<TH class='textoseparadorgrupocampos' halign='left' colspan='4'>" . "<DIV class='campoformulario' id='div_tramitacao'>&nbsp;&nbsp;Dados do Histórico" . "</DIV>" . "</TH>" . "</TR>";
 		
 		$retorno .= "<TR>
 		            <TH class='campoformulario' nowrap>Data:</TH>
@@ -287,15 +283,21 @@ function getBotao($idBotao, $descricao, $classe, $isSubmit, $complementoHTML) {
 }
 function isLupa() {
 	// vem do linkPesquisa ou do campo formulario
-	$lupa = @$_GET ["lupa"];
+	$lupa = @$_GET [constantes::$ID_REQ_LUPA];
 	if ($lupa == null || $lupa == "") {
-		$lupa = @$_POST ["lupa"];
+		$lupa = @$_POST [constantes::$ID_REQ_LUPA];
 	}
 	
-	if ($lupa == null)
-		$lupa = "N";
-	
 	return $lupa == "S";
+}
+function isMultiSelecao() {
+	// vem do linkPesquisa ou do campo formulario
+	$flag = @$_GET [constantes::$ID_REQ_MULTISELECAO];
+	if ($flag == null || $flag == "") {
+		$flag = @$_POST [constantes::$ID_REQ_MULTISELECAO];
+	}
+	
+	return $flag == "S";
 }
 function getBotaoValidacaoAcesso($idBotao, $descricao, $classe, $isSubmit, $imprimirNaLupa, $imprimirNaManutencao, $todosTemAcesso, $complementoHTML) {
 	return getBotaoGeral ( $idBotao, $descricao, $classe, $isSubmit, $imprimirNaLupa, $imprimirNaManutencao, $todosTemAcesso, $complementoHTML, "" );
@@ -336,8 +338,8 @@ function getBotaoExcluir() {
 	return getBotaoPorFuncao ( "bttexcluir", "Excluir", "botaofuncaop", false, false, true, "onClick='javascript:excluir();' accesskey='x'", constantes::$CD_FUNCAO_EXCLUIR );
 }
 function getBotaoIncluir() {
-	//return getBotaoValidacaoAcesso ( "bttincluir", "Incluir", "botaofuncaop", false, false, true, false, "onClick='javascript:incluir();' accesskey='n'" );
-	return getBotaoPorFuncao ( "bttincluir", "Incluir", "botaofuncaop", false, false, true, "onClick='javascript:incluir();' accesskey='n'", constantes::$CD_FUNCAO_INCLUIR);
+	// return getBotaoValidacaoAcesso ( "bttincluir", "Incluir", "botaofuncaop", false, false, true, false, "onClick='javascript:incluir();' accesskey='n'" );
+	return getBotaoPorFuncao ( "bttincluir", "Incluir", "botaofuncaop", false, false, true, "onClick='javascript:incluir();' accesskey='n'", constantes::$CD_FUNCAO_INCLUIR );
 }
 function getBotaoDetalhar() {
 	return getBotaoValidacaoAcesso ( "bttdetalhar", "Detalhar", "botaofuncaop", false, true, true, true, "onClick='javascript:detalhar(false);' accesskey='d'" );
@@ -349,43 +351,49 @@ function getBotaoFechar() {
 	return getBotaoValidacaoAcesso ( "bttfechar", "Fechar", "botaofuncaop", false, true, false, true, "onClick='javascript:window.close();' accesskey='f'" );
 }
 function getRodape() {
-	$isLupa = isLupa ();
 	// aqui guarda a informacao de ser o contexto de LUPA, quando ocultara alguns botoes
 	$lupa = "N";
-	if ($isLupa)
+	if (isLupa ())
 		$lupa = "S";
 	
-	$retorno = "<INPUT type='hidden' name='lupa' id='lupa' value='" . $lupa . "'>\n";
+	$multiSelecao = "N";
+	if (isMultiSelecao ())
+		$multiSelecao = "S";
+	
+	$retorno = "<INPUT type='hidden' name='".constantes::$ID_REQ_LUPA."' id='".constantes::$ID_REQ_LUPA."' value='" . $lupa . "'>\n";
+	$retorno .= "<INPUT type='hidden' name='".constantes::$ID_REQ_MULTISELECAO."' id='".constantes::$ID_REQ_MULTISELECAO."' value='" . $multiSelecao . "'>\n";
 	return $retorno;
 }
 function getBotoesRodape() {
 	return getBotoesRodapeComRestricao ( null );
 }
 function exibeBotao($arrayBotoesARemover, $nmFuncaoBotao, $usuarioLogadoTemPermissao, $restringeBotaoSemValidarPermissao) {
-	return ! existeItemNoArray ( $nmFuncaoBotao, $arrayBotoesARemover ) || ($usuarioLogadoTemPermissao && !$restringeBotaoSemValidarPermissao);
+	return ! existeItemNoArray ( $nmFuncaoBotao, $arrayBotoesARemover ) || ($usuarioLogadoTemPermissao && ! $restringeBotaoSemValidarPermissao);
 }
 function getBotoesRodapeComRestricao($arrayBotoesARemover, $restringeBotaoSemValidarPermissao = false) {
 	
 	// o administrador pode ver todos os botoes
 	$usuarioLogadoTemPermissao = dominioPermissaoUsuario::isAdministrador ( getColecaoPermissaoUsuarioLogado () );
 	
-	/*$temIncluir = ! existeItemNoArray ( constantes::$CD_FUNCAO_INCLUIR, $arrayBotoesARemover ) || $usuarioLogadoTemPermissao;
-	$temAlterar = ! existeItemNoArray ( constantes::$CD_FUNCAO_ALTERAR, $arrayBotoesARemover ) || $usuarioLogadoTemPermissao;
-	$temExcluir = ! existeItemNoArray ( constantes::$CD_FUNCAO_EXCLUIR, $arrayBotoesARemover ) || $usuarioLogadoTemPermissao;*/
+	/*
+	 * $temIncluir = ! existeItemNoArray ( constantes::$CD_FUNCAO_INCLUIR, $arrayBotoesARemover ) || $usuarioLogadoTemPermissao;
+	 * $temAlterar = ! existeItemNoArray ( constantes::$CD_FUNCAO_ALTERAR, $arrayBotoesARemover ) || $usuarioLogadoTemPermissao;
+	 * $temExcluir = ! existeItemNoArray ( constantes::$CD_FUNCAO_EXCLUIR, $arrayBotoesARemover ) || $usuarioLogadoTemPermissao;
+	 */
 	
 	// falta fazer para os outros botoes
-	$temIncluir = exibeBotao($arrayBotoesARemover, constantes::$CD_FUNCAO_INCLUIR, $usuarioLogadoTemPermissao, $restringeBotaoSemValidarPermissao);	
-	$temAlterar = exibeBotao($arrayBotoesARemover, constantes::$CD_FUNCAO_ALTERAR, $usuarioLogadoTemPermissao, $restringeBotaoSemValidarPermissao);
-	$temExcluir = exibeBotao($arrayBotoesARemover, constantes::$CD_FUNCAO_EXCLUIR, $usuarioLogadoTemPermissao, $restringeBotaoSemValidarPermissao);
-			
+	$temIncluir = exibeBotao ( $arrayBotoesARemover, constantes::$CD_FUNCAO_INCLUIR, $usuarioLogadoTemPermissao, $restringeBotaoSemValidarPermissao );
+	$temAlterar = exibeBotao ( $arrayBotoesARemover, constantes::$CD_FUNCAO_ALTERAR, $usuarioLogadoTemPermissao, $restringeBotaoSemValidarPermissao );
+	$temExcluir = exibeBotao ( $arrayBotoesARemover, constantes::$CD_FUNCAO_EXCLUIR, $usuarioLogadoTemPermissao, $restringeBotaoSemValidarPermissao );
+	
 	$isManutencao = false;
 	$isDetalhamento = false;
 	$funcao = @$_GET ["funcao"];
 	
-	//considera que qq funcao chamado que nao sejam as funcoes baiscas (alterar, excluir, incluir...) caira nessa opcao
-	//marreta: verifica pelo tamanho do nome da funcao
-	//um exemplo eh o metodo encaminhar chamado no encaminhamento de demanda (voDemandaTramitacao)
-	$isMetodoChamadoEspecifico = strlen($funcao) > 2; 
+	// considera que qq funcao chamado que nao sejam as funcoes baiscas (alterar, excluir, incluir...) caira nessa opcao
+	// marreta: verifica pelo tamanho do nome da funcao
+	// um exemplo eh o metodo encaminhar chamado no encaminhamento de demanda (voDemandaTramitacao)
+	$isMetodoChamadoEspecifico = strlen ( $funcao ) > 2;
 	
 	if ($funcao == constantes::$CD_FUNCAO_DETALHAR) {
 		$isDetalhamento = true;
@@ -427,21 +435,21 @@ function getBotoesRodapeComRestricao($arrayBotoesARemover, $restringeBotaoSemVal
 	return $html;
 }
 function getLinkPesquisa($link) {
-	return getImagemLink("javascript:abrirJanelaAuxiliar('" . $link . "',true, false, false);\" ", "lupa.png");
+	return getImagemLink ( "javascript:abrirJanelaAuxiliar('" . $link . "',true, false, false);\" ", "lupa.png" );
 }
 function getImagemLink($href, $nmImagem) {
-
-	//$pasta = pasta_imagens . "//";
-	$pasta = getPastaImagens() . "//";
-
-	$html = "<A id='lnkFramework' name='lnkFramework' " . "href=\"". $href . "\"" . " class='linkNormal' >" . "<img src='" . $pasta . $nmImagem . "'  width='22' height='22' border='0'></A>";
 	
-	//echo $pasta;
-
+	// $pasta = pasta_imagens . "//";
+	$pasta = getPastaImagens () . "//";
+	
+	$html = "<A id='lnkFramework' name='lnkFramework' " . "href=\"" . $href . "\"" . " class='linkNormal' >" . "<img src='" . $pasta . $nmImagem . "'  width='22' height='22' border='0'></A>";
+	
+	// echo $pasta;
+	
 	return $html;
 }
-function getBorrachaJS($js) {	
-	$html = "&nbsp;&nbsp;<a onClick=\"javascript:" . $js . "\" ><img  title='Limpar' src='" . caminho_imagens . "borracha.gif' width='15' height='15' A style='CURSOR: POINTER'></a>\n";	
+function getBorrachaJS($js) {
+	$html = "&nbsp;&nbsp;<a onClick=\"javascript:" . $js . "\" ><img  title='Limpar' src='" . caminho_imagens . "borracha.gif' width='15' height='15' A style='CURSOR: POINTER'></a>\n";
 	return $html;
 }
 function getBorracha($nmCampos) {
@@ -504,10 +512,10 @@ function getComponenteConsultaPaginacao($comboOrdenacao, $cdAtrOrdenacao, $cdOrd
 	$html = "";
 	
 	$objetosPorPagina = new dominioQtdObjetosPagina ();
-	$comboQtdRegistros = new select ( $objetosPorPagina->colecao );	
-	$radioHistorico = new radiobutton ( dominioSimNao::getColecao());
+	$comboQtdRegistros = new select ( $objetosPorPagina->colecao );
+	$radioHistorico = new radiobutton ( dominioSimNao::getColecao () );
 	
-	if($cdHistorico == null){
+	if ($cdHistorico == null) {
 		$cdHistorico = constantes::$CD_NAO;
 	}
 	
@@ -537,10 +545,10 @@ function getComponenteConsultaPaginacao($comboOrdenacao, $cdAtrOrdenacao, $cdOrd
 	return $html;
 }
 function getHTMLRadioButtonConsulta($nmRadio, $idRadio, $voAtualOuChaveString) {
-	return getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, false);
+	return getHTMLGridConsulta ( $nmRadio, $idRadio, $voAtualOuChaveString, false );
 }
 function getHTMLCheckBoxConsulta($nmRadio, $idRadio, $voAtualOuChaveString) {
-	return getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, true);
+	return getHTMLGridConsulta ( $nmRadio, $idRadio, $voAtualOuChaveString, true );
 }
 function getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, $isCheckBox) {
 	$isSelecionado = false;
@@ -570,12 +578,21 @@ function getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, $isCheck
 		$checked = "checked";
 	
 	$tipoComponente = "radio";
-	if($isCheckBox){
+	if ($isCheckBox) {
 		$tipoComponente = "checkbox";
 	}
 	
 	$retorno = "<INPUT type='$tipoComponente' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $checked . ">";
 	// echo $chave;
+	
+	return $retorno;
+}
+function getXGridConsulta($nmRadio, $isCheckBox) {
+	$retorno = "&nbsp;&nbsp;X";
+	if ($isCheckBox) {
+		$js = "try{marcarTodosCheckBoxes('$nmRadio');}catch(erro){;}";
+		$retorno = "<a onClick=\"javascript:" . $js . "\" A style='CURSOR: POINTER'>$retorno</a>\n";
+	}
 	
 	return $retorno;
 }
@@ -616,8 +633,8 @@ function getObjetoSessao($ID, $levantarExcecaoSeObjetoInexistente = false) {
 	
 	if ($_SESSION [$ID] != null) {
 		$objeto = $_SESSION [$ID];
-	}else if ($levantarExcecaoSeObjetoInexistente){
-		throw new excecaoObjetoSessaoInexistente($ID); 
+	} else if ($levantarExcecaoSeObjetoInexistente) {
+		throw new excecaoObjetoSessaoInexistente ( $ID );
 	}
 	
 	$isUsarSessao = @$_POST ["utilizarSessao"] != "N";
@@ -632,16 +649,14 @@ function removeObjetoSessao($ID) {
 	session_start ();
 	unset ( $_SESSION [$ID] );
 }
-function formatarCodigoContrato($cd, $ano, $tipo) {	
+function formatarCodigoContrato($cd, $ano, $tipo) {
 	$dominioTipoContrato = new dominioTipoContrato ();
 	$complemento = $dominioTipoContrato->getDescricao ( $tipo );
 	return formatarCodigoAnoComplemento ( $cd, $ano, $complemento );
 }
-
 function formatarCodigoAnoComplemento($cd, $ano, $complemento) {
-	return formatarCodigoAnoComplementoArgs($cd, $ano, null, $complemento);
+	return formatarCodigoAnoComplementoArgs ( $cd, $ano, null, $complemento );
 }
-
 function formatarCodigoAnoComplementoArgs($cd, $ano, $pTamanhoCodigo, $complemento) {
 	$retorno = "";
 	if ($complemento != null && $complemento != "") {
@@ -649,11 +664,11 @@ function formatarCodigoAnoComplementoArgs($cd, $ano, $pTamanhoCodigo, $complemen
 	}
 	
 	$tamanhoCodigo = TAMANHO_CODIGOS_SAFI;
-	if($pTamanhoCodigo != null){
+	if ($pTamanhoCodigo != null) {
 		$tamanhoCodigo = $pTamanhoCodigo;
 	}
 	
-	$retorno .= complementarCharAEsquerda ( $cd, "0", $tamanhoCodigo ) . "/" . substr($ano, 2, 2);
+	$retorno .= complementarCharAEsquerda ( $cd, "0", $tamanhoCodigo ) . "/" . substr ( $ano, 2, 2 );
 	
 	return $retorno;
 }
@@ -667,24 +682,119 @@ function getDataHoje() {
 	return date ( 'd/m/Y' );
 }
 function tratarExcecaoHTML($ex, $vo = null) {
-	if($vo != null){
-		putObjetoSessao($vo->getNmTabela(), $vo);
-		//a debaixo eh para a tela de msg de erro
-		putObjetoSessao(constantes::$ID_REQ_SESSAO_VO, $vo);		
+	if ($vo != null) {
+		putObjetoSessao ( $vo->getNmTabela (), $vo );
+		// a debaixo eh para a tela de msg de erro
+		putObjetoSessao ( constantes::$ID_REQ_SESSAO_VO, $vo );
 	}
 	
 	$msg = $ex->getMessage ();
-	$msg = str_replace("\n", "", $msg);
+	$msg = str_replace ( "\n", "", $msg );
 	
 	header ( "Location: ../mensagemErro.php?texto=" . $msg, TRUE, 307 );
 }
 function getStrComPuloLinhaHTML($str) {
-	return getStrComPuloLinhaGenerico($str,"<br>");
+	return getStrComPuloLinhaGenerico ( $str, "<br>" );
 }
 function getStrComPuloLinha($str) {
-	return getStrComPuloLinhaGenerico($str,"\n");
+	return getStrComPuloLinhaGenerico ( $str, "\n" );
 }
-function getStrComPuloLinhaGenerico($str,$pulo) {
+function getStrComPuloLinhaGenerico($str, $pulo) {
 	return "$str$pulo";
 }
+function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFuncoes = null, $colecaoFuncoesARemover = null) {
+	
+	//se colecoes a remover for nulo, tera todas as funcoes
+	$valorDefault = $colecaoFuncoesARemover == null;	
+	
+	$temIncluir = $valorDefault;
+	$temAlterar = $valorDefault;
+	$temDetalhar = $valorDefault;
+	$temExcluir = $valorDefault;
+	$temCancelar = $valorDefault;
+	
+	//se for igual a remover todas, todas serao false como valor default
+	if ($colecaoFuncoesARemover != null && $colecaoFuncoesARemover != constantes::$CD_FUNCAO_TODAS) {
+		$temIncluir = ! existeItemNoArray ( constantes::$CD_FUNCAO_INCLUIR, $colecaoFuncoesARemover );
+		$temAlterar = ! existeItemNoArray ( constantes::$CD_FUNCAO_ALTERAR, $colecaoFuncoesARemover );
+		$temDetalhar = ! existeItemNoArray ( constantes::$CD_FUNCAO_DETALHAR, $colecaoFuncoesARemover );
+		$temExcluir = ! existeItemNoArray ( constantes::$CD_FUNCAO_EXCLUIR, $colecaoFuncoesARemover );
+		$temCancelar = ! existeItemNoArray ( constantes::$CD_FUNCAO_CANCELAR, $colecaoFuncoesARemover );
+	}	
+	
+	if ($colecaoFuncoes!= null) {
+		$temIncluir = existeItemNoArray ( constantes::$CD_FUNCAO_INCLUIR, $colecaoFuncoes);
+		$temAlterar = existeItemNoArray ( constantes::$CD_FUNCAO_ALTERAR, $colecaoFuncoes);
+		$temDetalhar = existeItemNoArray ( constantes::$CD_FUNCAO_DETALHAR, $colecaoFuncoes);
+		$temExcluir = existeItemNoArray ( constantes::$CD_FUNCAO_EXCLUIR, $colecaoFuncoes);
+		$temCancelar = existeItemNoArray ( constantes::$CD_FUNCAO_CANCELAR, $colecaoFuncoes);
+	}
+	
+	if($temDetalhar){
+	$html .= " function detalhar(isExcluir) {\n";
+	$html .= "  if(isExcluir == null || !isExcluir){ \n";
+	$html .= "   funcao = '" . constantes::$CD_FUNCAO_DETALHAR . "';\n";
+	$html .= "  }else{\n";
+	$html .= "   funcao = '" . constantes::$CD_FUNCAO_EXCLUIR . "';\n";
+	$html .= "  }\n";
+	$html .= "  //o campo pode ser um radio ou checkbox, depende se for uma janela de lupa ou nao\n";
+	$html .= "  if (!isRadioButtonConsultaSelecionado('$pNmCampoConsulta'))\n";
+	$html .= "   return;\n";
+					
+	$html .= "  if (!isApenasUmCheckBoxSelecionado('$pNmCampoConsulta'))\n";
+	$html .= "	 return;\n";
+						
+	$html .= "	campoChave = $pNmCampoConsulta;\n";
+	$html .= "  if(!" . booleanToExtenso(isMultiSelecao()). "){\n";
+	$html .= "   chave = ".$pNmCampoConsulta.".value;\n";
+	$html .= "  }else{\n";
+			//sera um ckeckbox
+		    //se for array pega o primeiro e unico registro selecionado
+	$html .= "   chave = retornarValoresCheckBoxesSelecionadosComoArray(campoChave)[0];\n";
+	$html .= "  }\n";
+						
+	$html .= "  lupa = document.frm_principal.".constantes::$ID_REQ_LUPA.".value;\n";
+	$html .= "  multiSelecao = document.frm_principal.".constantes::$ID_REQ_MULTISELECAO.".value;\n";	
+	$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&".constantes::$ID_REQ_LUPA."='+ lupa + '&".constantes::$ID_REQ_MULTISELECAO."='+ multiSelecao;\n";
+	$html .= "}\n\n";
+	}
+	
+	if($temExcluir){
+	$html .= " function excluir() {\n";
+	$html .= "  detalhar(true);\n";
+	$html .= " }\n\n";
+	}
+	
+	if($temIncluir){
+	$html .= " function incluir() {\n";
+	$html .= "  location.href='manter.php?funcao=". constantes::$CD_FUNCAO_INCLUIR ."';\n";
+	$html .= " }\n\n";
+	}
+	
+	if($temAlterar){
+	$html .= " function alterar() {\n";
+	$html .= "  if (!isRadioButtonConsultaSelecionado('$pNmCampoConsulta'))\n";
+	$html .= "   return;\n";
+	
+	if($isHistoricoFiltro)
+		$html .= "  exibirMensagem('Registro de historico nao permite alteracao.');return;\n";
+			    
+	$html .= " chave = $pNmCampoConsulta.value;\n";	
+	$html .= " location.href='manter.php?funcao=".constantes::$CD_FUNCAO_ALTERAR."&chave=' + chave;\n";
+	$html .= "}\n\n";
+	}
+	
+	if($temCancelar){
+	$html .= " function cancelar() {\n";	
+	$html .= "  lupa = document.frm_principal.".constantes::$ID_REQ_LUPA.".value;\n";
+	$html .= "  multiSelecao = document.frm_principal.".constantes::$ID_REQ_MULTISELECAO.".value;\n";
+	$html .= "  location.href='index.php?consultar=S&".constantes::$ID_REQ_LUPA."='+ lupa + '&".constantes::$ID_REQ_MULTISELECAO."='+ multiSelecao;\n";
+	
+	$html .= "}\n\n";
+	}
+	
+	
+	return $html;
+}
+
 ?>

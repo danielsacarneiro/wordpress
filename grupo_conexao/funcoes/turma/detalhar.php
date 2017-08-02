@@ -124,23 +124,19 @@ function confirmar() {
 				</DIV>
 				</TH>
 			</TR>
-			<TR>
-				<TH class="textoseparadorgrupocampos" halign="left" colspan="4">
-					  <div id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
-					  <?php
-					  //include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php?funcao=" . constantes::$CD_FUNCAO_DETALHAR);
+			<TR>	
+            <TD class="conteinerfiltro" colspan="4">            
+            <TABLE cellpadding="0" cellspacing="0" id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
+            <TBODY>
+            					  <?php
 					  $voCamposDadosPessoaAjax = $vo;
-					  include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");
-					  //removeObjetoSessao(voturma::$ID_REQ_COLECAO_ALUNOS);
+					  include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");					  
 					  ?>
-			          </div>	          
-				</TH>
-			</TR>
-				<?php 
-				/*include_once 'bibliotecaTurma.php';
-				$colecaoAlunos = $vo->dbprocesso->consultarDemandaTramitacao($vo);
-				mostrarGridAlunos($colecaoAlunos, true);*/
-				?>			
+            
+            </TBODY>
+            </TABLE>
+            </TD>
+            </TR>
                       
             
         <?php if(!$isInclusao){

@@ -101,6 +101,7 @@ function listarAlunos(cd, funcao) {
 
 function transferirDadosPessoa(cdPessoa) {		   
 	//chamar funcao bibliotecafuncoespessoa
+	//alert(cdPessoa);
 	carregarDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');
 
 	//listarAlunos(cdPessoa, "<?=constantes::$CD_FUNCAO_INCLUIR?>");
@@ -132,7 +133,6 @@ function confirmar() {
 	
 	return confirm("Confirmar Alteracoes?");    
 }
-
 
 </SCRIPT>
 </HEAD>
@@ -181,14 +181,14 @@ function confirmar() {
 				<DIV class="campoformulario">&nbsp;&nbsp;Incluir Alunos&nbsp;&nbsp;
 				<?php 
 				include_once(caminho_funcoes. "pessoa/dominioVinculoPessoa.php");
-				echo getLinkPesquisa("../pessoa?" . vopessoavinculo::$nmAtrCd . "=" . dominioVinculoPessoa::$CD_VINCULO_ALUNO);
+				echo getLinkPesquisa("../pessoa/index.php?".constantes::$ID_REQ_MULTISELECAO."=S&" . vopessoavinculo::$nmAtrCd . "=" . dominioVinculoPessoa::$CD_VINCULO_ALUNO);
 				echo "&nbsp;&nbsp; Limpar tudo" . getBorrachaJS("limparDadosPessoa(-1);");
 				?>
 				</DIV>
 				</TH>
 			</TR>
 						
-					
+			<TR>	
             <TD class="conteinerfiltro" colspan="4">            
             <TABLE cellpadding="0" cellspacing="0" id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
             <TBODY>

@@ -60,16 +60,11 @@ function isFormularioValido() {
 	return true;
 }
 
-function cancelar() {
-	//history.back();
-	lupa = document.frm_principal.lupa.value;	
-	location.href="index.php?consultar=S&lupa="+ lupa;	
-}
-
 function confirmar() {
 	return confirm("Confirmar Alteracoes?");    
 }
 
+<?=getFuncoesJSGenericas("document.frm_principal.rdb_consulta", $isHistorico, array(constantes::$CD_FUNCAO_CANCELAR));?>
 </SCRIPT>
 
 </HEAD>

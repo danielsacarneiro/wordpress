@@ -188,6 +188,10 @@ class vopessoa extends voentidade {
 		$this->cd = $array [0];
 		$this->sqHist = $array [1];
 	}
+	static function getCdPessoaChaveExplode($chave) {
+		$array = explode ( CAMPO_SEPARADOR, $chave );
+		return $array [0];
+	}
 	function getMensagemComplementarTelaSucesso() {
 		$retorno = $this->getMensagemComplementarTelaSucessoPadrao ( $this->getTituloJSP (), $this->cd, $this->nome, $this->sqHist );
 		return $retorno;

@@ -25,7 +25,11 @@
     static $CD_FUNCAO_INCLUIR = "I";
     static $CD_FUNCAO_ALTERAR = "A";
     static $CD_FUNCAO_DETALHAR = "D";
+    static $CD_FUNCAO_CANCELAR = "C";
     static $CD_FUNCAO_TODAS = "T";
+    
+    static $ID_REQ_LUPA = "lupa";
+    static $ID_REQ_MULTISELECAO = "multiSelecao";
     
     static $DS_SIM  = "Sim";
     static $DS_NAO  = "Não";
@@ -64,6 +68,7 @@
     static $TAMANHO_CODIGOS = 5;
     static $TAMANHO_CODIGOS_SAFI = 3;
     static $CD_CAMPO_SEPARADOR = "*";
+    static $CD_CAMPO_SEPARADOR_ARRAY = ",";
     static $CD_CAMPO_SUBSTITUICAO = "[[*]]";
     static $CD_CAMPO_NULO = "null";
     static $ID_REQ_SESSAO_VO = "vo";

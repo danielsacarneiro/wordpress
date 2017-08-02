@@ -4,14 +4,14 @@
  * implementa a busca insensitive de uma palavra em outra
  * diferente de strpos que eh case sensitive
  */
-function getMultiPos($haystack, $needles, $sensitive=true, $offset=0){
-	foreach($needles as $needle) {
-		$result[$needle] = ($sensitive) ? strpos($haystack, $needle, $offset) : stripos($haystack, $needle, $offset);
+function getMultiPos($haystack, $needles, $sensitive = true, $offset = 0) {
+	foreach ( $needles as $needle ) {
+		$result [$needle] = ($sensitive) ? strpos ( $haystack, $needle, $offset ) : stripos ( $haystack, $needle, $offset );
 	}
 	return $result;
 }
 function isColecaoVazia($recordset) {
-	return $recordset == null || $recordset == "" || (is_array($recordset) && count($recordset)==0);
+	return $recordset == null || $recordset == "" || (is_array ( $recordset ) && count ( $recordset ) == 0);
 }
 function getColunaEmLinha($recordset, $nmColuna, $pSeparador) {
 	$retorno = null;
@@ -78,7 +78,7 @@ function existeStr1NaStr2ComSeparador($str2, $str1comseparador) {
 	for($i = 0; $i < $tamanho; $i ++) {
 		$especie = $array [$i];
 		// verifica se eh o tipo da especie em questao
-		if($especie != null && $especie != ""){
+		if ($especie != null && $especie != "") {
 			$existe = mb_stripos ( $str2, $especie );
 			// echo "<br>$str2 x $especie";
 			
@@ -229,9 +229,8 @@ function array_merge_keys() {
 	}
 	return $result;
 }
-
 function putElementoArrayComChaves($input, $elem) {
-	return array_merge_keys ( $input, $elem);	
+	return array_merge_keys ( $input, $elem );
 }
 function getColecaoEntreSeparador($colecaoAtributos, $separador) {
 	return getColecaoEntreSeparadorAspas ( $colecaoAtributos, $separador, false );
@@ -310,15 +309,15 @@ function getNomeArquivoPHP() {
 function isPastaRaiz() {
 	$retorno = false;
 	
-	//constantes definidas em config_lib.php
+	// constantes definidas em config_lib.php
 	$pastaRaiz = pasta_raiz_sistema;
 	$nmPasta = getNomePastaArquivoPHP ();
 	
-	//echo "$nmPasta<br>";
+	// echo "$nmPasta<br>";
 	$indice = getIndiceBarraOuPonto ( $nmPasta );
 	$nmPasta = substr ( $nmPasta, 0, $indice ) . pasta_aplicacao;
-	 //echo "|$nmPasta<br>";
-	 //echo "|$pastaRaiz<br>";
+	// echo "|$nmPasta<br>";
+	// echo "|$pastaRaiz<br>";
 	
 	if (strtoupper ( $pastaRaiz ) == strtoupper ( $nmPasta ))
 		$retorno = true;
@@ -326,12 +325,12 @@ function isPastaRaiz() {
 	return $retorno;
 }
 function isHospedagem() {
-	$retorno = false;	
-	//constantes definidas em config_lib.php
-	$path = $_SERVER['DOCUMENT_ROOT'];		
-	//echo "$nmPasta<br>";
-	$retorno = mb_stripos($path, nome_hospedagem);
-		
+	$retorno = false;
+	// constantes definidas em config_lib.php
+	$path = $_SERVER ['DOCUMENT_ROOT'];
+	// echo "$nmPasta<br>";
+	$retorno = mb_stripos ( $path, nome_hospedagem );
+	
 	return $retorno;
 }
 function subirNivelPasta($pasta, $qtdNiveis) {
@@ -366,9 +365,15 @@ function getAtributoComoBooleano($param) {
 	}
 	return $retorno;
 }
-
-function isFileUploadValido($fileUpload){
-	return $fileUpload['name'] != "" && $fileUpload['error'] == 0;
+function isFileUploadValido($fileUpload) {
+	return $fileUpload ['name'] != "" && $fileUpload ['error'] == 0;
+}
+function booleanToExtenso($boolean) {
+	$retorno = "false";
+	if ($boolean)
+		$retorno = "true";
+	
+	return $retorno;
 }
 
 ?>
