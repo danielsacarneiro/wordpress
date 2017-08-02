@@ -360,8 +360,8 @@ function getRodape() {
 	if (isMultiSelecao ())
 		$multiSelecao = "S";
 	
-	$retorno = "<INPUT type='hidden' name='".constantes::$ID_REQ_LUPA."' id='".constantes::$ID_REQ_LUPA."' value='" . $lupa . "'>\n";
-	$retorno .= "<INPUT type='hidden' name='".constantes::$ID_REQ_MULTISELECAO."' id='".constantes::$ID_REQ_MULTISELECAO."' value='" . $multiSelecao . "'>\n";
+	$retorno = "<INPUT type='hidden' name='" . constantes::$ID_REQ_LUPA . "' id='" . constantes::$ID_REQ_LUPA . "' value='" . $lupa . "'>\n";
+	$retorno .= "<INPUT type='hidden' name='" . constantes::$ID_REQ_MULTISELECAO . "' id='" . constantes::$ID_REQ_MULTISELECAO . "' value='" . $multiSelecao . "'>\n";
 	return $retorno;
 }
 function getBotoesRodape() {
@@ -534,7 +534,7 @@ function getComponenteConsultaPaginacao($comboOrdenacao, $cdAtrOrdenacao, $cdOrd
 		$html .= " Num.Registros por página: " . $comboQtdRegistros->getHtmlOpcao ( "qtdRegistrosPorPag", "qtdRegistrosPorPag", $qtdRegistrosPorPag, false );
 	}
 	
-	if ($temHistorico)
+	if ($temHistorico && ! isLupa ())
 		$html .= " &nbsp;Histórico: " . $radioHistorico->getHtmlRadio ( "cdHistorico", "cdHistorico", $cdHistorico, false, false );
 	
 	$html .= "&nbsp;<button id='localizar' class='botaoconsulta' type='submit'>Consultar</button>\n";
@@ -704,8 +704,8 @@ function getStrComPuloLinhaGenerico($str, $pulo) {
 }
 function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFuncoes = null, $colecaoFuncoesARemover = null) {
 	
-	//se colecoes a remover for nulo, tera todas as funcoes
-	$valorDefault = $colecaoFuncoesARemover == null;	
+	// se colecoes a remover for nulo, tera todas as funcoes
+	$valorDefault = $colecaoFuncoesARemover == null;
 	
 	$temIncluir = $valorDefault;
 	$temAlterar = $valorDefault;
@@ -713,86 +713,85 @@ function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFu
 	$temExcluir = $valorDefault;
 	$temCancelar = $valorDefault;
 	
-	//se for igual a remover todas, todas serao false como valor default
+	// se for igual a remover todas, todas serao false como valor default
 	if ($colecaoFuncoesARemover != null && $colecaoFuncoesARemover != constantes::$CD_FUNCAO_TODAS) {
 		$temIncluir = ! existeItemNoArray ( constantes::$CD_FUNCAO_INCLUIR, $colecaoFuncoesARemover );
 		$temAlterar = ! existeItemNoArray ( constantes::$CD_FUNCAO_ALTERAR, $colecaoFuncoesARemover );
 		$temDetalhar = ! existeItemNoArray ( constantes::$CD_FUNCAO_DETALHAR, $colecaoFuncoesARemover );
 		$temExcluir = ! existeItemNoArray ( constantes::$CD_FUNCAO_EXCLUIR, $colecaoFuncoesARemover );
 		$temCancelar = ! existeItemNoArray ( constantes::$CD_FUNCAO_CANCELAR, $colecaoFuncoesARemover );
-	}	
-	
-	if ($colecaoFuncoes!= null) {
-		$temIncluir = existeItemNoArray ( constantes::$CD_FUNCAO_INCLUIR, $colecaoFuncoes);
-		$temAlterar = existeItemNoArray ( constantes::$CD_FUNCAO_ALTERAR, $colecaoFuncoes);
-		$temDetalhar = existeItemNoArray ( constantes::$CD_FUNCAO_DETALHAR, $colecaoFuncoes);
-		$temExcluir = existeItemNoArray ( constantes::$CD_FUNCAO_EXCLUIR, $colecaoFuncoes);
-		$temCancelar = existeItemNoArray ( constantes::$CD_FUNCAO_CANCELAR, $colecaoFuncoes);
 	}
 	
-	if($temDetalhar){
-	$html .= " function detalhar(isExcluir) {\n";
-	$html .= "  if(isExcluir == null || !isExcluir){ \n";
-	$html .= "   funcao = '" . constantes::$CD_FUNCAO_DETALHAR . "';\n";
-	$html .= "  }else{\n";
-	$html .= "   funcao = '" . constantes::$CD_FUNCAO_EXCLUIR . "';\n";
-	$html .= "  }\n";
-	$html .= "  //o campo pode ser um radio ou checkbox, depende se for uma janela de lupa ou nao\n";
-	$html .= "  if (!isRadioButtonConsultaSelecionado('$pNmCampoConsulta'))\n";
-	$html .= "   return;\n";
-					
-	$html .= "  if (!isApenasUmCheckBoxSelecionado('$pNmCampoConsulta'))\n";
-	$html .= "	 return;\n";
-						
-	$html .= "	campoChave = $pNmCampoConsulta;\n";
-	$html .= "  if(!" . booleanToExtenso(isMultiSelecao()). "){\n";
-	$html .= "   chave = ".$pNmCampoConsulta.".value;\n";
-	$html .= "  }else{\n";
-			//sera um ckeckbox
-		    //se for array pega o primeiro e unico registro selecionado
-	$html .= "   chave = retornarValoresCheckBoxesSelecionadosComoArray(campoChave)[0];\n";
-	$html .= "  }\n";
-						
-	$html .= "  lupa = document.frm_principal.".constantes::$ID_REQ_LUPA.".value;\n";
-	$html .= "  multiSelecao = document.frm_principal.".constantes::$ID_REQ_MULTISELECAO.".value;\n";	
-	$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&".constantes::$ID_REQ_LUPA."='+ lupa + '&".constantes::$ID_REQ_MULTISELECAO."='+ multiSelecao;\n";
-	$html .= "}\n\n";
+	if ($colecaoFuncoes != null) {
+		$temIncluir = existeItemNoArray ( constantes::$CD_FUNCAO_INCLUIR, $colecaoFuncoes );
+		$temAlterar = existeItemNoArray ( constantes::$CD_FUNCAO_ALTERAR, $colecaoFuncoes );
+		$temDetalhar = existeItemNoArray ( constantes::$CD_FUNCAO_DETALHAR, $colecaoFuncoes );
+		$temExcluir = existeItemNoArray ( constantes::$CD_FUNCAO_EXCLUIR, $colecaoFuncoes );
+		$temCancelar = existeItemNoArray ( constantes::$CD_FUNCAO_CANCELAR, $colecaoFuncoes );
 	}
 	
-	if($temExcluir){
-	$html .= " function excluir() {\n";
-	$html .= "  detalhar(true);\n";
-	$html .= " }\n\n";
+	if ($temDetalhar) {
+		$html .= " function detalhar(isExcluir) {\n";
+		$html .= "  if(isExcluir == null || !isExcluir){ \n";
+		$html .= "   funcao = '" . constantes::$CD_FUNCAO_DETALHAR . "';\n";
+		$html .= "  }else{\n";
+		$html .= "   funcao = '" . constantes::$CD_FUNCAO_EXCLUIR . "';\n";
+		$html .= "  }\n";
+		$html .= "  //o campo pode ser um radio ou checkbox, depende se for uma janela de lupa ou nao\n";
+		$html .= "  if (!isRadioButtonConsultaSelecionado('$pNmCampoConsulta'))\n";
+		$html .= "   return;\n";
+		
+		$html .= "  if (!isApenasUmCheckBoxSelecionado('$pNmCampoConsulta'))\n";
+		$html .= "	 return;\n";
+		
+		$html .= "	campoChave = $pNmCampoConsulta;\n";
+		$html .= "  if(!" . booleanToExtenso ( isMultiSelecao () ) . "){\n";
+		$html .= "   chave = " . $pNmCampoConsulta . ".value;\n";
+		$html .= "  }else{\n";
+		// sera um ckeckbox
+		// se for array pega o primeiro e unico registro selecionado
+		$html .= "   chave = retornarValoresCheckBoxesSelecionadosComoArray(campoChave)[0];\n";
+		$html .= "  }\n";
+		
+		$html .= "  lupa = document.frm_principal." . constantes::$ID_REQ_LUPA . ".value;\n";
+		$html .= "  multiSelecao = document.frm_principal." . constantes::$ID_REQ_MULTISELECAO . ".value;\n";
+		$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao;\n";
+		$html .= "}\n\n";
 	}
 	
-	if($temIncluir){
-	$html .= " function incluir() {\n";
-	$html .= "  location.href='manter.php?funcao=". constantes::$CD_FUNCAO_INCLUIR ."';\n";
-	$html .= " }\n\n";
+	if ($temExcluir) {
+		$html .= " function excluir() {\n";
+		$html .= "  detalhar(true);\n";
+		$html .= " }\n\n";
 	}
 	
-	if($temAlterar){
-	$html .= " function alterar() {\n";
-	$html .= "  if (!isRadioButtonConsultaSelecionado('$pNmCampoConsulta'))\n";
-	$html .= "   return;\n";
-	
-	if($isHistoricoFiltro)
-		$html .= "  exibirMensagem('Registro de historico nao permite alteracao.');return;\n";
-			    
-	$html .= " chave = $pNmCampoConsulta.value;\n";	
-	$html .= " location.href='manter.php?funcao=".constantes::$CD_FUNCAO_ALTERAR."&chave=' + chave;\n";
-	$html .= "}\n\n";
+	if ($temIncluir) {
+		$html .= " function incluir() {\n";
+		$html .= "  location.href='manter.php?funcao=" . constantes::$CD_FUNCAO_INCLUIR . "';\n";
+		$html .= " }\n\n";
 	}
 	
-	if($temCancelar){
-	$html .= " function cancelar() {\n";	
-	$html .= "  lupa = document.frm_principal.".constantes::$ID_REQ_LUPA.".value;\n";
-	$html .= "  multiSelecao = document.frm_principal.".constantes::$ID_REQ_MULTISELECAO.".value;\n";
-	$html .= "  location.href='index.php?consultar=S&".constantes::$ID_REQ_LUPA."='+ lupa + '&".constantes::$ID_REQ_MULTISELECAO."='+ multiSelecao;\n";
-	
-	$html .= "}\n\n";
+	if ($temAlterar) {
+		$html .= " function alterar() {\n";
+		$html .= "  if (!isRadioButtonConsultaSelecionado('$pNmCampoConsulta'))\n";
+		$html .= "   return;\n";
+		
+		if ($isHistoricoFiltro)
+			$html .= "  exibirMensagem('Registro de historico nao permite alteracao.');return;\n";
+		
+		$html .= " chave = $pNmCampoConsulta.value;\n";
+		$html .= " location.href='manter.php?funcao=" . constantes::$CD_FUNCAO_ALTERAR . "&chave=' + chave;\n";
+		$html .= "}\n\n";
 	}
 	
+	if ($temCancelar) {
+		$html .= " function cancelar() {\n";
+		$html .= "  lupa = document.frm_principal." . constantes::$ID_REQ_LUPA . ".value;\n";
+		$html .= "  multiSelecao = document.frm_principal." . constantes::$ID_REQ_MULTISELECAO . ".value;\n";
+		$html .= "  location.href='index.php?consultar=S&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao;\n";
+		
+		$html .= "}\n\n";
+	}
 	
 	return $html;
 }
