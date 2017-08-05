@@ -170,14 +170,7 @@ class filtroManter extends multiplosConstrutores {
 		}
 		
 		// var_dump($this->groupby);
-		if ($this->groupby != null && $this->groupby != "") {
-			$str = $this->groupby;
-			if (is_array ( $this->groupby )) {
-				$str = getSQLStringFormatadaColecaoIN ( $this->groupby, false );
-			}
-			
-			$strFiltro = $strFiltro . "\n GROUP BY " . $str;
-		}
+		$strFiltro = $strFiltro . static::getSQLGroupby($this->groupby);		
 		
 		// pega do filho, se existir
 		$strOrdemDefault = "";
@@ -219,6 +212,18 @@ class filtroManter extends multiplosConstrutores {
 		// echo $strFiltro;
 		
 		return $strFiltro;
+	}
+	static function getSQLGroupby($groupby){
+		if ($groupby!= null && $groupby!= "") {
+			$str = $groupby;
+			if (is_array ( $groupby)) {
+				$str = getSQLStringFormatadaColecaoIN ( $groupby, false );
+			}
+			
+			$strFiltro = "\n GROUP BY " . $str;
+		}
+		
+		return $strFiltro;		
 	}
 	function getVOEntidadePrincipal() {
 		$class = $this->nmEntidadePrincipal;

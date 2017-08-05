@@ -9,17 +9,8 @@ inicio();
 removeObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS );
 
 $vo = new voturma();
-//var_dump($vo->varAtributos);
-$chave = @$_GET["chave"];
-$array = explode("*",$chave);
-
-$vo->cd = $array[0];
-$vo->cdHistorico = $array[1];
-$isHistorico = ("S" == $vo->cdHistorico);    
-if($isHistorico){
-    $sqHist = $array[2];
-    $vo->sqHist = $sqHist;
-}
+$vo->getVOExplodeChave($chave);
+$isHistorico = ($vo->sqHist != null && $vo->sqHist != "");
 
 $readonly = "";
 $nmFuncao = "";
@@ -31,12 +22,6 @@ putObjetoSessao($vo->getNmTabela(), $vo);
 
 //var_dump($vo->colecaoAlunos);
     
-$dhInclusao = $vo->dhInclusao;
-$dhUltAlteracao = $vo->dhUltAlteracao;
-$cdUsuarioInclusao = $vo->cdUsuarioInclusao;
-$cdUsuarioUltAlteracao = $vo->cdUsuarioUltAlteracao;
-
-
 $nmFuncao = "DETALHAR ";
 $titulo = $vo->getTituloJSP();
 $complementoTit = "";
@@ -107,8 +92,11 @@ function confirmar() {
                 <TD class="campoformulario" colspan=3><INPUT type="text" id="<?=voturma::$nmAtrDescricao?>" name="<?=voturma::$nmAtrDescricao?>"  value="<?php echo($vo->descricao);?>"  class="camporeadonly" size="50" readonly></TD>
             </TR>  
             <TR>
-	            <TH class="campoformulario" nowrap width=1%>Valor Mensal:</TH>
-	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
+	            <TH class="campoformulario" nowrap width=1%>Valor.Mensal/Pessoa:</TH>
+	            <TD class="campoformulario" width=1%><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
+	            class="camporeadonlyalinhadodireita" size="15" readonly></TD>
+	            <TH class="campoformulario" nowrap width=1%>Receita Mensal:</TH>
+	            <TD class="campoformulario" ><INPUT type="text" value="<?php echo(getMoeda($colecao[filtroManterTurma::$NM_COL_VALOR_REAL]));?>"
 	            class="camporeadonlyalinhadodireita" size="15" readonly></TD>
 	        </TR>
 			<TR>

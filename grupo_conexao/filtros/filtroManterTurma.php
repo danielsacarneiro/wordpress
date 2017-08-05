@@ -3,6 +3,10 @@ include_once (caminho_util . "bibliotecaSQL.php");
 include_once (caminho_lib . "filtroManter.php");
 class filtroManterTurma extends filtroManter {
 	public static $nmFiltro = "filtroManterTurma";
+
+	static $NM_COL_VALOR_IDEAL = "NM_COL_VALOR_IDEAL"; 
+	static $NM_COL_VALOR_REAL = "NM_COL_VALOR_REAL";
+	static $NM_COL_QTD_ALUNOS = "NM_COL_QTD_ALUNOS";
 	var $nomePessoa;
 	var $cdPessoa;
 	var $dsTurma;

@@ -55,7 +55,9 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 					if($temValorDiferenciado){
 						$classColuna = "tabeladadosdestacadoamarelo";
 						$obs = $colecaoAlunos[$i][vopessoaturma::$nmAtrObservacao];
-						$mensagemAlerta = "onMouseOver=\"toolTip('$obs')\" onMouseOut=\"toolTip()\"";
+						if($obs != null){
+							$mensagemAlerta = "onMouseOver=\"toolTip('$obs')\" onMouseOut=\"toolTip()\"";
+						}
 					}
 											
 					$html .= "<TD class='tabeladados' nowrap>" . complementarCharAEsquerda ( $voAtual->cd, "0", TAMANHO_CODIGOS ) . "</TD> \n";
@@ -69,8 +71,13 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 					//o campo nome eh um array porque sao varias pessoas a incluir
 					$html .= "<INPUT TYPE='HIDDEN' NAME='".voturma::$ID_REQ_COLECAO_ALUNOS."[]' VALUE='" . $voAtual->cd. "'> \n";
 					$html .= "</TR> \n";
+					
 			}
 		}
+		
+		$html .=  "<TR>";
+		$html .=  "<TD class='totalizadortabeladadosalinhadodireita' colspan='$numColunas'>Total de registro(s): $tamanho</TD>";
+		$html .=  "</TR>";
 		
 		$html .= "</TBODY> \n";
 		$html .= "</TABLE> \n";

@@ -181,7 +181,7 @@ function getNumDuracao(){
                 <TD class="campoformulario" colspan=3><INPUT type="text" id="<?=voturma::$nmAtrDescricao?>" name="<?=voturma::$nmAtrDescricao?>"  value="<?php echo($vo->descricao);?>"  class="camponaoobrigatorio" size="50" required></TD>
             </TR>
 			<TR>
-	            <TH class="campoformulario" nowrap width=1%>Valor Mensal:</TH>
+	            <TH class="campoformulario" nowrap width=1%>Valor.Mensal/Pessoa:</TH>
 	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" required value="<?php echo(getMoeda($vo->valor));?>"
 	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" class="camponaoobrigatorioalinhadodireita" size="15" ></TD>
 	        </TR>
