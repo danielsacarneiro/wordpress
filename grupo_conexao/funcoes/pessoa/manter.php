@@ -61,7 +61,7 @@ $cdUsuarioUltAlteracao = $vo->cdUsuarioUltAlteracao;
 function isFormularioValido() {
 	
 	campoDocCPF = document.frm_principal.<?=vopessoa::$nmAtrDocCPF?>;
-	if (!isCampoCNPFouCNPJValido(campoDocCPF, true, false)){
+	if (!isCampoCNPFouCNPJValido(campoDocCPF, campoDocCPF.required, false)){
 		return false;	
 	}
 
@@ -120,8 +120,8 @@ function validaMaiorIdade(){
 	return true;
 }
 
-function checkResponsabilidade() {
-	campoResponsabilidade = document.frm_principal.checkBoxREsponsabilidade;
+function checkNomeResponsavel() {
+	campoResponsabilidade = document.frm_principal.checkBoxResponsabilidade;
 	campoResponsavel = document.frm_principal.<?=vopessoa::$nmAtrResponsavel?>;
 
 	campoResponsavel.required = true;
@@ -153,7 +153,7 @@ function formataFormDocumentacao() {
 
 function iniciar(){
 	//verificaVinculo();
-	checkResponsabilidade();
+	checkNomeResponsavel();
 	formataFormDocumentacao();	
 }
 
@@ -190,7 +190,15 @@ function iniciar(){
                      <?php
                      $selectVinculo = new select ( dominioVinculoPessoa::getColecao() );
                      echo $selectVinculo->getHtmlCombo ( vopessoavinculo::$nmAtrCd, vopessoavinculo::$nmAtrCd, $colecao[vopessoavinculo::$nmAtrCd], true, "camponaoobrigatorio", true, " required ", $isInclusao);
-                     ?>                
+                     ?>
+	            <SCRIPT language="JavaScript" type="text/javascript">
+	            	colecaoIDCamposRequired = ["<?=vopessoa::$nmAtrDocCPF?>",
+		            	"<?=vopessoa::$nmAtrDocRG?>",
+		            	"<?=vopessoa::$nmAtrEmail?>",
+		            	"<?=vopessoa::$nmAtrDtNascimento?>"
+	            		];
+	            </SCRIPT>
+	            <INPUT type="checkbox" id="<?=voentidade::$nmAtrConfirmarNaoInclusaoDeCamposObrigatorios?>" name="<?=voentidade::$nmAtrConfirmarNaoInclusaoDeCamposObrigatorios?>" value="" onClick="validaFormRequiredCheckBox(this, colecaoIDCamposRequired);"> *Assumo a responsabilidade de não incluir os valores obrigatórios.                     
             </TR>
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Nome:</TH>
@@ -213,7 +221,7 @@ function iniciar(){
 	            	       name="<?=vopessoa::$nmAtrDtNascimento?>" 
 	            			value="<?php echo(getData($vo->dtNascimento));?>"
 	            			onkeyup="formatarCampoData(this, event, false);" 
-	            			onChange ="checkResponsabilidade();"
+	            			onChange ="checkNomeResponsavel();"
 	            			class="camponaoobrigatorio" 
 	            			size="10" 
 	            			maxlength="10" required>
@@ -308,7 +316,7 @@ function iniciar(){
                 <TH class="campoformulario" nowrap width=1%>Responsável:</TH>
 				<TD class="campoformulario" colspan=3>
                 <INPUT type="text" id="<?=vopessoa::$nmAtrResponsavel?>" name="<?=vopessoa::$nmAtrResponsavel?>"  value="<?php echo($vo->responsavel);?>"  class="camponaoobrigatorio" size="70" required>
-                <INPUT type="checkbox" name="checkBoxREsponsabilidade" value="" onClick="checkResponsabilidade();" <?=$checked?>> *O próprio.
+                <INPUT type="checkbox" name="checkBoxResponsabilidade" value="" onClick="checkNomeResponsavel();" <?=$checked?>> *O próprio.
                 </TD>
             </TR>
               

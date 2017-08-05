@@ -4,6 +4,7 @@ include_once (caminho_util . "bibliotecaFuncoesPrincipal.php");
 class voentidade extends multiplosConstrutores {
 	static $nmTabelaSufixoHistorico = "_hist";
 	static $nmTabelaSufixoSequencial = "_seq";
+	static $nmAtrConfirmarNaoInclusaoDeCamposObrigatorios = "ConfirmarNaoInclusaoDeCamposObrigatorios";
 	static $nmAtrTemDesativado = "TemDesativado";
 	static $nmAtrSqHist = "hist";
 	static $nmAtrDhInclusao = "dh_inclusao";
