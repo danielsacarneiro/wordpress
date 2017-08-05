@@ -182,12 +182,11 @@ class vopessoa extends voentidade {
 	function getValorChavePrimaria() {
 		return $this->cd . constantes::$CD_CAMPO_SEPARADOR . $this->sqHist;
 	}
-	function getVOExplodeChave() {
-		$chave = @$_GET ["chave"];
-		$array = explode ( CAMPO_SEPARADOR, $chave );
+	function getChavePrimariaVOExplode($array){
 		$this->cd = $array [0];
 		$this->sqHist = $array [1];
 	}
+	
 	static function getCdPessoaChaveExplode($chave) {
 		$array = explode ( CAMPO_SEPARADOR, $chave );
 		return $array [0];

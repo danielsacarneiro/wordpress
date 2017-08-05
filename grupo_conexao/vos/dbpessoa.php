@@ -43,6 +43,35 @@ class dbpessoa extends dbprocesso {
 		
 		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, false );
 	}
+	function consultarFiltroManterPessoaTurma($filtro) {
+		$nmTabela = vopessoa::getNmTabela ();
+		$nmTabelaPessoaVinculo = vopessoavinculo::getNmTabela ();
+		$nmTabelaPessoaTurma = vopessoaturma::getNmTabela ();
+		$nmTabelaTurma = voturma::getNmTabela ();
+		
+		$atributosConsulta = $nmTabela . "." . vopessoa::$nmAtrCd;
+		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrNome;
+		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrDocCPF;
+		$atributosConsulta .= "," . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCd;
+		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrValor;
+		$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrObservacao;
+		$atributosConsulta .= ",COALESCE(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "," . $nmTabelaTurma. "." . voturma::$nmAtrValor. ") AS " . vopessoaturma::$nmAtrValor;
+		
+		$querySelect = "SELECT " . $atributosConsulta;
+		
+		$queryFrom = "\n FROM " . $nmTabela;
+		$queryFrom .= "\n INNER JOIN " . $nmTabelaPessoaVinculo;
+		$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCdPessoa;
+		$queryFrom .= "\n LEFT JOIN " . $nmTabelaPessoaTurma;
+		$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa;
+		$queryFrom .= "\n LEFT JOIN " . $nmTabelaTurma;
+		$queryFrom .= "\n ON " . $nmTabelaTurma. "." . voturma::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma;
+		
+		// echo $querySelect."<br>";
+		// echo $queryFrom;
+		
+		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, false );
+	}
 	function consultarPessoaManter($filtro, $validarConsulta) {		
 		$nmTabela = vopessoa::getNmTabelaStatic($filtro->isHistorico());
 		$atributosConsulta = $nmTabela . "." . vopessoa::$nmAtrCd;

@@ -4,17 +4,6 @@ include_once (caminho_util . "bibliotecaFuncoesPrincipal.php");
 
 // .................................................................................................................
 class dbturma extends dbprocesso {
-	function consultarPorChave($vo, $isHistorico) {
-		$nmTabela = $vo->getNmTabelaEntidade ( $isHistorico );
-		
-		$arrayColunasRetornadas = array (
-				$nmTabela . ".*" 
-		);
-		
-		$retorno = $this->consultarPorChaveMontandoQuery ( $vo, $arrayColunasRetornadas, $queryJoin, $isHistorico, true );
-		
-		return $retorno;
-	}
 	
 	function consultarFiltroManterTurma($filtro) {
 		$nmTabelaTurma = voturma::getNmTabelaStatic($filtro->isHistorico());

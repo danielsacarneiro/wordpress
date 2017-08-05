@@ -7,7 +7,7 @@ function getComboPessoaVinculo($idCampo, $nmCampo, $cdOpcaoSelecionada, $classCa
 	return getComboColecaoGenerico($dominioVinculo->colecao, $idCampo, $nmCampo, $cdOpcaoSelecionada, $classCampo, $tagHtml);
 }
 
-function consultarPessoas($colecaoCdPessoa){
+function consultarPessoasTurma($colecaoCdPessoa){
 	//$voContrato = new vocontrato();
 	$filtro = new filtroManterPessoa(false);
 	$filtro->colecaoCd = $colecaoCdPessoa;
@@ -16,7 +16,7 @@ function consultarPessoas($colecaoCdPessoa){
 	$filtro->cdOrdenacao = constantes::$CD_ORDEM_CRESCENTE;
 	
 	$db = new dbpessoa();
-	$colecao = $db->consultarFiltroManterPessoa($filtro);
+	$colecao = $db->consultarFiltroManterPessoaTurma($filtro);
 	
 	return $colecao;
 }

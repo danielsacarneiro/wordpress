@@ -116,6 +116,10 @@ class voturma extends voentidade {
 	function getValorChavePrimaria() {
 		return $this->cd;
 	}
+	function getChavePrimariaVOExplode($array){
+		$this->cd = $array [0];	
+	}
+	
 	function toString() {
 		$retorno .= $this->cd . ",";
 		$retorno .= $this->descricao . ",";

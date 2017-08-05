@@ -305,6 +305,9 @@ class voentidade extends multiplosConstrutores {
 	static function getCodigoFormatado($codigo) {
 		return complementarCharAEsquerda ( $codigo, "0", TAMANHO_CODIGOS );
 	}
+	static function getCodigoDEscricaoFormatado($codigo, $ds) {
+		return static::getCodigoFormatado($codigo) . " - " . $ds;
+	}
 	static function excluirArquivo($enderecoArquivo) {
 		if (file_exists ( $enderecoArquivo )) {
 			unlink ( $enderecoArquivo );

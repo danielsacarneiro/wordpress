@@ -24,18 +24,17 @@ class filtroManterPessoaTurma extends filtroManter{
 		$this->nome = @$_POST[vopessoa::$nmAtrNome];
 		$this->dsTurma = @$_POST[voturma::$nmAtrDescricao];
 		$this->dsMateria= @$_POST[vomateria::$nmAtrDescricao];
-		$this->cdvinculo = @$_POST[voPessoaTurma::$nmAtrCd];
+		$this->cdvinculo = @$_POST[vopessoavinculo::$nmAtrCd];
 	}
 	
 	function getFiltroConsultaSQL($comAtributoOrdenacao = null){
-        $voPessoa= new vopessoa();
-        $voPessoaTurma= new vopessoaturma();
 		$filtro = "";
 		$conector  = "";
 
 		$isHistorico = $this->isHistorico();
-        $nmTabela = $voPessoa->getNmTabelaEntidade($isHistorico);
-        $nmTabelaPessoaTurma = $voPessoaTurma->getNmTabela();
+        $nmTabelaPessoa = vopessoa::getNmTabelaStatic($isHistorico);
+        $nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic($isHistorico);
+        $nmTabelaTurma = voturma::getNmTabelaStatic($isHistorico);
         
 		//seta os filtros obrigatorios        
 		if($this->isSetaValorDefault()){
@@ -64,7 +63,7 @@ class filtroManterPessoaTurma extends filtroManter{
 		
 		if($this->dsTurma != null){
 			$filtro = $filtro . $conector
-			. $nmTabela. "." .voturma::$nmAtrDescricao
+			. $nmTabelaTurma. "." .voturma::$nmAtrDescricao
 			. " LIKE '%"
 					//. utf8_encode($this->nome)
 					. $this->dsTurma
@@ -95,9 +94,9 @@ class filtroManterPessoaTurma extends filtroManter{
 		
 		if($this->nome != null){
 			$filtro = $filtro . $conector
-			. $nmTabela. "." .vopessoa::$nmAtrNome
+			. $nmTabelaPessoa. "." .vopessoa::$nmAtrNome
 			. " LIKE '%"
-					. utf8_encode($this->nome)
+					. $this->nome
 					. "%'";
 						
 					$conector  = "\n AND ";
@@ -136,9 +135,7 @@ class filtroManterPessoaTurma extends filtroManter{
 	function getAtributosOrdenacao(){
 		$varAtributos = array(
 				vopessoaturma::$nmAtrCdTurma => "Turma",
-				vopessoa::$nmAtrNome => "Nome",
-				vopessoa::$nmAtrDhUltAlteracao=> "Data.Alteração",
-				vopessoa::$nmAtrCd => "Cd.Pessoa"
+				vopessoa::$nmAtrNome => "Pessoa"
 		);
 		return $varAtributos;
 	}

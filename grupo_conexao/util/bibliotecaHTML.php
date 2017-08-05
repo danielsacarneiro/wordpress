@@ -367,9 +367,21 @@ function getRodape() {
 function getBotoesRodape() {
 	return getBotoesRodapeComRestricao ( null );
 }
+function getBotoesApenasDetalhar() {
+	$arrayBotoesARemover = array (
+			constantes::$CD_FUNCAO_INCLUIR,
+			constantes::$CD_FUNCAO_ALTERAR,
+			constantes::$CD_FUNCAO_EXCLUIR 
+	);
+	return getBotoesRodapeComRestricao ( $arrayBotoesARemover, true );
+}
 function exibeBotao($arrayBotoesARemover, $nmFuncaoBotao, $usuarioLogadoTemPermissao, $restringeBotaoSemValidarPermissao) {
 	return ! existeItemNoArray ( $nmFuncaoBotao, $arrayBotoesARemover ) || ($usuarioLogadoTemPermissao && ! $restringeBotaoSemValidarPermissao);
 }
+/*
+ * $restringeBotaoSemValidarPermissao serve para retirar o botao em $arrayBotoesARemover independente de ter permissao o usuario
+ *
+ */
 function getBotoesRodapeComRestricao($arrayBotoesARemover, $restringeBotaoSemValidarPermissao = false) {
 	
 	// o administrador pode ver todos os botoes
@@ -741,8 +753,10 @@ function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFu
 		$html .= "  if (!isRadioButtonConsultaSelecionado('$pNmCampoConsulta'))\n";
 		$html .= "   return;\n";
 		
-		$html .= "  if (!isApenasUmCheckBoxSelecionado('$pNmCampoConsulta'))\n";
-		$html .= "	 return;\n";
+		$html .= "  if(" . booleanToExtenso ( isMultiSelecao () ) . "){\n";
+		$html .= "   if (!isApenasUmCheckBoxSelecionado('$pNmCampoConsulta'))\n";
+		$html .= "	  return;\n";
+		$html .= "  }\n";
 		
 		$html .= "	campoChave = $pNmCampoConsulta;\n";
 		$html .= "  if(!" . booleanToExtenso ( isMultiSelecao () ) . "){\n";

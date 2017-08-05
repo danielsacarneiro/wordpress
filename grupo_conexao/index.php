@@ -26,7 +26,8 @@ setCabecalho(constantes::$tituloSistema);
 	f.adicionarItem(f1);
 	
 	f2 = new Tree('Serviço 02 (Relacionamentos)');
-    f2.adicionarItem(new Link('Turmas', '<?=caminho_funcoesHTML?>turma', ''));	
+    f2.adicionarItem(new Link('Pessoa x Turma', '<?=caminho_funcoesHTML?>pessoa_turma', ''));
+    f2.adicionarItem(new Link('Turmas', '<?=caminho_funcoesHTML?>turma', ''));
 	f.adicionarItem(f2);
 	
 	<?php if(isUsuarioAdmin()){?>

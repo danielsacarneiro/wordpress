@@ -6,14 +6,14 @@ try{
 //inicia os parametros
 inicio();
 
-$vo = new voturma();
+$vo = new vopessoaturma();
 //var_dump($vo->varAtributos);
-$chave = @$_GET["chave"];
-$array = explode("*",$chave);
+$vo->getVOExplodeChave($chave);
+$isHistorico = ($vo->sqHist != null && $vo->sqHist != "");
 
 $vo->cd = $array[0];
 $vo->cdHistorico = $array[1];
-$isHistorico = ("S" == $vo->cdHistorico);    
+    
 if($isHistorico){
     $sqHist = $array[2];
     $vo->sqHist = $sqHist;
@@ -95,13 +95,15 @@ function confirmar() {
             <TABLE id="table_filtro" class="filtro" cellpadding="0" cellspacing="0">
             <TBODY>
 			<TR>
-                <TH class="campoformulario" nowrap width=1%>Código:</TH>
-                <TD class="campoformulario" colspan=3><INPUT type="text" value="<?php echo(complementarCharAEsquerda($vo->cd, "0", TAMANHO_CODIGOS));?>"  class="camporeadonlyalinhadodireita" size="5" readonly></TD>
-            </TR>            
-			<TR>
-                <TH class="campoformulario" nowrap width=1%>Descrição:</TH>
-                <TD class="campoformulario" colspan=3><INPUT type="text" id="<?=voturma::$nmAtrDescricao?>" name="<?=voturma::$nmAtrDescricao?>"  value="<?php echo($vo->descricao);?>"  class="camporeadonly" size="50" readonly></TD>
-            </TR>  
+                <TH class="campoformulario" nowrap width=1%>Pessoa:</TH>
+                <TD class="campoformulario" colspan=3><INPUT type="text" value="<?php echo($vo->getCodigoDEscricaoFormatado($vo->cdPessoa, $colecao[vopessoa::$nmAtrNome]));?>"  class="camporeadonly" size="50" readonly></TD>
+            </TR>
+                <TH class="campoformulario" nowrap width=1%>Turma:</TH>
+                <TD class="campoformulario" colspan=3><INPUT type="text" value="<?php echo($vo->getCodigoDEscricaoFormatado($vo->cdTurma, $colecao[voturma::$nmAtrDescricao]));?>"  class="camporeadonly" size="50" readonly></TD>
+                
+				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo($vo->cdTurma);?>">
+				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdPessoa?>" name="<?=vopessoaturma::$nmAtrCdPessoa?>"  value="<?php echo($vo->cdPessoa);?>">						
+            </TR>
             <TR>
 	            <TH class="campoformulario" nowrap width=1%>Valor Mensal:</TH>
 	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"

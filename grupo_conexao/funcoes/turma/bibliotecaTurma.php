@@ -9,12 +9,13 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 	}
 	
 	$html = "";
+	$html .= "<SCRIPT language='JavaScript' type='text/javascript' src='" . caminho_js . "tooltip.js'></SCRIPT>\n";
 	$html .= "<TR>\n";
 	$html .= "<TH class='textoseparadorgrupocampos' halign='left' colspan='4'>\n";
 	
 	if ($tamanho > 0) {
 		
-		$numColunas = 4;
+		$numColunas = 5;
 		
 		$html .= "<TABLE id='table_tabeladados' class='tabeladados' cellpadding='0' cellspacing='0'> \n";
 		$html .= " <TBODY>  \n";
@@ -23,6 +24,7 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 		$html .= "<TH class='headertabeladados' width='1%' nowrap>Código</TH>   \n";
 		$html .= "<TH class='headertabeladados' width='90%'>Nome</TH> \n";
 		$html .= "<TH class='headertabeladados' width='1%'>Doc.</TH> \n";
+		$html .= "<TH class='headertabeladados' width='1%'>Valor</TH> \n";
 		if(!$isDetalhamento){
 			//$html .= "<TH class='headertabeladados' width='1%'>Excluir</TH> \n";
 		}
@@ -46,10 +48,20 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 				$doc = $voAtual->docCPF;
 				if($doc == null)
 					$doc = $voAtual->docRG;
+					$classColuna = "tabeladados";
 					
+					$temValorDiferenciado = $colecaoAlunos[$i][voturma::$nmAtrValor] != $colecaoAlunos[$i][vopessoaturma::$nmAtrValor];
+					$mensagemAlerta= "";
+					if($temValorDiferenciado){
+						$classColuna = "tabeladadosdestacadoamarelo";
+						$obs = $colecaoAlunos[$i][vopessoaturma::$nmAtrObservacao];
+						$mensagemAlerta = "onMouseOver=\"toolTip('$obs')\" onMouseOut=\"toolTip()\"";
+					}
+											
 					$html .= "<TD class='tabeladados' nowrap>" . complementarCharAEsquerda ( $voAtual->cd, "0", TAMANHO_CODIGOS ) . "</TD> \n";
 					$html .= "<TD class='tabeladados' >" . $voAtual->nome . "</TD> \n";
 					$html .= "<TD class='tabeladados' nowrap>" . documentoPessoa::getNumeroDocFormatado($doc) . "</TD> \n";
+					$html .= "<TD class='$classColuna' $mensagemAlerta>" . getMoeda($colecaoAlunos[$i][vopessoaturma::$nmAtrValor]) . "</TD> \n";
 					if(!$isDetalhamento){
 						$html .= "<TD class='tabeladados' nowrap>" .  getBorrachaJS("limparDadosPessoa($voAtual->cd);") . "</TD> \n";
 					}

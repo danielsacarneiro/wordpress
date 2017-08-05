@@ -19,13 +19,9 @@ if($isInclusao){
 	$nmFuncao = "INCLUIR ";	
 }else{
     $readonly = "readonly";
-	$chave = @$_GET["chave"];
-	$array = explode("*",$chave);
-	
-	$vo->cd = $array[0];
-    $vo->cdHistorico = $array[1];
-    $isHistorico = ("S" == $vo->cdHistorico);        
-	
+    $vo->getVOExplodeChave($chave);
+    $isHistorico = ($vo->sqHist != null && $vo->sqHist != "");
+    
 	$dbprocesso = $vo->dbprocesso;					
 	$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
 	$vo->getDadosBanco($colecao);
@@ -88,15 +84,23 @@ function confirmar() {
             <DIV id="div_filtro" class="div_filtro">
             <TABLE id="table_filtro" class="filtro" cellpadding="0" cellspacing="0">
             <TBODY>
+            
 			<TR>
-                <TH class="campoformulario" nowrap width=1%>Turma:</TH>
-                <TD class="campoformulario" colspan=3><INPUT type="text" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo($vo->descricao);?>"  class="camponaoobrigatorio" size="50" required></TD>
+                <TH class="campoformulario" nowrap width=1%>Pessoa:</TH>
+                <TD class="campoformulario" colspan=3><INPUT type="text" value="<?php echo($vo->getCodigoDEscricaoFormatado($vo->cdPessoa, $colecao[vopessoa::$nmAtrNome]));?>"  class="camporeadonly" size="50" readonly></TD>
             </TR>
+                <TH class="campoformulario" nowrap width=1%>Turma:</TH>
+                <TD class="campoformulario" colspan=3><INPUT type="text" value="<?php echo($vo->getCodigoDEscricaoFormatado($vo->cdTurma, $colecao[voturma::$nmAtrDescricao]));?>"  class="camporeadonly" size="50" readonly></TD>
+                
+				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo($vo->cdTurma);?>">
+				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdPessoa?>" name="<?=vopessoaturma::$nmAtrCdPessoa?>"  value="<?php echo($vo->cdPessoa);?>">						
+            </TR>
+            
 			<TR>
 	            <TH class="campoformulario" nowrap width=1%>Valor Mensal:</TH>
-	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=vopessoaturma::$nmAtrValor?>" name="<?=vopessoaturma::$nmAtrValor?>" required value="<?php echo(getMoeda($vo->valor));?>"
+	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=vopessoaturma::$nmAtrValor?>" name="<?=vopessoaturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
 	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" class="camponaoobrigatorioalinhadodireita" size="15" ></TD>
-	        </TR>					            
+	        </TR>
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Observação:</TH>
                 <TD class="campoformulario" colspan=3>

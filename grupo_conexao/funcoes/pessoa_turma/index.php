@@ -20,7 +20,7 @@ $isHistorico = ("S" == $cdHistorico);
 
 $vo = new vopessoaturma();
 $dbprocesso = $vo->dbprocesso;
-$colecao = $dbprocesso->consultarComPaginacao($vo, $filtro);
+$colecao = $dbprocesso->consultarFiltroManterPessoaTurma($filtro);
 
 if($filtro->temValorDefaultSetado){
 	;
@@ -35,7 +35,6 @@ $numTotalRegistros = $filtro->numTotalRegistros;
 <!DOCTYPE html>
 <HTML>
 <HEAD>
-<?=setTituloPagina($vo->getTituloJSP())?>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_radiobutton.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>tooltip.js"></SCRIPT>
@@ -65,50 +64,10 @@ function isFormularioValido() {
 	return true;
 }
 
-function limparFormulario() {	
-	for(i=0;i<frm_principal.length;i++){
-		frm_principal.elements[i].value='';
-	}	
-}
-
-function detalhar(isExcluir) {    
-    if(isExcluir == null || !isExcluir)
-        funcao = "<?=constantes::$CD_FUNCAO_DETALHAR?>";
-    else
-        funcao = "<?=constantes::$CD_FUNCAO_EXCLUIR?>";
-    
-    if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
-            return;
-    	
-	chave = document.frm_principal.rdb_consulta.value;	
-	lupa = document.frm_principal.lupa.value;
-	location.href="detalhar.php?funcao=" + funcao + "&chave=" + chave + "&lupa="+ lupa;
-}
-
-function excluir() {
-    detalhar(true);
-}
-
-function incluir() {
-	location.href="manter.php?funcao=<?=constantes::$CD_FUNCAO_INCLUIR?>";
-}
-
-function alterar() {
-    if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
-            return;
-        
-    <?php
-    if($isHistorico){
-    	echo "exibirMensagem('Registro de historico nao permite alteracao.');return";
-    }?>
-    
-	chave = document.frm_principal.rdb_consulta.value;	
-	location.href="manter.php?funcao=<?=constantes::$CD_FUNCAO_ALTERAR?>&chave=" + chave;
-
-}
-
+<?=getFuncoesJSGenericas("document.frm_principal.rdb_consulta", $isHistorico);?>
 </SCRIPT>
 </HEAD>
+<?=setTituloPagina($vo->getTituloJSP())?>
 <BODY class="paginadados" onload="">
 	  
 <FORM name="frm_principal" method="post" action="index.php?consultar=S">
@@ -141,7 +100,7 @@ function alterar() {
 			<TR>
 				<TH class="campoformulario" width="1%" nowrap>Cd.Pessoa:</TH>
                 <TD class="campoformulario"  width="1%">
-					<INPUT type="text" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdPessoa, "0", 5));?>"  class="camponaoobrigatorio" size="6" ></TD>                
+					<INPUT type="text" id="<?=vopessoaturma::$nmAtrCdPessoa?>" name="<?=vopessoaturma::$nmAtrCdPessoa?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdPessoa, "0", 5));?>"  class="camponaoobrigatorio" size="6" ></TD>                
                 <TH class="campoformulario" width="1%" nowrap>Nome:</TH>
                 <TD class="campoformulario">
 					<INPUT type="text" id="<?=vopessoa::$nmAtrNome?>" name="<?=vopessoa::$nmAtrNome?>"  value="<?php echo($filtro->nome);?>"  class="camponaoobrigatorio" size="50" ></TD>
@@ -159,8 +118,10 @@ function alterar() {
              <TBODY>
                 <TR>
                   <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
-                    <TH class="headertabeladados" width="1%">Código</TH>
-                    <TH class="headertabeladados" width="98%">Descrição</TH>
+                    <TH class="headertabeladados" width="1%">Cd.Pessoa</TH>
+                    <TH class="headertabeladados" width="60%">Nome</TH>
+                    <TH class="headertabeladados" width="1%">Cd.Turma</TH>
+                    <TH class="headertabeladados" width="35%">Descrição</TH>
                     <TH class="headertabeladados" width="1%">Valor</TH>
                 </TR>
                 <?php								
@@ -169,7 +130,7 @@ function alterar() {
                 else 
                         $tamanho = 0;			
                
-                 $colspan=4;
+                 $colspan=6;
                  if($isHistorico){
                  	$colspan++;
                  }                        
@@ -182,8 +143,10 @@ function alterar() {
                     <TD class="tabeladados">
                     <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
                     </TD>
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($colecao[$i][vopessoaturma::$nmAtrCd], "0", TAMANHO_CODIGOS);?></TD>
-                    <TD class="tabeladados"><?php echo $colecao[$i][vopessoaturma::$nmAtrDescricao];?></TD>
+                    <TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->cdPessoa);?></TD>
+                    <TD class="tabeladados"><?php echo $colecao[$i][vopessoa::$nmAtrNome];?></TD>
+                    <TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->cdTurma);?></TD>
+                    <TD class="tabeladados"><?php echo $colecao[$i][voturma::$nmAtrDescricao];?></TD>
                     <TD class="tabeladados"><?php echo getMoeda($voAtual->valor);?></TD>                    
                 </TR>					
                 <?php
@@ -211,7 +174,14 @@ function alterar() {
                        <TD>
                         <TABLE class="barraacoesaux" cellpadding="0" cellspacing="0">
 	                   	<TR>
-	                   		<?=getBotoesRodape();?>
+	                   		<?php 
+	                   		
+	                   		$arrayBotoesARemover = array (
+	                   				constantes::$CD_FUNCAO_INCLUIR
+	                   		);
+	                   		echo getBotoesRodapeComRestricao ( $arrayBotoesARemover, true );	                   		
+	                   			                   		
+	                   		?>
                          </TR>
                          </TABLE>
 	                   </TD>

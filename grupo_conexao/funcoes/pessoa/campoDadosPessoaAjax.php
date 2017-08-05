@@ -75,7 +75,7 @@ function imprimeGridAlunosTurma($chave, $funcao, $colecaoCdAlunos) {
 	
 	$recordSet = "";
 	if ($colecaoCdAlunos != null) {
-		$recordSet = consultarPessoas ( $colecaoCdAlunos );
+		$recordSet = consultarPessoasTurma ( $colecaoCdAlunos );
 		putObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS, $colecaoCdAlunos );
 	}
 	// var_dump($recordSet);
