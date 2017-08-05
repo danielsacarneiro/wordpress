@@ -41,7 +41,6 @@ Class voContratoInfo extends voentidade{
 		$this->temTabHistorico = true;
 		//por enquanto nao tem tabela relacionada que impeca a exclusao do registro principal
 		//diferente do voDemanda, por ex
-		$this->temTabsRelacionamentoQueImpedemExclusaoDireta = false;
 		
 		$class = self::getNmClassProcesso();
 		$this->dbprocesso= new $class();

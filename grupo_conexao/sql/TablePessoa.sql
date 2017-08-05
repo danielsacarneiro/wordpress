@@ -3,6 +3,7 @@ ALTER DATABASE unct CHARACTER SET utf8 COLLATE utf8_general_ci;
 -- ALTER TABLE pessoa DROP FOREIGN KEY fk_pessoa_usuario;
 drop table pessoa_vinculo;
 drop table pessoa;
+drop table pessoa_hist;
 CREATE TABLE pessoa (
 	pe_cd INT NOT NULL AUTO_INCREMENT,
     pe_nome VARCHAR(150),
@@ -29,12 +30,11 @@ CREATE TABLE pessoa (
         
     CONSTRAINT pk PRIMARY KEY (pe_cd)
 );    
-ALTER TABLE pessoa ADD UNIQUE KEY chave_doc_pessoa (pe_doc_cpf); 
+-- ALTER TABLE pessoa ADD UNIQUE KEY chave_doc_pessoa (pe_doc_cpf); 
 -- ALTER TABLE pessoa CHANGE COLUMN pe_tel pe_tel VARCHAR(100) NULL DEFAULT NULL ;
     
 -- ALTER TABLE pessoa DROP FOREIGN KEY fk_pessoa_usuario;
 
-drop table pessoa_hist;
 CREATE TABLE pessoa_hist (
 	hist INT NOT NULL AUTO_INCREMENT,
 	pe_cd INT NOT NULL,
@@ -66,7 +66,6 @@ CREATE TABLE pessoa_hist (
     CONSTRAINT pk PRIMARY KEY (hist)
 );
 
-drop table pessoa_vinculo;
 CREATE TABLE pessoa_vinculo (
 	vi_cd INT NOT NULL,
     pe_cd INT NOT NULL,

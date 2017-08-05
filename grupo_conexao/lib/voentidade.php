@@ -4,6 +4,7 @@ include_once (caminho_util . "bibliotecaFuncoesPrincipal.php");
 class voentidade extends multiplosConstrutores {
 	static $nmTabelaSufixoHistorico = "_hist";
 	static $nmTabelaSufixoSequencial = "_seq";
+	static $nmAtrTemDesativado = "TemDesativado";
 	static $nmAtrSqHist = "hist";
 	static $nmAtrDhInclusao = "dh_inclusao";
 	static $nmAtrDhUltAlteracao = "dh_ultima_alt";
@@ -21,9 +22,6 @@ class voentidade extends multiplosConstrutores {
 	var $varAtributosARemover;
 	var $temTabHistorico;
 	
-	// atributo que indica se a entidade implementa a desativacao
-	// a desativacao soh eh necessaria quando ha tabelas de relacionamento que impedem a exclusao direta
-	var $temTabsRelacionamentoQueImpedemExclusaoDireta;
 	var $dbprocesso = "";
 	var $dhInclusao;
 	var $dhUltAlteracao;
@@ -52,7 +50,6 @@ class voentidade extends multiplosConstrutores {
 		$this->cdUsuarioUltAlteracao = id_user;
 		$this->NM_METODO_RETORNO_CONFIRMAR = null;
 		$this->temTabHistorico = true;
-		$this->temTabsRelacionamentoQueImpedemExclusaoDireta = true;
 		
 		// cria a classe processo para todo vo
 		/*
@@ -300,9 +297,6 @@ class voentidade extends multiplosConstrutores {
 	}
 	function temTabHistorico() {
 		return $this->temTabHistorico;
-	}
-	function temTabsRelacionamentoQueImpedemExclusaoDireta() {
-		return $this->temTabsRelacionamentoQueImpedemExclusaoDireta;
 	}
 	function getValoresWhereSQLChaveSemNomeTabela($isHistorico) {
 		return str_replace ( $this->getNmTabelaEntidade ( $isHistorico ) . ".", "", $this->getValoresWhereSQLChave ( $isHistorico ) );

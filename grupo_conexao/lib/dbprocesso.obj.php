@@ -419,9 +419,9 @@ class dbprocesso {
 		return $retorno;
 	}
 	function desativarOuExcluirPrincipal($voEntidade) {
-		// exclui o principal em caso de nao ter historico ou, ainda que tenha, nao implementa a desativacao
+		// exclui o principal em caso de nao ter historico 
 		// a desativacao soh eh necessaria quando ha tabelas de relacionamento que impedem a exclusao direta
-		if (! $voEntidade->temTabHistorico () || ! $voEntidade->temTabsRelacionamentoQueImpedemExclusaoDireta ()) {
+		if (! $voEntidade->temTabHistorico ()) {
 			// exclusao simples
 			$query = $this->excluirSQL ( $voEntidade, $isHistorico );
 		} else {
@@ -445,8 +445,8 @@ class dbprocesso {
 		// echo "entrou temhistorico";
 		// se eh o registro de historico, deve verificar se pode excluir o registro desativado na tabela principal
 		// so pode excluir o registro principal se eh o ultimo historico e nao ha outro registro ativo
-		// a validacao so eh feita se o voentidade implementa a desativacao (quando tem tabelas relacionadas que nao permitem exclusao direta)
-		if ($voEntidade->temTabsRelacionamentoQueImpedemExclusaoDireta () && $this->permiteExclusaoPrincipal ( $voEntidade )) {
+		// (quando tem tabelas relacionadas que nao permitem exclusao direta)
+		if ($this->permiteExclusaoPrincipal ( $voEntidade )) {
 			// echo "entrou aqui permiteExclusaoPrincipal";
 			// exclui o registro desativado na tabela principal
 			$query = $this->excluirHistoricoEPrincipalSQL ( $voEntidade );
@@ -639,7 +639,7 @@ class dbprocesso {
 	 * se o vo implementar a desativacao, trara sempre a quantidade de historicos + 1 (+ o registro desativado na tabela principal)
 	 * se nao implementar, traz apenas a quantidade de historicos pra certa chave
 	 */
-	function consultarSituacaoHistorico($vo) {
+	function permiteExclusaoPrincipal($vo) {
 		$nmTabela = $vo->getNmTabelaEntidade ( false );
 		$nmTabelaHistorico = $vo->getNmTabelaEntidade ( true );
 		$arrayColunasRetornadas = $vo->getAtributosChavePrimaria ();
@@ -647,6 +647,7 @@ class dbprocesso {
 		$querySelect .= "SELECT ";
 		$querySelect .= getSQLStringFormatadaColecaoIN ( $arrayColunasRetornadas, false );
 		$querySelect .= ", null  AS " . voentidade::$nmAtrSqHist;
+		$querySelect .= ", 1  AS " . voentidade::$nmAtrTemDesativado;
 		$querySelect .= " FROM " . $nmTabela;
 		$querySelect .= " WHERE ";
 		$querySelect .= $vo->getValoresWhereSQLChave ( false );
@@ -657,29 +658,32 @@ class dbprocesso {
 		
 		$querySelect .= "\n\n UNION \n\n SELECT ";
 		$querySelect .= getSQLStringFormatadaColecaoIN ( $arrayColunasRetornadas, false );
+		$querySelect .= ", 0  AS " . voentidade::$nmAtrTemDesativado;
 		$querySelect .= " FROM " . $nmTabelaHistorico;
 		$querySelect .= " WHERE ";
 		$querySelect .= $vo->getValoresWhereSQLChaveSemNomeTabela ( false );
 		
-		// echo $querySelect;
+		 //echo "<br>" . $querySelect;
+		 $temDesativado = false;
 		try {
 			$colecao = $this->consultarEntidadeComValidacao ( $querySelect, false, true );
-			$retorno = count ( $colecao );
+			
+			foreach ($colecao as $registro){
+				if($registro[voentidade::$nmAtrTemDesativado] == 1){
+					$temDesativado = true;
+					break;
+				}
+			}
+			$countColecao= count ( $colecao );
 		} catch ( excecaoConsultaVazia $ex ) {
 			//throw new excecaoGenerica ( "Erro ao excluir histórico. Inexiste histórico a ser excluído." );
-			$retorno = 0;
+			$countColecao= 0;
 		}
 		// se consulta vazia levanta excecao
 
-		// echo "valor do parametro de permissao de exclusao principal:".$retorno;
-		return $retorno;
-	}
-	function permiteExclusaoPrincipal($vo) {
-		$countColecao = $this->consultarSituacaoHistorico ( $vo );
-		
 		// se a qtd de registro for igual a 2, eh o proprio registro consultado, temos o registro de historico + o registro desativado
 		// eh essa situacao que permite a exclusao do principal quando a desativacao eh implementada
-		$retorno = ($vo->isHistorico () && $countColecao == 2);
+		$retorno = ($vo->isHistorico () && $countColecao == 2 && $temDesativado);
 		
 		// echo "<br> valor retorno booleano:". $retorno;
 		return $retorno;
