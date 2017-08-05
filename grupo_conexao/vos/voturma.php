@@ -3,15 +3,20 @@ include_once (caminho_lib . "voentidade.php");
 class voturma extends voentidade {
 	static $NM_DIV_COLECAO_ALUNOS = "NM_DIV_COLECAO_ALUNOS";
 	static $ID_REQ_COLECAO_ALUNOS = "ID_REQ_COLECAO_ALUNOS";
+	static $ID_REQ_DURACAO = "ID_REQ_DURACAO";
 	static $nmAtrCd = "tu_cd";
 	static $nmAtrDescricao = "tu_ds";
 	static $nmAtrValor = "tu_valor";
 	static $nmAtrObservacao = "tu_obs";
+	static $nmAtrDtInicio = "tu_dtinicio";
+	static $nmAtrDtFim = "tu_dtfim";
 
 	var $cd = "";
 	var $descricao = "";
 	var $valor = "";
 	var $obs = "";
+	var $dtInicio = "";
+	var $dtFim = "";
 	var $colecaoAlunos = "";
 	
 	// ...............................................................
@@ -53,6 +58,8 @@ class voturma extends voentidade {
 				self::$nmAtrCd,
 				self::$nmAtrDescricao,
 				self::$nmAtrValor,
+				self::$nmAtrDtInicio,
+				self::$nmAtrDtFim,
 				self::$nmAtrObservacao 
 		);
 		
@@ -63,6 +70,10 @@ class voturma extends voentidade {
 		$this->cd = $registrobanco [self::$nmAtrCd];
 		$this->descricao = $registrobanco [self::$nmAtrDescricao];
 		$this->valor = $registrobanco [self::$nmAtrValor];
+		
+		$this->dtInicio = $registrobanco [self::$nmAtrDtInicio];
+		$this->dtFim = $registrobanco [self::$nmAtrDtFim];
+		
 		$this->obs = $registrobanco [self::$nmAtrObservacao];	
 	}
 	function getDadosChaveOperacaoMaixComplexa($registrobanco) {
@@ -73,6 +84,10 @@ class voturma extends voentidade {
 		$this->cd = @$_POST [self::$nmAtrCd];
 		$this->descricao = @$_POST [self::$nmAtrDescricao];
 		$this->valor = @$_POST [self::$nmAtrValor];
+		
+		$this->dtInicio = @$_POST[self::$nmAtrDtInicio];
+		$this->dtFim = @$_POST[self::$nmAtrDtFim];
+		
 		$this->obs = @$_POST [self::$nmAtrObservacao];
 		
 		$this->colecaoAlunos = @$_POST [self::$ID_REQ_COLECAO_ALUNOS];

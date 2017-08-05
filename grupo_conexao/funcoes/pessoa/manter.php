@@ -67,10 +67,10 @@ function isFormularioValido() {
 
 	<?php 
 	if($isInclusao){?>
-		if (!validaFoto()){
+		/*if (!validaFoto()){
 			exibirMensagem("Selecione uma foto!");
 			return false;	
-		}
+		}*/
 	<?php
 	}?>
 		
@@ -257,7 +257,7 @@ function iniciar(){
             </TR>    
             <?php
             $nmCampoFoto = vopessoa::$nmAtrFoto;
-            if(!$isInclusao){
+            if(!$isInclusao && $vo->foto != null){
             	$foto = vopessoa::getNMPastaDestinoFotos(true). $vo->foto;
             }else{
             	$foto = pasta_imagens . vopessoa::$NM_IMAGEM_SELECIONE_FOTO;

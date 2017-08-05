@@ -24,6 +24,8 @@ class dbturma extends dbprocesso {
 		$atributosConsulta = $nmTabelaTurma. "." . voturma::$nmAtrCd;
 		$atributosConsulta .= "," . $nmTabelaTurma. "." . voturma::$nmAtrDescricao;
 		$atributosConsulta .= "," . $nmTabelaTurma. "." . voturma::$nmAtrValor;
+		$atributosConsulta .= "," . $nmTabelaTurma. "." . voturma::$nmAtrDtInicio;
+		$atributosConsulta .= "," . $nmTabelaTurma. "." . voturma::$nmAtrDtFim;
 		
 		$querySelect = "SELECT " . $atributosConsulta;
 		
@@ -77,7 +79,7 @@ class dbturma extends dbprocesso {
 		try {
 			$voturma = $this->incluirTurma ( $voturma );
 			
-			if ($voturma->colecaoAlunos != null) {
+			if (!isColecaoVazia($voturma->colecaoAlunos)) {
 				$this->incluirPessoaTurma ( $voturma );
 			}			
 			// End transaction
@@ -91,7 +93,7 @@ class dbturma extends dbprocesso {
 		
 		return $voturma;
 	}
-	function incluirPessoaTurma($voturma) {
+	function incluirPessoaTurma($voturma) {		
 		foreach ( $voturma->colecaoAlunos as $cdAluno) {			
 			$vopeturma = new vopessoaturma ();
 			$vopeturma->cdTurma = $voturma->cd;
@@ -186,7 +188,9 @@ class dbturma extends dbprocesso {
 		$retorno = "";
 		$retorno .= $this->getVarComoNumero ( $voturma->cd ) . ",";
 		$retorno .= $this->getVarComoString ( $voturma->descricao ) . ",";
-		$retorno .= $this->getVarComoDecimal ( $voturma->valor ) . ",";
+		$retorno .= $this->getVarComoDecimal ( $voturma->valor ) . ",";		
+		$retorno .= $this->getVarComoData ( $voturma->dtInicio) . ",";
+		$retorno .= $this->getVarComoData ( $voturma->dtFim) . ",";
 		$retorno .= $this->getVarComoString ( $voturma->obs );
 		
 		$retorno .= $voturma->getSQLValuesInsertEntidade ();
@@ -204,6 +208,16 @@ class dbturma extends dbprocesso {
 		
 		if ($vo->valor != null) {
 			$retorno .= $sqlConector . voturma::$nmAtrValor . " = " . $this->getVarComoDecimal ( $vo->valor );
+			$sqlConector = ",";
+		}
+		
+		if ($vo->dtInicio != null) {
+			$retorno .= $sqlConector . voturma::$nmAtrDtInicio . " = " . $this->getVarComoData( $vo->dtInicio );
+			$sqlConector = ",";
+		}
+		
+		if ($vo->dtFim != null) {
+			$retorno .= $sqlConector . voturma::$nmAtrDtFim . " = " . $this->getVarComoData( $vo->dtFim);
 			$sqlConector = ",";
 		}
 		

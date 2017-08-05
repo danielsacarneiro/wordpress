@@ -141,7 +141,7 @@ class vopessoa extends voentidade {
 	function getDadosFormulario() {
 		$this->cd = @$_POST [vopessoa::$nmAtrCd];
 		$this->nome = strtoupper(@$_POST [vopessoa::$nmAtrNome]);
-		$this->responsavel = @$_POST [vopessoa::$nmAtrResponsavel];
+		$this->responsavel = strtoupper(@$_POST [vopessoa::$nmAtrResponsavel]);
 		$this->email = @$_POST [vopessoa::$nmAtrEmail];
 		$this->tel = @$_POST [vopessoa::$nmAtrTel];
 		$this->telWapp = @$_POST [vopessoa::$nmAtrTelWapp];
@@ -224,8 +224,10 @@ class vopessoa extends voentidade {
 		 * }
 		 * }
 		 */
-		$arquivo = self::getNMPastaDestinoFotos() . $this->foto;
-		self::excluirArquivo ( $arquivo );
+		if($this->foto != null){
+			$arquivo = self::getNMPastaDestinoFotos() . $this->foto;
+			self::excluirArquivo ( $arquivo );
+		}
 		// echo (caminho_funcoes.self::getNmTabela()."/".self::getNMPastaDestinoFotos() . $this->foto);
 	}
 	
@@ -239,8 +241,10 @@ class vopessoa extends voentidade {
 		
 		$funcao = @$_POST ["funcao"];
 		$isInclusao = $funcao == constantes::$CD_FUNCAO_INCLUIR;
+		$isAlteracao = $funcao == constantes::$CD_FUNCAO_ALTERAR;
 		
-		if ($isInclusao) {
+		$nomeFinal = @$_POST [vopessoa::$nmAtrFoto];
+		if ($isInclusao || $isAlteracao) {
 			if (isFileUploadValido ( $imagem )) {
 				$this->criaPastaFotos ();
 				//echo "tem arquivo";
@@ -249,12 +253,10 @@ class vopessoa extends voentidade {
 				if (! move_uploaded_file ( $imagem ['tmp_name'], self::getNMPastaDestinoFotos() . $nomeFinal )) {
 					throw new excecaoGenerica ( "Erro na gravação da foto! Nome da foto:" . $nomeFinal . " | Nome do arquivo:" . $imagem ['name'] );
 				}
-			} else {
+			} /*else {
 				throw new excecaoGenerica ( "Foto é obrigatória!" );
-			}
-		} else {
-			$nomeFinal = @$_POST [vopessoa::$nmAtrFoto];
-		}
+			}*/
+		} 
 		
 		$this->foto = $nomeFinal;
 	}

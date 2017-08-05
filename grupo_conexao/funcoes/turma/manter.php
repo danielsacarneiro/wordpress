@@ -47,6 +47,7 @@ $nome  = $vo->descricao;
 <HEAD>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_moeda.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_datahora.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_ajax.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_pessoa.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>mensagens_globais.js"></SCRIPT>
@@ -117,7 +118,14 @@ function limparDadosPessoa(cdPessoa) {
 // Verifica se o formulario esta valido para alteracao, exclusao ou detalhamento
 function isFormularioValido() {
 	if (!isCampoMoedaComSeparadorMilharValido(document.frm_principal.<?=voturma::$nmAtrValor?>, 2, false))
-		return false;		
+		return false;
+
+	dataInicio = document.frm_principal.<?=voturma::$nmAtrDtInicio?>;
+	dataFim = document.frm_principal.<?=voturma::$nmAtrDtFim?>;
+	if(!isPeriodoValido(dataInicio, dataFim, true, true, true, false, true)) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -134,6 +142,17 @@ function confirmar() {
 	return confirm("Confirmar Alteracoes?");    
 }
 
+function getNumDuracao(){
+	try{
+		num = getQtMeses(document.frm_principal.<?=voturma::$nmAtrDtInicio?>.value, document.frm_principal.<?=voturma::$nmAtrDtFim?>.value);
+		if(!isNaN(num) && num >= 0)
+			document.frm_principal.<?=voturma::$ID_REQ_DURACAO?>.value = num;
+		else
+			document.frm_principal.<?=voturma::$ID_REQ_DURACAO?>.value = '';
+	}catch(err){
+		document.frm_principal.<?=voturma::$ID_REQ_DURACAO?>.value = '';
+	};
+}
 </SCRIPT>
 </HEAD>
 <?=setTituloPagina($vo->getTituloJSP())?>
@@ -169,7 +188,36 @@ function confirmar() {
 	            <TH class="campoformulario" nowrap width=1%>Valor Mensal:</TH>
 	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" required value="<?php echo(getMoeda($vo->valor));?>"
 	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" class="camponaoobrigatorioalinhadodireita" size="15" ></TD>
-	        </TR>					            
+	        </TR>
+			<TR>
+	            <TH class="campoformulario" nowrap width="1%">Período:</TH>
+	            <TD class="campoformulario" colspan=3>
+	            	Dt.Início: <INPUT type="text" 
+	            	       id="<?=voturma::$nmAtrDtInicio?>" 
+	            	       name="<?=voturma::$nmAtrDtInicio?>" 
+	            			value="<?php echo(getData($vo->dtInicio));?>"
+	            			onkeyup="formatarCampoData(this, event, false);" 
+	            			onChange="getNumDuracao();" 
+	            			class="camponaoobrigatorio" 
+	            			size="10" 
+	            			maxlength="10" required>
+				a Dt.Fim:
+	            	<INPUT type="text" 
+	            	       id="<?=voturma::$nmAtrDtFim?>" 
+	            	       name="<?=voturma::$nmAtrDtFim?>" 
+	            			value="<?php echo(getData($vo->dtFim));?>"
+	            			onkeyup="formatarCampoData(this, event, false);"
+		            		onChange="getNumDuracao();" 
+	            			class="camponaoobrigatorio" 
+	            			size="10" 
+	            			maxlength="10">
+	            Duração:
+	             <INPUT type="text" name = "<?=voturma::$ID_REQ_DURACAO?>" value="<?php if($vo->dtFim != null) echo getQtdMesesEntreDatas($vo->dtInicio, $vo->dtFim);?>"  class="camporeadonlyalinhadodireita" size="3" readonly> mes(es)
+	             </TD>
+	            </TR>                            
+	            			
+				</TD>                
+            </TR>	        
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Observação:</TH>
                 <TD class="campoformulario" colspan=3>

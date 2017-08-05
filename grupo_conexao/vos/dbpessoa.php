@@ -131,7 +131,21 @@ class dbpessoa extends dbprocesso {
 		// echo $query;
 		return $this->atualizarEntidade ( $query );
 	}
-
+	//artificio para permitir incluir foto na alteracao
+	//apenas sera feito isso uma vez
+	//assim, todos os registros historicos que nao tinham passam a ter foto
+	//tudo isso para garantir a exclusao da foto quando da exclusao de todos os historicos indepedente da ordem de exclusao
+	function alterarFotosDeTodosHistoricos($vopessoa) {		
+		$vo = new vopessoa ();
+		$nmTabela = $vo->getNmTabelaEntidade ( true );
+		$query = "UPDATE " . $nmTabela;
+		$query .= " SET " . vopessoa::$nmAtrFoto . " = " . getVarComoString($vopessoa->foto);
+		$query .= "\n WHERE " . vopessoa::$nmAtrCd . " = " . $vopessoa->cd;
+		
+		// echo $query;
+		return $this->atualizarEntidade ( $query );
+	}
+	
 	function incluirPessoa($vopessoa) {
 		$vopessoa->cd = $this->getProximoSequencial ( vopessoa::$nmAtrCd, $vopessoa );
 		
@@ -152,14 +166,23 @@ class dbpessoa extends dbprocesso {
 		// Start transaction
 		$this->cDb->retiraAutoCommit ();
 		try {
+			$foto = $vopessoa->foto;
 			$this->excluirPessoaVinculo ( $vopessoa );
 			$this->incluirPessoaVinculo ( $vopessoa );
 						
-			$vopessoa = parent::alterar ( $vopessoa );
+			parent::alterar ( $vopessoa );
+			
+			//se foto for nao nulo, quer dizer que antes era nulo e o sistema permitiu alterar para passar a ter uma foto
+			//isso so pode acontecer no caso de na inclusao nao ter sido incluida foto!
+			if( $foto != null){
+				$vopessoa->foto = $foto;
+				$this->alterarFotosDeTodosHistoricos( $vopessoa );
+			}
 			
 			// End transaction
 			$this->cDb->commit ();
 		} catch ( Exception $e ) {
+			$vopessoa->excluirFoto();
 			$this->cDb->rollback ();
 			throw new Exception ( $e->getMessage () );
 		}
@@ -283,10 +306,10 @@ class dbpessoa extends dbprocesso {
 			$sqlConector = ",";
 		}
 		
-		/*if ($vo->foto != null) {
+		if ($vo->foto != null) {
 			$retorno .= $sqlConector . vopessoa::$nmAtrFoto . " = " . $this->getVarComoString ( $vo->foto );
 			$sqlConector = ",";
-		}*/
+		}
 		
 		if ($vo->obs != null) {
 			$retorno .= $sqlConector . vopessoa::$nmAtrObservacao . " = " . $this->getVarComoString ( $vo->obs );

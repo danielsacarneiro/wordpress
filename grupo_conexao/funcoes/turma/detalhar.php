@@ -110,7 +110,29 @@ function confirmar() {
 	            <TH class="campoformulario" nowrap width=1%>Valor Mensal:</TH>
 	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
 	            class="camporeadonlyalinhadodireita" size="15" readonly></TD>
-	        </TR>					            
+	        </TR>
+			<TR>
+	            <TH class="campoformulario" nowrap width="1%">Período:</TH>
+	            <TD class="campoformulario" colspan=3>
+	            	Dt.Início: <INPUT type="text" 
+	            	       id="<?=voturma::$nmAtrDtInicio?>" 
+	            	       name="<?=voturma::$nmAtrDtInicio?>" 
+	            			value="<?php echo(getData($vo->dtInicio));?>"
+	            			class="camporeadonly" 
+	            			size="10" 
+	            			maxlength="10" readonly>
+				a Dt.Fim:
+	            	<INPUT type="text" 
+	            	       id="<?=voturma::$nmAtrDtFim?>" 
+	            	       name="<?=voturma::$nmAtrDtFim?>" 
+	            			value="<?php echo(getData($vo->dtFim));?>" 
+	            			class="camporeadonly" 
+	            			size="10" 
+	            			maxlength="10" readonly>
+	            Duração:
+	             <INPUT type="text" name = "<?=voturma::$ID_REQ_DURACAO?>" value="<?php if($vo->dtFim != null) echo getQtdMesesEntreDatas($vo->dtInicio, $vo->dtFim);?>"  class="camporeadonlyalinhadodireita" size="3" readonly> mes(es)
+	             </TD>
+	        </TR>	        
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Observação:</TH>
                 <TD class="campoformulario" colspan=3>

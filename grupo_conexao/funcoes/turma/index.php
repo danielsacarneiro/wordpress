@@ -162,6 +162,8 @@ function alterar() {
                     <TH class="headertabeladados" width="1%">Código</TH>
                     <TH class="headertabeladados" width="98%">Descrição</TH>
                     <TH class="headertabeladados" width="1%">Valor</TH>
+                    <TH class="headertabeladados" width="1%">Dt.Início</TH>
+                    <TH class="headertabeladados" width="1%">Dt.Fim</TH>
                 </TR>
                 <?php								
                 if (is_array($colecao))
@@ -169,7 +171,7 @@ function alterar() {
                 else 
                         $tamanho = 0;			
                
-                 $colspan=4;
+                 $colspan=6;
                  if($isHistorico){
                  	$colspan++;
                  }                        
@@ -184,7 +186,9 @@ function alterar() {
                     </TD>
                     <TD class="tabeladados"><?php echo complementarCharAEsquerda($colecao[$i][voturma::$nmAtrCd], "0", TAMANHO_CODIGOS);?></TD>
                     <TD class="tabeladados"><?php echo $colecao[$i][voturma::$nmAtrDescricao];?></TD>
-                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($voAtual->valor);?></TD>                    
+                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($voAtual->valor);?></TD>
+                    <TD class="tabeladadosalinhadodireita"><?php echo getData($voAtual->dtInicio);?></TD>
+                    <TD class="tabeladadosalinhadodireita"><?php echo getData($voAtual->dtFim);?></TD>
                 </TR>					
                 <?php
 				}				
