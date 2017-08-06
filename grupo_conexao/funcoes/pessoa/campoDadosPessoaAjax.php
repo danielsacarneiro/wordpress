@@ -8,13 +8,9 @@ $chave = @$_GET ["chavePessoa"];
 $funcao = @$_GET ["funcao"];
 // echo "chave = $chave and funcao = $funcao";
 
-// pega do $voCamposDadosPessoaAjax que foi chamado no detalhamento da turma
-// mas somente se a $chave nao tiver sido passada, quando tera alguma operacao sobre a colecao
-if ($voCamposDadosPessoaAjax != null) {
-	$colecaoCdAlunos = $voCamposDadosPessoaAjax->colecaoAlunos;
-}
+//$voCamposDadosPessoaAjax vem eventualmente da pagina que chamou
 
-echo imprimeGridAlunosTurma ( $chave, $funcao, $colecaoCdAlunos );
+echo imprimeGridAlunosTurma ( $chave, $funcao, $voCamposDadosPessoaAjax);
 function incluirChave($chave, $array) {
 	// var_dump($chave);
 	$arrayChave = explode ( constantes::$CD_CAMPO_SEPARADOR_ARRAY, $chave );
@@ -36,7 +32,13 @@ function incluirArrayNoArray($arrayAIncluir, $array) {
 	
 	return $array;
 }
-function imprimeGridAlunosTurma($chave, $funcao, $colecaoCdAlunos) {
+function imprimeGridAlunosTurma($chave, $funcao, $voCamposDadosPessoaAjax) {
+	// pega do $voCamposDadosPessoaAjax que foi chamado no detalhamento da turma
+	// mas somente se a $chave nao tiver sido passada, quando tera alguma operacao sobre a colecao
+	if ($voCamposDadosPessoaAjax != null) {
+		$colecaoCdAlunos = $voCamposDadosPessoaAjax->colecaoAlunos;
+	}
+	
 	$html = "";
 	$isInclusao = $funcao == constantes::$CD_FUNCAO_INCLUIR;
 	$isDetalhamento = $funcao == constantes::$CD_FUNCAO_DETALHAR || $funcao == constantes::$CD_FUNCAO_EXCLUIR;
@@ -75,7 +77,7 @@ function imprimeGridAlunosTurma($chave, $funcao, $colecaoCdAlunos) {
 	
 	$recordSet = "";
 	if ($colecaoCdAlunos != null) {
-		$recordSet = consultarPessoasTurma ( $colecaoCdAlunos );
+		$recordSet = consultarPessoasTurma ( $colecaoCdAlunos, $voCamposDadosPessoaAjax->cd);
 		putObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS, $colecaoCdAlunos );
 	}
 	// var_dump($recordSet);

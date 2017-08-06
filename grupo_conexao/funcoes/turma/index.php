@@ -35,7 +35,6 @@ $numTotalRegistros = $filtro->numTotalRegistros;
 <!DOCTYPE html>
 <HTML>
 <HEAD>
-<?=setTituloPagina($vo->getTituloJSP())?>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_radiobutton.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>tooltip.js"></SCRIPT>
@@ -109,6 +108,7 @@ function alterar() {
 
 </SCRIPT>
 </HEAD>
+<?=setTituloPagina($vo->getTituloJSP())?>
 <BODY class="paginadados" onload="">
 	  
 <FORM name="frm_principal" method="post" action="index.php?consultar=S">

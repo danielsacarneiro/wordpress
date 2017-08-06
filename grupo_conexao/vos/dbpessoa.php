@@ -55,7 +55,11 @@ class dbpessoa extends dbprocesso {
 		$atributosConsulta .= "," . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCd;
 		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrValor;
 		$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrObservacao;
-		$atributosConsulta .= ",COALESCE(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "," . $nmTabelaTurma. "." . voturma::$nmAtrValor. ") AS " . vopessoaturma::$nmAtrValor;
+		if($filtro->cdTurma != null){
+			$atributosConsulta .= ",COALESCE(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "," . $nmTabelaTurma. "." . voturma::$nmAtrValor. ") AS " . vopessoaturma::$nmAtrValor;
+		}/*else{
+			$atributosConsulta .= ",COALESCE(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "," . $nmTabelaTurma. "." . voturma::$nmAtrValor. ") AS " . vopessoaturma::$nmAtrValor;
+		}*/
 		
 		$querySelect = "SELECT " . $atributosConsulta;
 		

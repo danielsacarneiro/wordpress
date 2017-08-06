@@ -50,7 +50,7 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 					$doc = $voAtual->docRG;
 					$classColuna = "tabeladados";
 					
-					$temValorDiferenciado = $colecaoAlunos[$i][voturma::$nmAtrValor] != $colecaoAlunos[$i][vopessoaturma::$nmAtrValor];
+					$temValorDiferenciado = $colecaoAlunos[$i][vopessoaturma::$nmAtrValor] != null && $colecaoAlunos[$i][voturma::$nmAtrValor] != $colecaoAlunos[$i][vopessoaturma::$nmAtrValor];
 					$mensagemAlerta= "";
 					if($temValorDiferenciado){
 						$classColuna = "tabeladadosdestacadoamarelo";

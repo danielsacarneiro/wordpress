@@ -12,6 +12,7 @@ class filtroManterPessoa extends filtroManter{
     // ...............................................................
 	// construtor
     var $cd;
+    var $cdTurma;
     var $colecaoCd;
     var $doc;
     var $nome;
@@ -20,6 +21,7 @@ class filtroManterPessoa extends filtroManter{
 	
 	function getFiltroFormulario(){		
 		$this->cd = @$_POST[vopessoa::$nmAtrCd];
+		$this->cdTurma = @$_POST[voturma::$nmAtrCd];
 		//$this->cdGestor = @$_POST[vopessoa::$nmAtrCdGestor];
 		$this->doc = @$_POST[vopessoa::$nmAtrDocCPF];
 		$this->nome = @$_POST[vopessoa::$nmAtrNome];
@@ -43,6 +45,7 @@ class filtroManterPessoa extends filtroManter{
 		$isHistorico = $this->isHistorico();
         $nmTabela = $voPessoa->getNmTabelaEntidade($isHistorico);
         $nmTabelaPessoaVinculo = $voPessoaVinculo->getNmTabela();
+        $nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic($isHistorico);
         
 		//seta os filtros obrigatorios        
 		if($this->isSetaValorDefault()){
@@ -66,6 +69,15 @@ class filtroManterPessoa extends filtroManter{
 			. $nmTabela. "." .vopessoa::$nmAtrCd
 			. " = "
 					. $this->cd;
+					
+					$conector  = "\n AND ";
+		}
+		
+		if($this->cdTurma != null){
+			$filtro = $filtro . $conector
+			. $nmTabelaPessoaTurma. "." .vopessoaturma::$nmAtrCdTurma
+			. " = "
+					. $this->cdTurma;
 					
 					$conector  = "\n AND ";
 		}

@@ -7,9 +7,12 @@ function getComboPessoaVinculo($idCampo, $nmCampo, $cdOpcaoSelecionada, $classCa
 	return getComboColecaoGenerico($dominioVinculo->colecao, $idCampo, $nmCampo, $cdOpcaoSelecionada, $classCampo, $tagHtml);
 }
 
-function consultarPessoasTurma($colecaoCdPessoa){
+function consultarPessoasTurma($colecaoCdPessoa, $cdTurma = null){
 	//$voContrato = new vocontrato();
 	$filtro = new filtroManterPessoa(false);
+	if($cdTurma != null){
+		$filtro->cdTurma = $cdTurma;
+	}	
 	$filtro->colecaoCd = $colecaoCdPessoa;
 	$filtro->setaFiltroConsultaSemLimiteRegistro();
 	$filtro->cdAtrOrdenacao = vopessoa::$nmAtrNome;
