@@ -1,5 +1,31 @@
 <?php
+function isClasseFrameWork($class_name, $tipoClasse){
+	$isClasseFramework = false;
+	$pos = strpos($class_name, $tipoClasse);
+	if($pos !== false && $pos == 0){
+		$isClasseFramework = true;
+	}
+	
+	return $isClasseFramework;
+}
 
+function getPastaRoot(){
+	$aplicacao = pasta_aplicacao;
+	$ambiente = "";
+	/*$arquivo = 'PROD';
+	 if (!file_exists($arquivo)) {
+	 $aplicacao.= "DESENV_eclipse";
+	 }*/
+	
+	$path = $_SERVER['DOCUMENT_ROOT'];
+	$path .= pasta_raiz_wordpress . "/";
+	define('caminho_wordpress', $path);
+	
+	$path .= $aplicacao;
+	//include_once($path);
+	
+	return $path;
+}
 /*
  * implementa a busca insensitive de uma palavra em outra
  * diferente de strpos que eh case sensitive

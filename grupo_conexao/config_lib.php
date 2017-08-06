@@ -1,4 +1,21 @@
 <?php
+
+include_once("util/bibliotecaFuncoesPrincipal.php");
+include_once ("util/constantes.class.php");
+
+//mysqli_report(MYSQLI_REPORT_ALL);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+date_default_timezone_set('America/Recife');
+setlocale(LC_ALL, 'portuguese');
+set_exception_handler("pegaExcecaoSemTratamento");
+
+//função definida pelo usuário para pegar exceções não tratadas
+function pegaExcecaoSemTratamento($exception){
+	//echo 'Exceção pega sem tratamento:</br>', $exception->getMessage(), '</br></br></br>';
+	//throw new Exception($exception->getMessage());
+	throw $exception;
+}
+
 //configuracao
 define('site_cliente', "http://www.grupoeducacionalconexao.com.br");
 define('nome_hospedagem', "econti.consulting");
@@ -6,24 +23,6 @@ define('site_hospedagem', "http://econti-consulting.umbler.net");
 define('pasta_aplicacao', "/grupo_conexao");
 define('pasta_raiz_wordpress', "/desenv/wordpress");
 define('pasta_raiz_sistema', pasta_raiz_wordpress . pasta_aplicacao);
-
-function getPastaRoot(){
-	$aplicacao = pasta_aplicacao;
-	$ambiente = "";
-	/*$arquivo = 'PROD';
-	 if (!file_exists($arquivo)) {
-	 $aplicacao.= "DESENV_eclipse";
-	 }*/
-	
-	$path = $_SERVER['DOCUMENT_ROOT'];
-	$path .= pasta_raiz_wordpress . "/";
-	define('caminho_wordpress', $path);
-	
-	$path .= $aplicacao;
-	//include_once($path);
-	
-	return $path;
-}
 
 header ('Content-type: text/html; charset=ISO-8859-1');
 
@@ -36,27 +35,7 @@ define('caminho_filtros', "$base/filtros/");
 define('caminho_excecoes', "$base/excecoes/");
 define('caminho_funcoesHTML', "funcoes/");
 define('caminho_funcoes', "$base/funcoes/");
-
-include_once(caminho_util."constantes.class.php");
-include_once(caminho_lib. "config.obj.php");
-$configBanco = new config();
 define('site_wordpress', pasta_raiz_wordpress . "/wp-admin/");
-
-
-//mysqli_report(MYSQLI_REPORT_ALL);
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-date_default_timezone_set('America/Recife');
-setlocale(LC_ALL, 'portuguese');
-//setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
-set_exception_handler("pegaExcecaoSemTratamento");
-
-//função definida pelo usuário para pegar exceções não tratadas
-function pegaExcecaoSemTratamento($exception){	
-	//echo 'Exceção pega sem tratamento:</br>', $exception->getMessage(), '</br></br></br>';
-	//throw new Exception($exception->getMessage());
-	throw $exception;
-}
 
 /*set_error_handler(function($errno, $errstr, $errfile, $errline, array $errcontext) {
 	// error was suppressed with the @-operator
@@ -71,16 +50,6 @@ function pegaExcecaoSemTratamento($exception){
 
 	//throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 });*/
-
-function isClasseFrameWork($class_name, $tipoClasse){	
-	$isClasseFramework = false;
-	$pos = strpos($class_name, $tipoClasse);
-	if($pos !== false && $pos == 0){
-		$isClasseFramework = true;
-	}
-	
-	return $isClasseFramework;	
-}
 
 /*a funcao abaixo serve para incluir a classe usada na confirmacao
  * o session precisa identificar qual classe ele serializa
@@ -115,8 +84,6 @@ spl_autoload_register(function ($class_name) {
 	
 });
 	
-include_once(caminho_util. "bibliotecaFuncoesPrincipal.php");
-
 $isPastaRaiz  = isPastaRaiz();
 $pastaRaiz = "";
 $caminhoJS = "lib/js/";
@@ -129,14 +96,11 @@ if(!$isPastaRaiz){
 	$pastaRaiz = "../../";
     $caminhoJS = $pastaRaiz . $caminhoJS;
     $caminhoCSS = $pastaRaiz . $caminhoCSS;
-    $caminhoIMG = $pastaRaiz . $caminhoIMG;
-    
+    $caminhoIMG = $pastaRaiz . $caminhoIMG;    
     $caminhoMenu = $pastaRaiz;
 }
 
 define('caminho_menu', $caminhoMenu);
-
-//html
 define('caminho_css', $caminhoCSS);
 define('caminho_js', $caminhoJS);
 define('caminho_imagens', $caminhoIMG);
@@ -149,7 +113,6 @@ $varGlobalJS =
 
 echo $varGlobalJS;
 
-include_once (caminho_util."constantes.class.php");
 //variaveis HTML
 define('TAMANHO_CODIGOS', constantes::$TAMANHO_CODIGOS);
 define('TAMANHO_CODIGOS_SAFI', constantes::$TAMANHO_CODIGOS_SAFI);
