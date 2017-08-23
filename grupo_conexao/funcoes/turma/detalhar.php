@@ -42,7 +42,7 @@ setCabecalho($titulo);
 <HEAD>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_cnpfcnpj.js"></SCRIPT>
-
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_moeda.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
 // Verifica se o formulario esta valido para alteracao, exclusao ou detalhamento
 function isFormularioValido() {
@@ -92,11 +92,8 @@ function confirmar() {
                 <TD class="campoformulario" colspan=3><INPUT type="text" id="<?=voturma::$nmAtrDescricao?>" name="<?=voturma::$nmAtrDescricao?>"  value="<?php echo($vo->descricao);?>"  class="camporeadonly" size="50" readonly></TD>
             </TR>  
             <TR>
-	            <TH class="campoformulario" nowrap width=1%>Valor.Mensal/Pessoa:</TH>
-	            <TD class="campoformulario" width=1%><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
-	            class="camporeadonlyalinhadodireita" size="15" readonly></TD>
-	            <TH class="campoformulario" nowrap width=1%>Receita Mensal:</TH>
-	            <TD class="campoformulario" ><INPUT type="text" value="<?php echo(getMoeda($colecao[filtroManterTurma::$NM_COL_VALOR_REAL]));?>"
+	            <TH class="campoformulario" nowrap width=1%>Investimento:</TH>
+	            <TD class="campoformulario" colspan=3><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
 	            class="camporeadonlyalinhadodireita" size="15" readonly></TD>
 	        </TR>
 			<TR>
@@ -138,10 +135,10 @@ function confirmar() {
             <TD class="conteinerfiltro" colspan="4">            
             <TABLE cellpadding="0" cellspacing="0" id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
             <TBODY>
-            					  <?php
+            		<?php
 					  $voCamposDadosPessoaAjax = $vo;
-					  include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");					  
-					  ?>
+					  echo mostrarGridAlunos($voCamposDadosPessoaAjax->colecaoAlunos, true);
+					 ?>
             
             </TBODY>
             </TABLE>

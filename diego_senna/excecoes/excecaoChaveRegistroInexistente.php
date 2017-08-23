@@ -1,0 +1,16 @@
+<?php
+/**
+ * Define uma classe de exceção
+ */
+class excecaoChaveRegistroInexistente extends excecaoGenerica
+{
+    // Redefine a exceção de forma que a mensagem não seja opcional
+    public function __construct($message = "Chave Registro Inexistente.", $code = 0, Exception $previous = null) {
+        // código
+    
+        // garante que tudo está corretamente inicializado
+        parent::__construct($message, $code, $previous);
+    }
+
+}
+?>

@@ -115,10 +115,10 @@ class dbturma extends dbprocesso {
 		return $voturma;
 	}
 	function incluirPessoaTurma($voturma) {
-		foreach ( $voturma->colecaoAlunos as $cdAluno ) {
-			$vopeturma = new vopessoaturma ();
-			$vopeturma->cdTurma = $voturma->cd;
-			$vopeturma->cdPessoa = $cdAluno;
+		foreach ( $voturma->colecaoAlunos as $vopessoaturma ) {
+			//$vopeturma = new vopessoaturma ();
+			$vopeturma = $vopessoaturma;
+			$vopeturma->cdTurma = $voturma->cd;			
 			$dbpeturma = $vopeturma->dbprocesso;
 			$dbpeturma->cDb = $this->cDb;
 			$dbpeturma->incluir ( $vopeturma );

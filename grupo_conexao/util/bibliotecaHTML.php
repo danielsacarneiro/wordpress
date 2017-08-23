@@ -609,9 +609,26 @@ function getXGridConsulta($nmRadio, $isCheckBox) {
 	return $retorno;
 }
 function getRadioButton($idRadio, $nmRadio, $chave, $checked, $complementoHTML) {
-	$retorno = "<INPUT type='radio' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $checked . ">";
+	$retorno = "<INPUT type='radio' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $checked . " $complementoHTML>";
 	return $retorno;
 }
+
+function getInputText($idText, $nmText, $value, $class=null, $size=null, $maxlength=null,$complementoHTML=null) {
+	if($maxlength == null){
+		$maxlength = 20;
+	}
+	if($size == null){
+		$size= 20;
+	}
+	if($class== null){
+		$class= "camponaoobrigatorio";
+	}
+	
+	$retorno = "<INPUT type='text' id='" . $idText . "' name='" . $nmText . "' value='" . $value. "' class='$class' size='$size' maxlength='$maxlength' $complementoHTML>";
+														
+	return $retorno;
+}
+												
 function getSelectGestor() {
 	$dbgestor = new dbgestor ();
 	$registros = $dbgestor->consultarSelect ();
@@ -808,6 +825,15 @@ function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFu
 	}
 	
 	return $html;
+}
+
+function getDetalhamentoHTMLCodigoAno($ano, $cd, $tamanhoCodigo = null) {
+	if($tamanhoCodigo == null){
+		$tamanhoCodigo = TAMANHO_CODIGOS;
+	}
+	$retorno .= "Ano: <INPUT type='text' value='$ano'  class='camporeadonly' size='5' readonly>";
+	$retorno .= "Número: <INPUT type='text' value='" . complementarCharAEsquerda ( $cd, "0", $tamanhoCodigo ) . "'  class='camporeadonlyalinhadodireita' size='6' readonly>";
+	return $retorno;
 }
 
 ?>

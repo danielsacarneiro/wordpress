@@ -68,6 +68,8 @@ function selecionar(isMultiplaSelecao) {
 		}
 
 		cdPessoa = array;
+
+		//alert(cdPessoa);
 		
 		window.opener.transferirDadosPessoa(cdPessoa);
 		window.close();

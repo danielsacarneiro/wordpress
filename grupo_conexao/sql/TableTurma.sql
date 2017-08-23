@@ -13,7 +13,7 @@ CREATE TABLE materia (
     CONSTRAINT pk PRIMARY KEY (ma_cd)
 );
 
-drop table turma;
+drop table IF EXISTS turma;
 CREATE TABLE turma (
 	tu_cd INT NOT NULL AUTO_INCREMENT,
     tu_ds VARCHAR(150) NOT NULL, 
@@ -28,10 +28,11 @@ CREATE TABLE turma (
     CONSTRAINT pk PRIMARY KEY (tu_cd)
 );
 
-drop table pessoa_turma;
+drop table IF EXISTS pessoa_turma;
 CREATE TABLE pessoa_turma (
 	pe_cd INT NOT NULL,
     tu_cd INT NOT NULL,
+    pt_numparcelas INT NOT NULL,
     pt_valor DECIMAL(10,2) DEFAULT NULL,
     pt_obs VARCHAR(300) DEFAULT NULL,
     dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,

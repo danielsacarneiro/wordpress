@@ -17,7 +17,7 @@ class filtroManterPessoa extends filtroManter{
     var $doc;
     var $nome;
     var $cdvinculo;
-    var $dtReferenciaContrato;
+    var $dtReferenciaContrato;    
 	
 	function getFiltroFormulario(){		
 		$this->cd = @$_POST[vopessoa::$nmAtrCd];
@@ -41,6 +41,7 @@ class filtroManterPessoa extends filtroManter{
         $voPessoaVinculo= new vopessoavinculo();
 		$filtro = "";
 		$conector  = "";
+		$this->voPrincipal = $voPessoa;
 
 		$isHistorico = $this->isHistorico();
         $nmTabela = $voPessoa->getNmTabelaEntidade($isHistorico);

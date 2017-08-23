@@ -16,7 +16,7 @@
      // Declaração de Variáveis
      var result = document.getElementById(idDivResultado);
      //alert(pCdPessoa);
-     imprimeResultado(result, "../pessoa/campoDadosPessoaAjax.php?chavePessoa=" + pCdPessoa + "&funcao=" + pFuncao);     
+     imprimeResultado(result, "../pessoa/campoDadosPessoaAjax.php?chavePessoa=" + pCdPessoa + "&operacao=" + pFuncao);     
  }
  
  /**

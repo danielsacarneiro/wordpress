@@ -2,17 +2,20 @@
 include_once (caminho_lib . "voentidade.php");
 class vopessoaturma extends voentidade {
 
-	static $NUM_MAXIMO_ALUNO = 15;
+	
+	static $ID_REQ_VALOR_TOTAL = "ID_REQ_VALOR_TOTAL";
 	
 	static $nmAtrCdPessoa = "pe_cd";
 	static $nmAtrCdTurma = "tu_cd";
 	static $nmAtrValor = "pt_valor";
+	static $nmAtrNumParcelas = "pt_numparcelas";
 	static $nmAtrObservacao = "pt_obs";
 	var $cdPessoa = "";
 	var $cdTurma = "";
 	var $valor = "";
+	var $numParcelas = "";
 	var $obs = "";
-	
+		
 	// ...............................................................
 	// Funções ( Propriedades e métodos da classe )
 	function __construct() {
@@ -28,6 +31,8 @@ class vopessoaturma extends voentidade {
 				self::$nmAtrCdUsuarioInclusao 
 		);
 		$this->removeAtributos ( $arrayAtribRemover );
+		//padrao
+		$this->numParcelas = 1;
 	}
 	public static function getTituloJSP() {
 		return "PESSOA x TURMA";
@@ -51,6 +56,7 @@ class vopessoaturma extends voentidade {
 		$retorno = array (
 				self::$nmAtrCdPessoa,
 				self::$nmAtrCdTurma,
+				self::$nmAtrNumParcelas,
 				self::$nmAtrValor,
 				self::$nmAtrObservacao 
 		);
@@ -62,12 +68,18 @@ class vopessoaturma extends voentidade {
 		$this->cdPessoa = $registrobanco [self::$nmAtrCdPessoa];
 		$this->cdTurma = $registrobanco [self::$nmAtrCdTurma];
 		$this->valor = $registrobanco [self::$nmAtrValor];
+		$this->numParcelas = $registrobanco [self::$nmAtrNumParcelas];
+		if($this->numParcelas == null){
+			$this->numParcelas = 1;
+		}
+		
 		$this->obs = $registrobanco [self::$nmAtrObservacao];
 	}
 	function getDadosFormulario() {
 		$this->cdPessoa = @$_POST [self::$nmAtrCdPessoa];
 		$this->cdTurma = @$_POST [self::$nmAtrCdTurma];
 		$this->valor = @$_POST [self::$nmAtrValor];
+		$this->numParcelas = $_POST[self::$nmAtrNumParcelas];
 		$this->obs = @$_POST [self::$nmAtrObservacao];
 	}
 	function getValorChavePrimaria() {

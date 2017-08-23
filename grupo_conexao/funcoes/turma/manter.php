@@ -46,7 +46,7 @@ $nome  = $vo->descricao;
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_datahora.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_ajax.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_pessoa.js"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>mensagens_globais.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_text.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>jquery.js"></SCRIPT>
 
 <SCRIPT language="JavaScript" type="text/javascript">
@@ -81,15 +81,33 @@ $nome  = $vo->descricao;
 }
 //No beforeSend*/
 	
-function listarAlunos(cd, funcao) {
+function listarAlunos(cdPessoa, cdTurma, operacao) {
+	
+	//try{
+		parcelas = getValueComoArray("<?=vopessoaturma::$nmAtrNumParcelas?>[]");
+		valores = getValueComoArray("<?=vopessoaturma::$nmAtrValor?>[]");
+		cdsPessoa = getValueComoArray("<?=vopessoaturma::$nmAtrCdPessoa?>[]");
+	/*}catch(ex){
+		parcelas = "";
+		valores = "";
+		cdsPessoa = "";
+	}*/
+
 	  $.ajax({
-	    type: "GET",
+	    type: "POST",
 	    url: "../pessoa/campoDadosPessoaAjax.php",	    
 	    data: {
 	      //cdPessoa: $('#seu_nome').val()
-	      chavePessoa: cd,
-	      funcao: funcao
+	      chavePessoa: cdPessoa,
+	      cdTurma: cdTurma,
+	      operacao: operacao,
+	      <?=vopessoaturma::$nmAtrNumParcelas?>: parcelas,
+	      <?=vopessoaturma::$nmAtrValor?>: valores,
+	      <?=vopessoaturma::$nmAtrCdPessoa?>: cdsPessoa
 	    },
+		beforeSend: function() { 
+			$('#<?=voturma::$NM_DIV_COLECAO_ALUNOS?>').html("<img  title='Limpar' src='<?=caminho_imagens?>loading/loading26.gif'>");			 
+		}, 
 	    success: function(data) {
 	      $('#<?=voturma::$NM_DIV_COLECAO_ALUNOS?>').html(data);
 	    }
@@ -97,17 +115,21 @@ function listarAlunos(cd, funcao) {
 }
 
 function transferirDadosPessoa(cdPessoa) {		   
-	//chamar funcao bibliotecafuncoespessoa
-	//alert(cdPessoa);
-	carregarDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');
 
-	//listarAlunos(cdPessoa, "<?=constantes::$CD_FUNCAO_INCLUIR?>");
+	cdTurma = document.frm_principal.<?=voturma::$nmAtrCd?>.value;
+	listarAlunos(cdPessoa, cdTurma, "<?=constantes::$CD_FUNCAO_INCLUIR?>");
+	
+	//chamar funcao bibliotecafuncoespessoa
+	//cdPessoa = cdPessoa + CD_CAMPO_SEPARADOR + cdTurma;
+	//carregarDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');	
 }
 
-function limparDadosPessoa(cdPessoa) {		   
-	//chamar funcao bibliotecafuncoespessoa
-	limparDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');
-	//listarAlunos(cdPessoa, "<?=constantes::$CD_FUNCAO_EXCLUIR?>");	
+function limparDadosPessoa(cdPessoa) {
+	cdTurma = document.frm_principal.<?=voturma::$nmAtrCd?>.value;
+	listarAlunos(cdPessoa, cdTurma, "<?=constantes::$CD_FUNCAO_EXCLUIR?>");		
+	
+	//bibliotecapessoajs
+	//limparDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');		
 }
 
 
@@ -127,7 +149,7 @@ function isFormularioValido() {
 
 function cancelar() {
 	//history.back();
-	lupa = document.frm_principal.lupa.value;	
+	lupa = document.frm_principal.lupa.value;
 	location.href="index.php?consultar=S&lupa="+ lupa;	
 }
 
@@ -148,6 +170,68 @@ function getNumDuracao(){
 	}catch(err){
 		document.frm_principal.<?=voturma::$ID_REQ_DURACAO?>.value = '';
 	};
+}
+
+function formataCamposPagamento(pCdPessoa){
+	campoParcelas = document.getElementById("<?=vopessoaturma::$nmAtrNumParcelas?>"+pCdPessoa);
+	campoValor = document.getElementById("<?=vopessoaturma::$nmAtrValor?>"+pCdPessoa);
+	campoTotal = document.getElementById("<?=vopessoaturma::$ID_REQ_VALOR_TOTAL?>"+pCdPessoa);
+
+	//if(pCampo.name = "")
+
+	numParcelas = campoParcelas.value;	
+	valor = campoValor.value;
+	
+	if(numParcelas == null || numParcelas == ""){
+		numParcelas = 1;
+	}
+
+//	isCampoMoedaComSeparadorMilharValido(pCampo, pQtCasasDecimais, pInObrigatorio, pVlMinimo, pVlMaximo, pSemMensagem, pSemFocarCampo)
+
+	if(!isCampoMoedaComSeparadorMilharValido(campoValor, 2, true, 0.01, null, true, true)){
+		valor = getValorCampoMoedaComoNumero(document.frm_principal.<?=voturma::$nmAtrValor?>);
+		valor = valor/numParcelas;
+	}else{
+		valor = getValorCampoMoedaComoNumero(campoValor);
+	}	
+	
+	try{
+		total = numParcelas * valor;
+	}catch(err){
+		total = 0;
+	};
+
+	if(isNaN(total)){
+		total = 0;
+	}
+	if(isNaN(valor)){
+		valor = 0;
+	}
+
+	setValorCampoMoedaComSeparadorMilhar(campoTotal, total, 2);
+	setValorCampoMoedaComSeparadorMilhar(campoValor, valor, 2);
+	getSomatorioValoresPessoas();	
+}
+
+function getSomatorioValoresPessoas(){
+	campoTotalTurma = document.getElementById("<?=voturma::$ID_REQ_VALOR_TOTAL?>");
+	array = document.getElementsByName("<?=vopessoaturma::$ID_REQ_VALOR_TOTAL?>");
+	
+	//alert(array[0]);
+	valor = 0;
+	for(i=0; i < array.length ;i++){
+		try{
+			soma = getValorCampoMoedaComoNumero(array[i]);
+			if(isNaN(soma)){
+				soma = 0;
+			}
+					
+			valor = valor + soma;
+		}catch(erro){
+			;
+		}
+	}
+	setValorCampoMoedaComSeparadorMilhar(campoTotalTurma, valor, 2);
 }
 </SCRIPT>
 </HEAD>
@@ -181,7 +265,7 @@ function getNumDuracao(){
                 <TD class="campoformulario" colspan=3><INPUT type="text" id="<?=voturma::$nmAtrDescricao?>" name="<?=voturma::$nmAtrDescricao?>"  value="<?php echo($vo->descricao);?>"  class="camponaoobrigatorio" size="50" required></TD>
             </TR>
 			<TR>
-	            <TH class="campoformulario" nowrap width=1%>Valor.Mensal/Pessoa:</TH>
+	            <TH class="campoformulario" nowrap width=1%>Investimento:</TH>
 	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" required value="<?php echo(getMoeda($vo->valor));?>"
 	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" class="camponaoobrigatorioalinhadodireita" size="15" ></TD>
 	        </TR>

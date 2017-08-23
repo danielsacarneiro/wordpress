@@ -67,6 +67,7 @@
     
     static $TAMANHO_CODIGOS = 5;
     static $TAMANHO_CODIGOS_SAFI = 3;
+    static $TAMANHO_MOEDA  = 11;
     static $CD_CAMPO_SEPARADOR = "*";
     static $CD_CAMPO_SEPARADOR_ARRAY = ",";
     static $CD_CAMPO_SUBSTITUICAO = "[[*]]";

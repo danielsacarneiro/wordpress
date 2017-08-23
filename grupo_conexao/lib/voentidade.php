@@ -181,9 +181,9 @@ class voentidade extends multiplosConstrutores {
 		
 		//metodo geralmente usado para exibir o objeto em paginas de detalhamento
 		//quando necessita de consultas maiores
-		//evitando que as consultas nas paginas de consultas sejam pesadas
-		if (method_exists ( $this, "getDadosChaveOperacaoMaixComplexa" )) {
-			$this->getDadosChaveOperacaoMaixComplexa ( $registrobanco );
+		//evitando que as consultas nem geral sejam pesadas
+		if (method_exists ( $this, "getDadosChaveOperacaoMaisComplexa" )) {
+			$this->getDadosChaveOperacaoMaisComplexa( $registrobanco = null);
 		}		
 	}
 	function removeAtributos($arrayAtribRemover) {

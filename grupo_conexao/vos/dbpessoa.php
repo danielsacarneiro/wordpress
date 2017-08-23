@@ -52,25 +52,38 @@ class dbpessoa extends dbprocesso {
 		$atributosConsulta = $nmTabela . "." . vopessoa::$nmAtrCd;
 		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrNome;
 		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrDocCPF;
-		$atributosConsulta .= "," . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCd;
-		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrValor;
-		$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrObservacao;
-		if($filtro->cdTurma != null){
-			$atributosConsulta .= ",COALESCE(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "," . $nmTabelaTurma. "." . voturma::$nmAtrValor. ") AS " . vopessoaturma::$nmAtrValor;
-		}/*else{
-			$atributosConsulta .= ",COALESCE(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "," . $nmTabelaTurma. "." . voturma::$nmAtrValor. ") AS " . vopessoaturma::$nmAtrValor;
-		}*/
+		$atributosConsulta .= "," . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCd;		
+		$temTurma = $filtro->cdTurma != null;
+		
+		if($temTurma){
+			//echo "tem turma";
+			$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrValor;
+			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrCdTurma;
+			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrCdPessoa;
+			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrObservacao;
+			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrNumParcelas;
+			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrValor;
+			//$atributosConsulta .= ",COALESCE(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "," . $nmTabelaTurma. "." . voturma::$nmAtrValor. ") AS " . vopessoaturma::$nmAtrValor;
+		}else{
+			//echo "NAO tem turma";
+			//se a turma nao for passada, eh p consultar apenas as pessoas, ignorando os dados que tenham de turmas existentes
+			//por isso o groupby, para nao trazer pessoas repetidas
+			$groupby = $nmTabela . "." . vopessoa::$nmAtrCd;
+			$filtro->groupby = $groupby;
+		}
 		
 		$querySelect = "SELECT " . $atributosConsulta;
 		
 		$queryFrom = "\n FROM " . $nmTabela;
 		$queryFrom .= "\n INNER JOIN " . $nmTabelaPessoaVinculo;
 		$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCdPessoa;
-		$queryFrom .= "\n LEFT JOIN " . $nmTabelaPessoaTurma;
-		$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa;
-		$queryFrom .= "\n LEFT JOIN " . $nmTabelaTurma;
-		$queryFrom .= "\n ON " . $nmTabelaTurma. "." . voturma::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma;
 		
+		if($temTurma){		
+			$queryFrom .= "\n LEFT JOIN " . $nmTabelaPessoaTurma;
+			$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa;
+			$queryFrom .= "\n LEFT JOIN " . $nmTabelaTurma;
+			$queryFrom .= "\n ON " . $nmTabelaTurma. "." . voturma::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma;
+		}		
 		// echo $querySelect."<br>";
 		// echo $queryFrom;
 		

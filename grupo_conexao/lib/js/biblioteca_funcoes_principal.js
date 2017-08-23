@@ -1,18 +1,18 @@
 /*
- Descrição:
- - Contém todas as mensagens e funções de apoio utilizadas pelas 
+ Descriï¿½ï¿½o:
+ - Contï¿½m todas as mensagens e funï¿½ï¿½es de apoio utilizadas pelas 
    demais bibliotecas
- - Deve ser incluída em todas as JSPs
+ - Deve ser incluï¿½da em todas as JSPs
 
- Dependências:
+ Dependï¿½ncias:
  - nenhuma
 */
 
 // Constantes
 TAMANHO_CODIGOS = 5;
 TAMANHO_CODIGOS_DOCUMENTOS = 3;
-CD_CAMPO_SUBSTITUICAO = "[[*]]"; // Deve ser igual à constante br.gov.pe.sefaz.sfi.util.Constantes.CD_CAMPO_SUBSTITUICAO
-CD_CAMPO_SUBSTITUICAO_MSGUSR = "#?#"; // Deve ser igual à constante br.gov.pe.sefaz.sfi.util.Constantes.CD_CAMPO_SUBSTITUICAO_MSGUSR
+CD_CAMPO_SUBSTITUICAO = "[[*]]"; // Deve ser igual ï¿½ constante br.gov.pe.sefaz.sfi.util.Constantes.CD_CAMPO_SUBSTITUICAO
+CD_CAMPO_SUBSTITUICAO_MSGUSR = "#?#"; // Deve ser igual ï¿½ constante br.gov.pe.sefaz.sfi.util.Constantes.CD_CAMPO_SUBSTITUICAO_MSGUSR
 
 //CD_CAMPO_SEPARADOR = "[[*]]";
 CD_CAMPO_SEPARADOR = "*";
@@ -53,13 +53,13 @@ ID_REQ_NM_CAMPO_FOCO_ATUAL = "nm_campo_foco_atual";
 ID_REQ_DT_HOJE = "dt_hoje_framework";
 ID_REQ_HR_HOJE = "hr_hoje_framework";
 ID_REQ_QT_REGISTROS_PAGINA = "qt_registros_pagina";
-ID_REQ_IN_LIMPAR_UNIDADE_ALOCACAO_SELECIONADA = "in_limpar_unidade_alocacao_selecionada"; // Deve ser igual à constante br.gov.pe.sefaz.sfi.util.web.ProcessadorRequisicao.ID_REQ_IN_LIMPAR_UNIDADE_ALOCACAO_SELECIONADA
+ID_REQ_IN_LIMPAR_UNIDADE_ALOCACAO_SELECIONADA = "in_limpar_unidade_alocacao_selecionada"; // Deve ser igual ï¿½ constante br.gov.pe.sefaz.sfi.util.web.ProcessadorRequisicao.ID_REQ_IN_LIMPAR_UNIDADE_ALOCACAO_SELECIONADA
 ID_REQ_NM_DISPOSITIVO_ACESSO = "nm_dispositivo_acesso";
 ID_REQ_TP_DISPOSITIVO_ACESSO = "tp_dispositivo_acesso";
 
 NM_PR_MONTAR_MENU_ACESSO="PRMontarMenuAcesso";
 
-// Variáveis
+// Variï¿½veis
 var isNS4 = (document.layers) ? true : false;
 var isNS6 = (!document.all && document.getElementById) ? true : false;
 var isNS71	= isNS6 && ((typeof document.designMode) != "undefined");
@@ -72,8 +72,8 @@ var isOPR = (navigator.userAgent.indexOf("Opera") != -1) ? true : false;
 window.onunload = tratarUnload;
 window.onerror = tratarErroFatal;
 
-// Integração com a biblioteca jsTrace.js
-// Para utilizar, basta importar jsTrace.js na JSP e invocar a função trace em qualquer ponto do código.
+// Integraï¿½ï¿½o com a biblioteca jsTrace.js
+// Para utilizar, basta importar jsTrace.js na JSP e invocar a funï¿½ï¿½o trace em qualquer ponto do cï¿½digo.
 // Exemplo: trace("Chamou evento onclick");
 var trace;
 if (typeof(jsTrace) != 'undefined'){
@@ -188,7 +188,7 @@ function limparFormularioGeral(){
 	}
 }
 
-// Confirma a execução de uma operação. Se pTexto for nulo, será exibida uma mensagem padrão de confirmação.
+// Confirma a execuï¿½ï¿½o de uma operaï¿½ï¿½o. Se pTexto for nulo, serï¿½ exibida uma mensagem padrï¿½o de confirmaï¿½ï¿½o.
 function solicitarConfirmacao(pTexto, pFuncaoCallBack) {
 	var mensagem;
 
@@ -204,7 +204,7 @@ function solicitarConfirmacao(pTexto, pFuncaoCallBack) {
 	} else {
 		var mbxMensagemConfirmacao = {
 				type: "confirm",
-				title: "Confirmação",
+				title: "Confirmaï¿½ï¿½o",
 				text: mensagem,
 				drag: true,
 				modal: true,
@@ -217,7 +217,7 @@ function solicitarConfirmacao(pTexto, pFuncaoCallBack) {
 	}
 }
 
-// Verifica se um elemento HTML é válido
+// Verifica se um elemento HTML ï¿½ vï¿½lido
 function isElementoValido(pNmElemento) {
 	var elemento = eval(pNmElemento);
 
@@ -232,7 +232,7 @@ function isElementoValido(pNmElemento) {
 function getQtElementos(pIdElemento) {
 	r = eval(pIdElemento);
 
-	// não existe nenhum elemento com o id informado
+	// nï¿½o existe nenhum elemento com o id informado
 	if (r == null) {
 		return 0;
 	} else {
@@ -244,7 +244,7 @@ function getQtElementos(pIdElemento) {
 	}
 }
 
-// Verifica se o campo está vazio
+// Verifica se o campo estï¿½ vazio
 function isCampoVazio(pCampo, pComMensagem) {
 	if (trim(pCampo.value) == "") {
 		if (pComMensagem) {
@@ -622,14 +622,14 @@ function _abrirJanelaAuxiliarMovel(pUrlJanela, pNmJanela) {
 	
 	janelaAuxiliar.onload = function() {
 		if (_janelaAuxiliarMovelElementos !== null) {
-			// Tratamento para o caso de refresh da página.
+			// Tratamento para o caso de refresh da pï¿½gina.
 			return;
 		}
 		
 		_janelaAuxiliarMovelElementos = [];
 		
-		// É necessário esconder todos os elementos porque o navegador nativo do Android 2.3
-		// não suporta definir "overflow" (utilizado no document.documentElement).
+		// ï¿½ necessï¿½rio esconder todos os elementos porque o navegador nativo do Android 2.3
+		// nï¿½o suporta definir "overflow" (utilizado no document.documentElement).
 		for (var i = 0, j = bodyElems.length; i < j; i++) {
 			var elem = bodyElems[i];
 			if (elem === janelaAuxiliar) continue;
@@ -827,7 +827,7 @@ function ocultarMensagemAguarde() {
 	modalWindowAguarde.close();
 
 	if (_nmBotaoAtivado != "") {
-		// Habilita botão que iniciou transação
+		// Habilita botï¿½o que iniciou transaï¿½ï¿½o
 		botaoAtivado = eval("document.frm_principal." + _nmBotaoAtivado);
 		if (botaoAtivado != null) {
 			botaoAtivado.disabled = false;
@@ -835,7 +835,7 @@ function ocultarMensagemAguarde() {
 		}
 	}
 
-	// Habilita botões de ação da tela de mensagem ao usuário
+	// Habilita botï¿½es de aï¿½ï¿½o da tela de mensagem ao usuï¿½rio
 	elementos = document.forms.item(0).elements;
 	for (var i = 0; i < elementos.length; i++) {
 		if (elementos.item(i).type == "button" &&
@@ -876,18 +876,18 @@ function ocultarMensagemAguardeAjax() {
 	}
 }
 
-// Indica se o formulário já foi submetido. Após um history.back() está variável é sempre false.
+// Indica se o formulï¿½rio jï¿½ foi submetido. Apï¿½s um history.back() estï¿½ variï¿½vel ï¿½ sempre false.
 var _inFormSubmetido = false;
 
-// Nome e título do botão acionado no formulário.
+// Nome e tï¿½tulo do botï¿½o acionado no formulï¿½rio.
 var _nmBotaoAtivado;
 var _nmTitleBotaoAtivado;
 
-// Indica se algum botão que inicia uma transação foi ativado (Confirmar, etc...).
+// Indica se algum botï¿½o que inicia uma transaï¿½ï¿½o foi ativado (Confirmar, etc...).
 var _inBotaoOperacaoAtivado = false;
 
-// Chamada quando se clica em qualquer botão do framework
-// Se for o botão Confirmar, invoca setBotaoOperacaoAtivado
+// Chamada quando se clica em qualquer botï¿½o do framework
+// Se for o botï¿½o Confirmar, invoca setBotaoOperacaoAtivado
 function setBotaoAtivado(pBotao) {
 	if (pBotao == null) {
 		_nmBotaoAtivado = "";
@@ -903,7 +903,7 @@ function setBotaoAtivado(pBotao) {
 	}
 }
 
-// Verifica se existe no formulário um botão Confirmar
+// Verifica se existe no formulï¿½rio um botï¿½o Confirmar
 function existeBotaoOperacaoConfirmar() {
 	var botao = document.getElementById("btt_confirmar");
 	if (botao != null) {
@@ -913,19 +913,19 @@ function existeBotaoOperacaoConfirmar() {
 	}
 }
 
-// Deve ser chamada dentro da função JavaScript associada ao evento onClick de um botão que 
-// dispara uma transação (processarXxxxxx), antes de chamar a função submeterFormulario
+// Deve ser chamada dentro da funï¿½ï¿½o JavaScript associada ao evento onClick de um botï¿½o que 
+// dispara uma transaï¿½ï¿½o (processarXxxxxx), antes de chamar a funï¿½ï¿½o submeterFormulario
 function setBotaoOperacaoAtivado(pBotao) {
 	_inBotaoOperacaoAtivado = true;
 }
 
-// Deve ser chamada dentro da função JavaScript que submete o formulário para atualizar a página, após chamar a função submeterFormulario
-// Ex.: função chamada pelo evento onchange de um select, função chamada pelo evento onblur de um text
+// Deve ser chamada dentro da funï¿½ï¿½o JavaScript que submete o formulï¿½rio para atualizar a pï¿½gina, apï¿½s chamar a funï¿½ï¿½o submeterFormulario
+// Ex.: funï¿½ï¿½o chamada pelo evento onchange de um select, funï¿½ï¿½o chamada pelo evento onblur de um text
 function setFormNaoSubmetido() {
 	_inFormSubmetido = false;
 }
 
-// Deve ser chamada dentro da página que é exibida quando um botão de operação é ativado e a operação é concluída com sucesso
+// Deve ser chamada dentro da pï¿½gina que ï¿½ exibida quando um botï¿½o de operaï¿½ï¿½o ï¿½ ativado e a operaï¿½ï¿½o ï¿½ concluï¿½da com sucesso
 function setOperacaoConcluidaComSucesso() {
 	var today = new Date();
 	var expires = new Date();
@@ -933,7 +933,7 @@ function setOperacaoConcluidaComSucesso() {
 	setCookie("sfi.in_operacao_sucesso", CD_VERDADEIRO, expires);
 }
 
-// Deve ser chamada dentro da página que é exibida quando um botão de operação é ativado e a operação é concluída sem sucesso
+// Deve ser chamada dentro da pï¿½gina que ï¿½ exibida quando um botï¿½o de operaï¿½ï¿½o ï¿½ ativado e a operaï¿½ï¿½o ï¿½ concluï¿½da sem sucesso
 function setOperacaoConcluidaSemSucesso() {
 	var today = new Date();
 	var expires = new Date();
@@ -950,14 +950,14 @@ function submeterFormulario(pAcao, pEvento, pInNaoExibirMensagemAguarde) {
 		exibirMensagemAguarde();
 	}
 
-	// Trata ressubmissão de formulários
+	// Trata ressubmissï¿½o de formulï¿½rios
 	if (existeBotaoOperacaoConfirmar() || _inBotaoOperacaoAtivado) {
 
 		var campoInFormularioSubmetido = eval("document.frm_principal." + ID_REQ_IN_FORMULARIO_SUBMETIDO);
 		
 		if (_inFormSubmetido) {
 			if (_inBotaoOperacaoAtivado) {
-				// Um botão de operação foi ativado mas a requisição foi interrompida pelo usuário.
+				// Um botï¿½o de operaï¿½ï¿½o foi ativado mas a requisiï¿½ï¿½o foi interrompida pelo usuï¿½rio.
 
 				var inPermitirRessubmissaoFormularioAposInterrupcao = true;
 				try {
@@ -989,12 +989,12 @@ function submeterFormulario(pAcao, pEvento, pInNaoExibirMensagemAguarde) {
 				var inFormularioSubmetido = campoInFormularioSubmetido.value;
 		
 				if (inFormularioSubmetido == CD_VERDADEIRO && _inBotaoOperacaoAtivado) {
-					// O formulário já foi submetido anteriormente e um botão de operação foi ativado na mesma página.
+					// O formulï¿½rio jï¿½ foi submetido anteriormente e um botï¿½o de operaï¿½ï¿½o foi ativado na mesma pï¿½gina.
 					
 					var inOperacaoSucesso = getCookie("sfi.in_operacao_sucesso");
 					
 					if (inOperacaoSucesso == CD_VERDADEIRO) {
-						// A operação anterior foi concluída com sucesso.
+						// A operaï¿½ï¿½o anterior foi concluï¿½da com sucesso.
 
 						var inPermitirRessubmissaoFormulario = true;
 						try {
@@ -1143,23 +1143,23 @@ function limparCampoHistorico() {
 	}
 }
 
-// Encerra Sessão (utilizada pelo GerenciadorMolduraCabecalho)
+// Encerra Sessï¿½o (utilizada pelo GerenciadorMolduraCabecalho)
 function encerrarSessao(pAcao) {
 	if (solicitarConfirmacao(mensagemGlobal(11))) {
 		submeterFormulario(pAcao, "");
 	}
 }
 
-// Encerra Sessão usando certificado digital (utilizada pelo GerenciadorMolduraCabecalho)
+// Encerra Sessï¿½o usando certificado digital (utilizada pelo GerenciadorMolduraCabecalho)
 function encerrarSessaoComCertificado(pAcao) {
 	if (solicitarConfirmacao(mensagemGlobal(15))) {
 		submeterFormulario(pAcao, "");
-		window.open("", "_parent"); // Exigida para fechar o browser no firefox e netscape, quando este não permite fechar o browser em suas configurações locais.
+		window.open("", "_parent"); // Exigida para fechar o browser no firefox e netscape, quando este nï¿½o permite fechar o browser em suas configuraï¿½ï¿½es locais.
 		window.close();
 	}
 }
 
-// Limpa a unidade de alocação selecionada e persistida em memória, para quem tem mais de uma unidade de alocação
+// Limpa a unidade de alocaï¿½ï¿½o selecionada e persistida em memï¿½ria, para quem tem mais de uma unidade de alocaï¿½ï¿½o
 function limparUnidadeAlocacaoSelecionada(pAcao) {
 	
 	var cdMensagemGlobal;
@@ -1175,7 +1175,7 @@ function limparUnidadeAlocacaoSelecionada(pAcao) {
 		//Cria um input hidden dinamicamente.
 	    var element = document.createElement("input");
 
-	    //Atribuição dos atributos e seus valores.
+	    //Atribuiï¿½ï¿½o dos atributos e seus valores.
 	    element.setAttribute("type", "hidden");
 	    element.setAttribute("name", ID_REQ_IN_LIMPAR_UNIDADE_ALOCACAO_SELECIONADA);
 	    element.setAttribute("value", CD_VERDADEIRO);
@@ -1231,7 +1231,7 @@ function acionarBotaoSeTeclaEnterPressionada(pBotao, pEvento) {
 	}
 }
 
-// Retorna o primeiro campo do formulário, caso exista
+// Retorna o primeiro campo do formulï¿½rio, caso exista
 function getPrimeiroCampoFormulario() {
 	testePrimeiroCampo = eval("document.frm_principal.primeiro_campo");
 	var campo = null;
@@ -1270,7 +1270,7 @@ function reiniciarFormulario() {
 			} else if (elementos.item(i).type == "select-one" && elementos.item(i).name != ID_REQ_QT_REGISTROS_PAGINA) {
 				if (elementos.item(i).length > 0) {
 					if (elementos.item(i).length == 3 && elementos.item(i).options[1].text == "Ativo" && elementos.item(i).options[2].text == "Inativo") {
-						// O SelectIndicadoAtivo deve reiniciar na opção Ativo
+						// O SelectIndicadoAtivo deve reiniciar na opï¿½ï¿½o Ativo
 						elementos.item(i).selectedIndex = 1;
 					} else {
 						elementos.item(i).selectedIndex = 0;
@@ -1279,7 +1279,7 @@ function reiniciarFormulario() {
 			}
 		}
 	} else {
-		// Se não, "reseta" o formulário
+		// Se nï¿½o, "reseta" o formulï¿½rio
 		document.frm_principal.reset();	
 	}
 	
@@ -1347,7 +1347,7 @@ function chavearDisplayFiltro() {
 	}
 }
 
-// Função para testar se uma janela pai é uma janela do e-Fisco
+// Funï¿½ï¿½o para testar se uma janela pai ï¿½ uma janela do e-Fisco
 function isJanelaAuxiliar(){
 	campoIndicadorJanelaAuxiliar = eval("document.frm_principal." + ID_REQ_IN_JANELA_AUXILIAR);
 	if (campoIndicadorJanelaAuxiliar != null) {
@@ -1361,7 +1361,7 @@ function isJanelaAuxiliar(){
 	}
 }
 
-// Função que indica se a aplicação está executando dentro do ambiente de teste do Selenium 
+// Funï¿½ï¿½o que indica se a aplicaï¿½ï¿½o estï¿½ executando dentro do ambiente de teste do Selenium 
 function isAmbienteTesteSelenium() {
 	inAmbienteTesteSelenium = eval("document.frm_principal." + ID_REQ_IN_AMBIENTE_TESTE_SELENIUM);
 
@@ -1376,27 +1376,27 @@ function isAmbienteTesteSelenium() {
 var _inQtMaxRegistros =false;
 var _msgAlertaQtMaxRegistros = "";
 
-// Configura a pagina de acordo com resolução e navegador
+// Configura a pagina de acordo com resoluï¿½ï¿½o e navegador
 function configurarPagina() {
 
 	if (isAmbienteDesenvolvimento()) {
 		campoIdContextoSessao = eval("document.frm_principal." + ID_REQ_ID_CONTEXTO_SESSAO);
 		
 		if (campoIdContextoSessao == null) {
-			exibirMensagem("ATENÇÃO: O campo oculto \"" + ID_REQ_ID_CONTEXTO_SESSAO + "\" não existe nesta jsp!");
+			exibirMensagem("ATENï¿½ï¿½O: O campo oculto \"" + ID_REQ_ID_CONTEXTO_SESSAO + "\" nï¿½o existe nesta jsp!");
 		} else {
 			if (campoIdContextoSessao.length > 1) {
-				exibirMensagem("ATENÇÃO: Existem " + campoIdContextoSessao.length + " campos ocultos \"" + ID_REQ_ID_CONTEXTO_SESSAO + "\" nesta jsp!");
+				exibirMensagem("ATENï¿½ï¿½O: Existem " + campoIdContextoSessao.length + " campos ocultos \"" + ID_REQ_ID_CONTEXTO_SESSAO + "\" nesta jsp!");
 			}
 		}
 
 		campoEvento = eval("document.frm_principal." + ID_REQ_EVENTO);
 
 		if (campoEvento == null) {
-			exibirMensagem("ATENÇÃO: O campo oculto \"" + ID_REQ_EVENTO + "\" não existe nesta jsp!");
+			exibirMensagem("ATENï¿½ï¿½O: O campo oculto \"" + ID_REQ_EVENTO + "\" nï¿½o existe nesta jsp!");
 		} else {
 			if (campoEvento.length > 1) {
-				exibirMensagem("ATENÇÃO: Existem " + campoEvento.length + " campos ocultos \"" + ID_REQ_EVENTO + "\" nesta jsp!");
+				exibirMensagem("ATENï¿½ï¿½O: Existem " + campoEvento.length + " campos ocultos \"" + ID_REQ_EVENTO + "\" nesta jsp!");
 			}
 		}
 	}
@@ -1442,7 +1442,7 @@ function configurarPagina() {
 		}
 	}
 
-	// Se for uma tela de consulta e só tiver um registro no grid, seleciona
+	// Se for uma tela de consulta e sï¿½ tiver um registro no grid, seleciona
 	filtro = document.getElementById("div_filtro");
 	if (filtro != null) {
 		rdbConsulta = eval("document.frm_principal.rdb_consulta");
@@ -1462,12 +1462,12 @@ function configurarPagina() {
 
 	elementos = document.forms.item(0).elements;
 	for (var i = 0; i < elementos.length; i++) {
-		// Teste para evitar utilização das teclas de atalho do framework
+		// Teste para evitar utilizaï¿½ï¿½o das teclas de atalho do framework
 		if (elementos.item(i).type == "button") {
 			if (!isBotaoFramework(elementos.item(i))) {
 				if (isTeclaAtalhoFramework(elementos.item(i).accessKey)) {
 					if (isAmbienteDesenvolvimento()) {
-						exibirMensagem("ATENÇÃO: A tecla de atalho (" + elementos.item(i).accessKey + ") do botão \"" + elementos.item(i).name + "\" já está associada a um botão do framework!");
+						exibirMensagem("ATENï¿½ï¿½O: A tecla de atalho (" + elementos.item(i).accessKey + ") do botï¿½o \"" + elementos.item(i).name + "\" jï¿½ estï¿½ associada a um botï¿½o do framework!");
 					}
 				}
 			}
@@ -1482,7 +1482,7 @@ function configurarPagina() {
 					body = colBody.item(0);
 					if (body.onload == null) {
 						elementos.item(i).style.background = "red";
-						exibirMensagem("ATENÇÃO: O campo \"" + elementos.item(i).name + "\" usa a classe CSS \"camporeadonly\" mas não está definido como \"readOnly\" ou \"disabled\"!");
+						exibirMensagem("ATENï¿½ï¿½O: O campo \"" + elementos.item(i).name + "\" usa a classe CSS \"camporeadonly\" mas nï¿½o estï¿½ definido como \"readOnly\" ou \"disabled\"!");
 					}
 				}
 	        }
@@ -1523,7 +1523,7 @@ function configurarPagina() {
 		}
 	}
 
-	// Verifica se existe alguma âncora no formulário
+	// Verifica se existe alguma ï¿½ncora no formulï¿½rio
 	ancora = eval("document.frm_principal." + ID_REQ_CD_ANCORA);
 	if (ancora != null) {
 		if (ancora.value != "") {
@@ -1531,7 +1531,7 @@ function configurarPagina() {
 		}
 	}
 
-	// Seta o foco para o próximo campo
+	// Seta o foco para o prï¿½ximo campo
 	campoNmCampoFocoAtual = eval("document.frm_principal." + ID_REQ_NM_CAMPO_FOCO_ATUAL);
 	if (campoNmCampoFocoAtual != null){
 		if (campoNmCampoFocoAtual.value != "") {
@@ -1539,7 +1539,7 @@ function configurarPagina() {
 			if (campoFocoAtual != null) {
 				campoProximoFoco = getProximoElementoParaFocar(campoFocoAtual);
 				campoProximoFoco.focus();
-				//Seta o campoNmCampoFocoAtual para null para que o foco não fique voltando sempre para o mesmo campo
+				//Seta o campoNmCampoFocoAtual para null para que o foco nï¿½o fique voltando sempre para o mesmo campo
 				campoNmCampoFocoAtual.value = "";
 			}
 		}
@@ -1635,7 +1635,7 @@ function getPosicaoYElementoDOM(pElementoDOM) {
    	return posY;
 }
 
-//Busca o nome do próximo campo para receber o foco
+//Busca o nome do prï¿½ximo campo para receber o foco
 function getProximoElementoParaFocar(pCampoFocoAtual) {
 	if (pCampoFocoAtual != null) {
 		elementos = document.forms.item(0).elements;
@@ -1664,7 +1664,7 @@ function getProximoElementoParaFocar(pCampoFocoAtual) {
 	}
 }
 
-// Configurar o cabeçalho fixo para tabela de dados. Esta função só deve ser chamada em páginas que contenham uma tabelaDados bem formatada.
+// Configurar o cabeï¿½alho fixo para tabela de dados. Esta funï¿½ï¿½o sï¿½ deve ser chamada em pï¿½ginas que contenham uma tabelaDados bem formatada.
 function configurarTabelaDadosCabecalhoFixo() {
 	// Adiciona uma tabela no final do div_tabeladados
 	$("#div_tabeladados").append("<table id='cabecalhoFixo' class='tabeladados' cellpadding='0' cellspacing='0'></table>");
@@ -1675,11 +1675,11 @@ function configurarTabelaDadosCabecalhoFixo() {
 		var topoTabela = $("#table_tabeladados").offset().top;
 	    var topoAtual = $(this).scrollTop();
 
-	    // Se com o scrool, o cabeçalho deixou de aparecer, mostra o cabeçalho fixo
+	    // Se com o scrool, o cabeï¿½alho deixou de aparecer, mostra o cabeï¿½alho fixo
 	    if (topoAtual >= topoTabela && $cabecalhoFixo.is(":hidden")) {
 	        $cabecalhoFixo.show();
 	    } else if (topoAtual < topoTabela) {
-	    	// esconde o cabeçalho fixo
+	    	// esconde o cabeï¿½alho fixo
 	        $cabecalhoFixo.hide();
 	    }
 	});
@@ -1837,7 +1837,7 @@ function ModalWindow() {
 			'height': 'auto',
 			'top': null,
 			'left': 'auto',
-			'title': "Informação",
+			'title': "Informaï¿½ï¿½o",
 			'text': "",
 			'text_align_center': false,
 			'text_margin_top': '5px',
@@ -2255,7 +2255,7 @@ function isAcessoMovel() {
 
 
 /*
- * Funções utilitárias para programação OO.
+ * Funï¿½ï¿½es utilitï¿½rias para programaï¿½ï¿½o OO.
  */
 function _SuperClasse() {}
 var _SuperClassePT = _SuperClasse.prototype;
@@ -2322,4 +2322,15 @@ function isPeloMenosUmCampoFormularioSelecionado(colecaoNmCamposForm, colecaoDes
 	}
 	
 	return temCampo;
+}
+
+function getValueComoArray(pNmCampo){
+	var retorno = new Array();
+	var inputs = document.getElementsByName(pNmCampo);
+	for( var x = 0; x < inputs.length; x++ )	{
+		elemento = inputs[x];	
+		retorno[x] = elemento.value; 
+		//alert(elemento.value);
+	}	
+	return retorno;
 }
