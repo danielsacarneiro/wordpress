@@ -103,6 +103,8 @@ class dbturma extends dbprocesso {
 			
 			if (! isColecaoVazia ( $voturma->colecaoAlunos )) {
 				$this->incluirPessoaTurma ( $voturma );
+			}else{
+				throw new excecaoGenerica("Não é permitido incluir turma sem alunos.");
 			}
 			// End transaction
 			$this->cDb->commit ();
