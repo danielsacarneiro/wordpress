@@ -94,12 +94,13 @@ function confirmar() {
                 
 				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo($vo->cdTurma);?>">
 				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdPessoa?>" name="<?=vopessoaturma::$nmAtrCdPessoa?>"  value="<?php echo($vo->cdPessoa);?>">						
-            </TR>
-            
+            </TR>            
 			<TR>
 	            <TH class="campoformulario" nowrap width=1%>Valor Mensal:</TH>
-	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=vopessoaturma::$nmAtrValor?>" name="<?=vopessoaturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
-	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" class="camponaoobrigatorioalinhadodireita" size="15" ></TD>
+	            <TD class="campoformulario" colspan="3">
+	            <INPUT type="text" id="<?=vopessoaturma::$nmAtrNumParcelas?>" name="<?=vopessoaturma::$nmAtrNumParcelas?>" value="<?php echo($vo->numParcelas);?>" class="camponaoobrigatorioalinhadodireita" size="2" required> x
+	            <INPUT type="text" id="<?=vopessoaturma::$nmAtrValor?>" name="<?=vopessoaturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
+	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" class="camponaoobrigatorioalinhadodireita" size="15" required></TD>
 	        </TR>
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Observação:</TH>

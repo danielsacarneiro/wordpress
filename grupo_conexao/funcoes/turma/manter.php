@@ -87,6 +87,7 @@ function listarAlunos(cdPessoa, cdTurma, operacao) {
 		parcelas = getValueComoArray("<?=vopessoaturma::$nmAtrNumParcelas?>[]");
 		valores = getValueComoArray("<?=vopessoaturma::$nmAtrValor?>[]");
 		cdsPessoa = getValueComoArray("<?=vopessoaturma::$nmAtrCdPessoa?>[]");
+		valorTurma = getValorCampoMoedaComoNumero(document.frm_principal.<?=voturma::$nmAtrValor?>);
 	/*}catch(ex){
 		parcelas = "";
 		valores = "";
@@ -100,6 +101,7 @@ function listarAlunos(cdPessoa, cdTurma, operacao) {
 	      //cdPessoa: $('#seu_nome').val()
 	      chavePessoa: cdPessoa,
 	      cdTurma: cdTurma,
+	      valorTurma: valorTurma,
 	      operacao: operacao,
 	      <?=vopessoaturma::$nmAtrNumParcelas?>: parcelas,
 	      <?=vopessoaturma::$nmAtrValor?>: valores,
@@ -214,24 +216,90 @@ function formataCamposPagamento(pCdPessoa){
 }
 
 function getSomatorioValoresPessoas(){
-	campoTotalTurma = document.getElementById("<?=voturma::$ID_REQ_VALOR_TOTAL?>");
-	array = document.getElementsByName("<?=vopessoaturma::$ID_REQ_VALOR_TOTAL?>");
-	
-	//alert(array[0]);
-	valor = 0;
-	for(i=0; i < array.length ;i++){
-		try{
-			soma = getValorCampoMoedaComoNumero(array[i]);
-			if(isNaN(soma)){
-				soma = 0;
+	try{
+		campoTotalTurma = document.getElementById("<?=voturma::$ID_REQ_VALOR_TOTAL?>");
+		array = document.getElementsByName("<?=vopessoaturma::$ID_REQ_VALOR_TOTAL?>");
+		
+		//alert(array[0]);
+		valor = 0;
+		for(i=0; i < array.length ;i++){
+			try{
+				soma = getValorCampoMoedaComoNumero(array[i]);
+				if(isNaN(soma)){
+					soma = 0;
+				}
+						
+				valor = valor + soma;
+			}catch(erro){
+				;
 			}
-					
-			valor = valor + soma;
-		}catch(erro){
-			;
 		}
+		setValorCampoMoedaComSeparadorMilhar(campoTotalTurma, valor, 2);
+	}catch(err){
+	;
 	}
-	setValorCampoMoedaComSeparadorMilhar(campoTotalTurma, valor, 2);
+}
+function distribuirValoresPessoas(zerar, apenasSeVazio){
+	//alert(1);
+
+	if(apenasSeVazio == null){
+		apenasSeVazio = false;
+	}
+
+	if(zerar == null){
+		zerar = false;
+	}
+	
+	campoValorTurma = document.frm_principal.<?=voturma::$nmAtrValor?>;
+	if(!isCampoMoedaComSeparadorMilharValido(campoValorTurma, 2, true, 0.01)){
+		return;
+	}
+
+	valorTurma = getValorCampoMoedaComoNumero(campoValorTurma);
+	try{
+		arrayValores = document.getElementsByName("<?=vopessoaturma::$nmAtrValor?>[]");
+		arrayValoresTotal = document.getElementsByName("<?=vopessoaturma::$ID_REQ_VALOR_TOTAL?>");
+		arrayParcelas = document.getElementsByName("<?=vopessoaturma::$nmAtrNumParcelas?>[]");
+		if(arrayValores != null){
+			distribuiPeloMenos1 = false;
+			for(i=0; i < arrayValores.length ;i++){ 
+				valor = 0;
+				campoValor = arrayValores[i];
+				if(!apenasSeVazio || (campoValor.value == null || campoValor.value == "" || getValorCampoMoedaComoNumero(campoValor) == 0)){					
+
+					if(campoValor.value != "")
+						valor = getValorCampoMoedaComoNumero(campoValor);
+					
+					if(valor == null || isNaN(valor)){
+						valor = 0;
+					}		
+					
+					if(valor == 0 || zerar){
+						if(zerar){
+							valor = 0;
+							valorTurma = 0;
+						}
+						else if(valor == 0){
+							parcela = eval(arrayParcelas[i].value);
+							valor = valorTurma/parcela;
+
+							distribuiPeloMenos1 = true;
+						}
+						
+						setValorCampoMoedaComSeparadorMilhar(campoValor, valor, 2);
+						setValorCampoMoedaComSeparadorMilhar(arrayValoresTotal[i], valorTurma, 2);
+					}
+				}
+			}
+
+			if(!zerar && !distribuiPeloMenos1){
+				exibirMensagem("Para distribuir o valor pelo menos 1 campo deve estar igual a 0 (zero).");
+			}
+		}
+	}catch(erro){
+		;
+	}	
+	getSomatorioValoresPessoas();
 }
 </SCRIPT>
 </HEAD>
@@ -292,7 +360,7 @@ function getSomatorioValoresPessoas(){
 	            			size="10" 
 	            			maxlength="10">
 	            Duração:
-	             <INPUT type="text" name = "<?=voturma::$ID_REQ_DURACAO?>" value="<?php if($vo->dtFim != null) echo getQtdMesesEntreDatas($vo->dtInicio, $vo->dtFim);?>"  class="camporeadonlyalinhadodireita" size="3" readonly> mes(es)
+	             <INPUT type="text" name = "<?=voturma::$ID_REQ_DURACAO?>" value="<?php if($vo->dtFim != null) echo getQtdMesesEntreDatas($vo->dtInicio, $vo->dtFim);?>"  class="camporeadonlyalinhadodireita" size="3" readonly> mes(es) aprox.
 	             </TD>
 	            </TR>                            
 	            			
@@ -311,6 +379,8 @@ function getSomatorioValoresPessoas(){
 				include_once(caminho_funcoes. "pessoa/dominioVinculoPessoa.php");
 				echo getLinkPesquisa("../pessoa/index.php?".constantes::$ID_REQ_MULTISELECAO."=S&" . vopessoavinculo::$nmAtrCd . "=" . dominioVinculoPessoa::$CD_VINCULO_ALUNO);
 				echo "&nbsp;&nbsp; Limpar tudo" . getBorrachaJS("limparDadosPessoa(-1);");
+				echo "&nbsp;&nbsp; Distribuir Valor Turma " . getBotao ( "", "Distribuir valor", $classe, false, " onClick='javascript:distribuirValoresPessoas(false, true);'" );
+				echo "&nbsp;&nbsp; Zerar valores " . getBotao ( "", "zerar valores", $classe, false, " onClick='javascript:distribuirValoresPessoas(true);'" );
 				?>
 				</DIV>
 				</TH>

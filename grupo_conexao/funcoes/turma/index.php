@@ -161,9 +161,9 @@ function alterar() {
                   <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
                     <TH class="headertabeladados" width="1%">Código</TH>
                     <TH class="headertabeladados" width="98%">Descrição</TH>
-                    <TH class="headertabeladados" width="1%">Qtd.Alunos</TH>
                     <TH class="headertabeladados" width="1%">Valor.Unit</TH>
-                    <TH class="headertabeladados" width="1%">Receita.Ideal</TH>
+                    <TH class="headertabeladados" width="1%">Qtd.Alunos</TH>                    
+                    <TH class="headertabeladados" width="1%">Receita.Ideal</TH>                    
                     <TH class="headertabeladados" width="1%">Receita.Real</TH>
                     <TH class="headertabeladados" width="1%">Dt.Início</TH>
                     <TH class="headertabeladados" width="1%">Dt.Fim</TH>
@@ -181,18 +181,28 @@ function alterar() {
                             
                 for ($i=0;$i<$tamanho;$i++) {
                         $voAtual = new voturma();
-                        $voAtual->getDadosBanco($colecao[$i]);                                                            
+                        $voAtual->getDadosBanco($colecao[$i]);
+                        
+                        $valorIdeal = $colecao[$i][filtroManterTurma::$NM_COL_VALOR_IDEAL];
+                        $valorReal = $colecao[$i][filtroManterTurma::$NM_COL_VALOR_REAL];
+                        
+                        $classColuna = "tabeladadosalinhadodireita";
+                        $temValorDiferenciado = $valorReal!= $valorIdeal;
+                        if ($temValorDiferenciado) {
+                        	$classColuna = "tabeladadosdestacado";
+                        }
+                        
                 ?>
                 <TR class="dados">
                     <TD class="tabeladados">
                     <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
                     </TD>
                     <TD class="tabeladados"><?php echo complementarCharAEsquerda($colecao[$i][voturma::$nmAtrCd], "0", TAMANHO_CODIGOS);?></TD>
-                    <TD class="tabeladados"><?php echo $colecao[$i][voturma::$nmAtrDescricao];?></TD>
-                    <TD class="tabeladadosalinhadodireita"><?php echo $colecao[$i][filtroManterTurma::$NM_COL_QTD_ALUNOS];?></TD>                    
+                    <TD class="tabeladados"><?php echo $colecao[$i][voturma::$nmAtrDescricao];?></TD>                    
                     <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($voAtual->valor);?></TD>
-                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($colecao[$i][filtroManterTurma::$NM_COL_VALOR_IDEAL]);?></TD>
-                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($colecao[$i][filtroManterTurma::$NM_COL_VALOR_REAL]);?></TD>
+                    <TD class="tabeladadosalinhadodireita"><?php echo $colecao[$i][filtroManterTurma::$NM_COL_QTD_ALUNOS];?></TD>                    
+                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorIdeal);?></TD>                    
+                    <TD class="<?=$classColuna?>"><?php echo getMoeda($valorReal);?></TD>
                     <TD class="tabeladadosalinhadodireita"><?php echo getData($voAtual->dtInicio);?></TD>
                     <TD class="tabeladadosalinhadodireita"><?php echo getData($voAtual->dtFim);?></TD>
                 </TR>					

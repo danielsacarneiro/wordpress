@@ -147,7 +147,7 @@ function isFormularioValido() {
                     <TD class="tabeladados"><?php echo $colecao[$i][vopessoa::$nmAtrNome];?></TD>
                     <TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->cdTurma);?></TD>
                     <TD class="tabeladados"><?php echo $colecao[$i][voturma::$nmAtrDescricao];?></TD>
-                    <TD class="tabeladados"><?php echo getMoeda($voAtual->valor);?></TD>                    
+                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($voAtual->valor);?></TD>                    
                 </TR>					
                 <?php
 				}				

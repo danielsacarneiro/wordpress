@@ -231,6 +231,9 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 			$voPessoaTurma = $vopessoaturmaatual;
 			$voAtual = $voPessoaTurma->vopessoa;
 			$voturma = $voPessoaTurma->voturma;
+			if($voturma->valor == null){
+				$voturma->valor = @$_POST["valorTurma"];
+			}
 			
 			if ($voAtual != null) {
 				
@@ -276,10 +279,10 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 				$html .= "<TD class='tabeladados' >" . $voAtual->nome . "</TD> \n";
 				$html .= "<TD class='tabeladados' nowrap>" . documentoPessoa::getNumeroDocFormatado ( $doc ) . "</TD> \n";
 				$html .= "<TD class='tabeladados' nowrap>" . getInputText ( vopessoaturma::$nmAtrNumParcelas.$voAtual->cd, vopessoaturma::$nmAtrNumParcelas."[]", $voPessoaTurma->numParcelas, $classValor, 2, 2, "$readonly onkeyup='validarCampoNumericoPositivo(this, 2, event);' $javaScript" ) . " x</TD> \n";
-				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$nmAtrValor.$voAtual->cd, vopessoaturma::$nmAtrValor."[]", getMoeda ( $voPessoaTurma->valor ), $classValor, constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "$readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);' $javaScript" ) . "</TD> \n";
+				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$nmAtrValor.$voAtual->cd, vopessoaturma::$nmAtrValor."[]", getMoeda ( $voPessoaTurma->valor, true ), $classValor, constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "$readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);' $javaScript" ) . "</TD> \n";
 				
 				$total = $voPessoaTurma->valor * $voPessoaTurma->numParcelas;
-				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$ID_REQ_VALOR_TOTAL.$voAtual->cd, vopessoaturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $total ), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, " readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);'" ) . "</TD> \n";
+				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$ID_REQ_VALOR_TOTAL.$voAtual->cd, vopessoaturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $total, true ), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, " readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);'" ) . "</TD> \n";
 				
 				if (! $isDetalhamento) {
 					$html .= "<TD class='tabeladados' nowrap>" . getBorrachaJS ( "limparDadosPessoa($voAtual->cd);" ) . "</TD> \n";
@@ -296,7 +299,7 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 		
 			$html .= "<TR>";
 			$html .= "<TD class='totalizadortabeladadosalinhadodireita' colspan='" . ($numColunas-1) ."'>Total: " 
-					. getInputText ( voturma::$ID_REQ_VALOR_TOTAL, voturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $valorReceita), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "readonly " ) . "</TD> \n";		
+					. getInputText ( voturma::$ID_REQ_VALOR_TOTAL, voturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $valorReceita, true), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "readonly " ) . "</TD> \n";		
 			$html .= "</TR>";
 		
 		$html .= "<TR>";

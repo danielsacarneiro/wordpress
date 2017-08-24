@@ -2,6 +2,7 @@
 include_once (caminho_util . "documentoPessoa.php");
 include_once (caminho_util . "dominioEstados.php");
 include_once (caminho_lib . "voentidade.php");
+include_once(caminho_util."bibliotecaHTML.php");
 class vopessoa extends voentidade {
 	static $NM_DIV_FOTO = "NM_DIV_FOTO";
 	static $NM_IMAGEM_SELECIONE_FOTO = "foto_selecione.gif";
@@ -175,8 +176,8 @@ class vopessoa extends voentidade {
 		$this->cdVinculo = @$_POST [vopessoavinculo::$nmAtrCd];
 	}
 	function toString() {
-		$retorno .= $this->cd . ",";
-		$retorno .= $this->nome . ",";
+		$retorno .= complementarCharAEsquerda($this->cd, "0", TAMANHO_CODIGOS) . " - ";
+		$retorno .= $this->nome;
 		return $retorno;
 	}
 	function getValorChavePrimaria() {

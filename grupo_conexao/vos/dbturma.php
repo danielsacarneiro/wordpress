@@ -44,6 +44,7 @@ class dbturma extends dbprocesso {
 		
 		//a coluna abaixo fica fora do group by
 		$atributosConsulta .= ",SUM(CASE WHEN $nmTabelaPessoaTurma." . vopessoaturma::$nmAtrValor . " > 0 THEN " . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . " ELSE $nmTabelaTurma." . voturma::$nmAtrValor . " END) AS " . filtroManterTurma::$NM_COL_VALOR_REAL;
+		$atributosConsulta .= ",SUM(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*".$nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas.") AS " . filtroManterTurma::$NM_COL_VALOR_REAL;
 		$atributosConsulta .= ",SUM(" . $nmTabelaTurma . "." . voturma::$nmAtrValor . ") AS " . filtroManterTurma::$NM_COL_VALOR_IDEAL;
 		$atributosConsulta .= ",COUNT(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa . ") AS " . filtroManterTurma::$NM_COL_QTD_ALUNOS;
 		
@@ -118,9 +119,13 @@ class dbturma extends dbprocesso {
 		foreach ( $voturma->colecaoAlunos as $vopessoaturma ) {
 			//$vopeturma = new vopessoaturma ();
 			$vopeturma = $vopessoaturma;
-			$vopeturma->cdTurma = $voturma->cd;			
+			$vopeturma->cdTurma = $voturma->cd;
 			$dbpeturma = $vopeturma->dbprocesso;
 			$dbpeturma->cDb = $this->cDb;
+			
+			if($vopessoaturma->valor <= 0){
+				throw new excecaoGenerica("Valor do aluno " . $vopessoaturma->vopessoa->toString() . " não pode ser zero.");
+			}
 			$dbpeturma->incluir ( $vopeturma );
 		}
 		// echo "<br>incluiu pessoa vinculo:" . var_dump($vopeturma);

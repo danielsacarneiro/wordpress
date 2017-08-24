@@ -33,6 +33,7 @@ class vopessoaturma extends voentidade {
 		$this->removeAtributos ( $arrayAtribRemover );
 		//padrao
 		$this->numParcelas = 1;
+		$this->valor = 0;
 	}
 	public static function getTituloJSP() {
 		return "PESSOA x TURMA";
@@ -79,6 +80,9 @@ class vopessoaturma extends voentidade {
 		$this->cdPessoa = @$_POST [self::$nmAtrCdPessoa];
 		$this->cdTurma = @$_POST [self::$nmAtrCdTurma];
 		$this->valor = @$_POST [self::$nmAtrValor];
+		if($this->valor == null){
+			$this->valor = 0;
+		}
 		$this->numParcelas = $_POST[self::$nmAtrNumParcelas];
 		$this->obs = @$_POST [self::$nmAtrObservacao];
 	}

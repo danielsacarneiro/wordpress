@@ -71,10 +71,15 @@ class dbpessoaturma extends dbprocesso {
 		$retorno = "";
 		$sqlConector = "";
 		
-		// if ($vo->valor != null) {
-		$retorno .= $sqlConector . vopessoaturma::$nmAtrValor . " = " . $this->getVarComoDecimal ( $vo->valor );
-		$sqlConector = ",";
-		// }
+		if ($vo->valor != null) {
+			$retorno .= $sqlConector . vopessoaturma::$nmAtrValor . " = " . $this->getVarComoDecimal ( $vo->valor );
+			$sqlConector = ",";
+		}
+		
+		if ($vo->numParcelas != null) {
+			$retorno .= $sqlConector . vopessoaturma::$nmAtrNumParcelas . " = " . $this->getVarComoNumero($vo->numParcelas);
+			$sqlConector = ",";
+		}
 		
 		if ($vo->obs != null) {
 			$retorno .= $sqlConector . vopessoaturma::$nmAtrObservacao . " = " . $this->getVarComoString ( $vo->obs );

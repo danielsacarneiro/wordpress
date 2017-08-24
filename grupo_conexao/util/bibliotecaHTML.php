@@ -133,10 +133,17 @@ function complementarCharAEsquerda($texto, $char, $qtdfinal) {
 	
 	return $retorno;
 }
-function getMoeda($valorSQL) {
+function getMoeda($valorSQL, $retornarZeroSeVazio = null) {
+	if($retornarZeroSeVazio == null){
+		$retornarZeroSeVazio = false;
+	}
+	
 	$retorno = "";
-	if ($valorSQL != null)
-		$retorno = number_format ( $valorSQL, 2, ',', '.' );
+	if ($valorSQL != null && $valorSQL != "null"){ 
+		$retorno = number_format ( $valorSQL, 2, ',', '.' );		
+	}else if($retornarZeroSeVazio){
+		$retorno = getMoeda("0");
+	}
 	return $retorno;
 }
 function getOrdemAtributos() {
