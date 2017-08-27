@@ -598,8 +598,15 @@ function getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, $isCheck
 	
 	return $retorno;
 }
-function getXGridConsulta($nmRadio, $isCheckBox) {
+function getXGridConsulta($nmRadio, $isCheckBox, $comParenteses = null) {
+	if($comParenteses == null){
+		$comParenteses = false;
+	}
 	$retorno = "&nbsp;&nbsp;X";
+	if($comParenteses){
+		$retorno = "&nbsp;&nbsp;(X)";
+	}
+	
 	if ($isCheckBox) {
 		$js = "try{marcarTodosCheckBoxes('$nmRadio');}catch(erro){;}";
 		$retorno = "<a onClick=\"javascript:" . $js . "\" A style='CURSOR: POINTER'>$retorno</a>\n";

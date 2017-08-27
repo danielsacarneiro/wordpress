@@ -2,8 +2,8 @@
 include_once (caminho_lib . "voentidade.php");
 class vopessoaturma extends voentidade {
 
-	
 	static $ID_REQ_VALOR_TOTAL = "ID_REQ_VALOR_TOTAL";
+	static $ID_REQ_COLECAO_PARCELAS_PAGAS = "ID_REQ_COLECAO_PARCELAS_PAGAS";
 	
 	static $nmAtrCdPessoa = "pe_cd";
 	static $nmAtrCdTurma = "tu_cd";
@@ -14,6 +14,8 @@ class vopessoaturma extends voentidade {
 	var $cdTurma = "";
 	var $valor = "";
 	var $numParcelas = "";
+	var $colecaoParcelasPagas = "";
+	var $colecaoParcelasPagasAnteriores = "";
 	var $obs = "";
 		
 	// ...............................................................
@@ -64,6 +66,15 @@ class vopessoaturma extends voentidade {
 		
 		return $retorno;
 	}
+	function getAtributosChavePrimaria() {
+		$retorno = array (
+				self::$nmAtrCdPessoa,
+				self::$nmAtrCdTurma
+		);
+		
+		return $retorno;
+	}
+	
 	function getDadosRegistroBanco($registrobanco) {
 		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
 		$this->cdPessoa = $registrobanco [self::$nmAtrCdPessoa];
@@ -76,6 +87,25 @@ class vopessoaturma extends voentidade {
 		
 		$this->obs = $registrobanco [self::$nmAtrObservacao];
 	}
+	function getDadosChaveOperacaoMaisComplexa() {
+		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
+		$recordset = consultarPagamentoPessoa($this);
+		$this->setColecaoParcelasPagasRegistroBanco($recordset);
+	}	
+	function setColecaoParcelasPagasRegistroBanco($colecao) {
+		$retorno = null;
+		if ($colecao != null) {
+			
+			$retorno = array ();
+			foreach ( $colecao as $registrobanco ) {
+				$vo = new vopagamento();
+				$vo->getDadosBanco ( $registrobanco );							
+				$retorno [$vo->numParcelaPaga] = $vo;
+			}
+		}
+		//var_dump($retorno);
+		$this->colecaoParcelasPagas = $retorno;
+	}	
 	function getDadosFormulario() {
 		$this->cdPessoa = @$_POST [self::$nmAtrCdPessoa];
 		$this->cdTurma = @$_POST [self::$nmAtrCdTurma];
@@ -85,6 +115,44 @@ class vopessoaturma extends voentidade {
 		}
 		$this->numParcelas = $_POST[self::$nmAtrNumParcelas];
 		$this->obs = @$_POST [self::$nmAtrObservacao];
+		
+		//quando vier da pagina de pagamento
+		$this->setColecaoParcelasPagas();
+		
+		//para guardar pra verificacao futura
+		$this->setColecaoParcelasPagasAnteriores();
+	}
+	function setColecaoParcelasPagasAnteriores() {
+		$strPArcelasPAgas = @$_POST [vopessoaturma::$ID_REQ_COLECAO_PARCELAS_PAGAS];		
+		$colecao = explode(constantes::$CD_CAMPO_SEPARADOR_ARRAY,$strPArcelasPAgas);
+		//var_dump($colecaoPagamento);
+		$this->colecaoParcelasPagasAnteriores = $colecao;
+	}
+	function setColecaoParcelasPagas() {
+		$colecaoPagamento = @$_POST [vopagamento::$nmAtrNumParcelaPaga];
+		//var_dump($colecaoPagamento);		
+		$retorno = null;
+		if (!isColecaoVazia($colecaoPagamento)) {
+			$retorno = array ();
+			for ( $i = 0; $i < count($colecaoPagamento);$i++) {
+				$numParcela = $colecaoPagamento[$i];
+				$vopagamento = new vopagamento();
+				$vopagamento->cdPessoa = $this->cdPessoa;
+				$vopagamento->cdTurma = $this->cdTurma;
+				$vopagamento->numParcelaPaga = $numParcela;
+				
+				$retorno [$numParcela] = $vopagamento;
+			}
+		}
+		//var_dump($retorno);
+		$this->colecaoParcelasPagas = $retorno;
+	}
+	function isParcelaPaga($parcela) {
+		$retorno = false;		
+		if(!isColecaoVazia($this->colecaoParcelasPagas)){
+			$retorno = in_array($parcela, array_keys($this->colecaoParcelasPagas));
+		}
+		return $retorno;
 	}
 	function getValorChavePrimaria() {
 		return $this->cdPessoa . CAMPO_SEPARADOR . $this->cdTurma . CAMPO_SEPARADOR . $this->sqHist;

@@ -28,15 +28,14 @@ class voturma extends voentidade {
 	// Funções ( Propriedades e métodos da classe )
 	function __construct() {
 		parent::__construct ();
-		$this->temTabHistorico = false;
+		$this->temTabHistorico = true;
 		
 		$class = self::getNmClassProcesso ();
 		$this->dbprocesso = new $class ();
 		
 		// retira os atributos padrao que nao possui
 		$arrayAtribRemover = array (
-				self::$nmAtrDhInclusao,
-				self::$nmAtrCdUsuarioInclusao 
+				self::$nmAtrDhInclusao 
 		);
 		$this->removeAtributos ( $arrayAtribRemover );
 	}
@@ -70,6 +69,13 @@ class voturma extends voentidade {
 		
 		return $retorno;
 	}
+	function getAtributosChavePrimaria() {
+		$retorno = array (
+				self::$nmAtrCd
+		);
+		
+		return $retorno;
+	}	
 	function getDadosRegistroBanco($registrobanco) {
 		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
 		$this->cd = $registrobanco [self::$nmAtrCd];
@@ -164,10 +170,11 @@ class voturma extends voentidade {
 	}
 	
 	function getValorChavePrimaria() {
-		return $this->cd;
+		return $this->cd . constantes::$CD_CAMPO_SEPARADOR . $this->sqHist;
 	}
 	function getChavePrimariaVOExplode($array){
 		$this->cd = $array [0];	
+		$this->sqHist = $array [1];
 	}
 	
 	function toString() {

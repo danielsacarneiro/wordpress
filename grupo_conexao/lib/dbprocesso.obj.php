@@ -1,6 +1,6 @@
 <?php
-include_once "config.obj.php";
 include_once "db.obj.php";
+include_once (caminho . "config.obj.php");
 include_once (caminho_util . "paginacao.php");
 include_once (caminho_util . "bibliotecaHTML.php");
 include_once (caminho_util . "bibliotecaSQL.php");

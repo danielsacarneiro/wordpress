@@ -6,11 +6,13 @@ include_once(caminho_filtros . "filtroManterTurma.php");
 try{
 //inicia os parametros
 inicio();
+$vo = new voturma();
 
 $titulo = "CONSULTAR " . voturma::getTituloJSP();
 setCabecalho($titulo);
 	
 $filtro  = new filtroManterTurma();
+$filtro->voPrincipal = $vo;
 $filtro = filtroManter::verificaFiltroSessao($filtro);
 
 $nome = $filtro->descricao;
@@ -18,7 +20,6 @@ $cdHistorico = $filtro->cdHistorico;
 $cdOrdenacao = $filtro->cdOrdenacao;
 $isHistorico = ("S" == $cdHistorico); 
 
-$vo = new voturma();
 $dbprocesso = $vo->dbprocesso;
 $colecao = $dbprocesso->consultarFiltroManterTurma($filtro);
 
@@ -157,14 +158,23 @@ function alterar() {
         <DIV id="div_tabeladados" class="tabeladados">
          <TABLE id="table_tabeladados" class="tabeladados" cellpadding="0" cellspacing="0">						
              <TBODY>
-                <TR>
+                <TR>                
                   <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
+                  <?php 
+                  if($isHistorico){
+                  	?>
+                  	<TH class="headertabeladados" width="1%">Sq.Hist</TH>
+                  <?php 
+                  }
+                  ?>                  
                     <TH class="headertabeladados" width="1%">Código</TH>
                     <TH class="headertabeladados" width="98%">Descrição</TH>
                     <TH class="headertabeladados" width="1%">Valor.Unit</TH>
                     <TH class="headertabeladados" width="1%">Qtd.Alunos</TH>                    
                     <TH class="headertabeladados" width="1%">Receita.Ideal</TH>                    
                     <TH class="headertabeladados" width="1%">Receita.Real</TH>
+                    <TH class="headertabeladados" width="1%">Pago</TH>
+                    <TH class="headertabeladados" width="1%">A.Receber</TH>
                     <TH class="headertabeladados" width="1%">Dt.Início</TH>
                     <TH class="headertabeladados" width="1%">Dt.Fim</TH>
                 </TR>
@@ -174,7 +184,7 @@ function alterar() {
                 else 
                         $tamanho = 0;			
                
-                 $colspan=9;
+                 $colspan=11;
                  if($isHistorico){
                  	$colspan++;
                  }                        
@@ -185,6 +195,8 @@ function alterar() {
                         
                         $valorIdeal = $colecao[$i][filtroManterTurma::$NM_COL_VALOR_IDEAL];
                         $valorReal = $colecao[$i][filtroManterTurma::$NM_COL_VALOR_REAL];
+                        $valorPago = $colecao[$i][filtroManterTurma::$NM_COL_VALOR_PAGO];
+                        $valorAReceber = $valorReal - $valorPago;
                         
                         $classColuna = "tabeladadosalinhadodireita";
                         $temValorDiferenciado = $valorReal!= $valorIdeal;
@@ -197,12 +209,21 @@ function alterar() {
                     <TD class="tabeladados">
                     <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
                     </TD>
+                  <?php                  
+                  if($isHistorico){                  	
+                  	?>
+                  	<TD class="tabeladados"><?php echo complementarCharAEsquerda($colecao[$i][$voAtual::$nmAtrSqHist], "0", TAMANHO_CODIGOS);?></TD>
+                  <?php 
+                  }
+                  ?>
                     <TD class="tabeladados"><?php echo complementarCharAEsquerda($colecao[$i][voturma::$nmAtrCd], "0", TAMANHO_CODIGOS);?></TD>
                     <TD class="tabeladados"><?php echo $colecao[$i][voturma::$nmAtrDescricao];?></TD>                    
                     <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($voAtual->valor);?></TD>
                     <TD class="tabeladadosalinhadodireita"><?php echo $colecao[$i][filtroManterTurma::$NM_COL_QTD_ALUNOS];?></TD>                    
                     <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorIdeal);?></TD>                    
-                    <TD class="<?=$classColuna?>"><?php echo getMoeda($valorReal);?></TD>
+                    <TD class="<?=$classColuna?>"><?php echo getMoeda($valorReal, true);?></TD>
+					<TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorPago, true);?></TD>                    
+					<TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorAReceber, true);?></TD>
                     <TD class="tabeladadosalinhadodireita"><?php echo getData($voAtual->dtInicio);?></TD>
                     <TD class="tabeladadosalinhadodireita"><?php echo getData($voAtual->dtFim);?></TD>
                 </TR>					
@@ -231,7 +252,7 @@ function alterar() {
                        <TD>
                         <TABLE class="barraacoesaux" cellpadding="0" cellspacing="0">
 	                   	<TR>
-	                   		<?=getBotoesRodape();?>
+	                   		<?=getBotoesRodape();?>	                   		
                          </TR>
                          </TABLE>
 	                   </TD>

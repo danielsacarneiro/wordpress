@@ -64,6 +64,16 @@ function isFormularioValido() {
 	return true;
 }
 
+function pagamento() {    
+    funcao = "<?=dbpessoaturma::$NM_FUNCAO_PAGAMENTO?>";    
+    if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
+            return;
+        	
+	chave = document.frm_principal.rdb_consulta.value;	
+	lupa = document.frm_principal.lupa.value;
+	location.href="pagamento.php?funcao=" + funcao + "&chave=" + chave + "&lupa="+ lupa;
+}
+
 <?=getFuncoesJSGenericas("document.frm_principal.rdb_consulta", $isHistorico);?>
 </SCRIPT>
 </HEAD>
@@ -119,10 +129,14 @@ function isFormularioValido() {
                 <TR>
                   <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
                     <TH class="headertabeladados" width="1%">Cd.Pessoa</TH>
+                    <TH class="headertabeladados" width="1%">Cd.Turma</TH>                    
                     <TH class="headertabeladados" width="60%">Nome</TH>
-                    <TH class="headertabeladados" width="1%">Cd.Turma</TH>
-                    <TH class="headertabeladados" width="35%">Descrição</TH>
+                    <TH class="headertabeladados" width="35%">Turma</TH>
+                    <TH class="headertabeladados" width="1%">Parcelas</TH>
                     <TH class="headertabeladados" width="1%">Valor</TH>
+                    <TH class="headertabeladados" width="1%">Total</TH>
+                    <TH class="headertabeladados" width="1%">Pago</TH>
+                    <TH class="headertabeladados" width="1%">A.Pagar</TH>
                 </TR>
                 <?php								
                 if (is_array($colecao))
@@ -130,24 +144,43 @@ function isFormularioValido() {
                 else 
                         $tamanho = 0;			
                
-                 $colspan=6;
+                 $colspan=10;
                  if($isHistorico){
                  	$colspan++;
                  }                        
                             
                 for ($i=0;$i<$tamanho;$i++) {
                         $voAtual = new vopessoaturma();
-                        $voAtual->getDadosBanco($colecao[$i]);                                                            
+                        $voAtual->getDadosBanco($colecao[$i]);
+                        
+                        $voAtualTurma = new voturma();
+                        $voAtualTurma->getDadosBanco($colecao[$i]);
+                        
+                        $inDesativado = $voAtualTurma->inDesativado;
+                        $classColuna = "tabeladados";
+                        
+                        if($inDesativado== constantes::$CD_SIM){
+                        	$classColuna = "tabeladadosdestacadovermelho";
+                        	$strDesativado = " (DESATIVADA)";
+                        }
+                        $valorPago = $colecao[$i][filtroManterPessoaTurma::$NM_COL_VALOR_PAGO];
+                        $valorTotal = $colecao[$i][filtroManterPessoaTurma::$NM_COL_VALOR_TOTAL];
+                        $valorAPagar = $valorTotal - $valorPago;
+                        
                 ?>
                 <TR class="dados">
                     <TD class="tabeladados">
                     <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
                     </TD>
                     <TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->cdPessoa);?></TD>
+                    <TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->cdTurma);?></TD>                    
                     <TD class="tabeladados"><?php echo $colecao[$i][vopessoa::$nmAtrNome];?></TD>
-                    <TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->cdTurma);?></TD>
-                    <TD class="tabeladados"><?php echo $colecao[$i][voturma::$nmAtrDescricao];?></TD>
-                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($voAtual->valor);?></TD>                    
+                    <TD class="<?=$classColuna?>"><?php echo $colecao[$i][voturma::$nmAtrDescricao].$strDesativado;?></TD>
+                    <TD class="tabeladadosalinhadodireita"><?php echo $voAtual->numParcelas?>x</TD>                    
+                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($voAtual->valor);?></TD>
+                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorTotal, true);?></TD>
+                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorPago, true);?></TD>
+                    <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorAPagar, true);?></TD>
                 </TR>					
                 <?php
 				}				
@@ -179,9 +212,9 @@ function isFormularioValido() {
 	                   		$arrayBotoesARemover = array (
 	                   				constantes::$CD_FUNCAO_INCLUIR
 	                   		);
-	                   		echo getBotoesRodapeComRestricao ( $arrayBotoesARemover, true );	                   		
-	                   			                   		
+	                   		echo getBotoesRodapeComRestricao ( $arrayBotoesARemover, true );	                   			                   		
 	                   		?>
+							<TD class="botaofuncao"><?=getBotao("bttpagamento", "Pagamento", null, false, "onClick='javascript:pagamento();' accesskey='p'")?></TD>	                   		
                          </TR>
                          </TABLE>
 	                   </TD>

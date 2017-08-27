@@ -53,13 +53,13 @@ function getColecaoAlunosVOPessoaTurma() {
 	$colecaoNumParcelas = @$_POST [vopessoaturma::$nmAtrNumParcelas];
 	$colecaoCdPessoas = @$_POST [vopessoaturma::$nmAtrCdPessoa];
 	
-	//var_dump($colecaoCdPessoas);
+	// var_dump($colecaoCdPessoas);
 	
 	for($i = 0; $i < count ( $colecaoCdPessoas ); $i ++) {
 		$vopessoaturma = new vopessoaturma ();
 		$cdPessoa = $colecaoCdPessoas [$i];
 		$vopessoaturma = $retorno [$cdPessoa];
-		$vopessoaturma->valor = getVarComoDecimal($colecaoValores [$i]);
+		$vopessoaturma->valor = getVarComoDecimal ( $colecaoValores [$i] );
 		$vopessoaturma->numParcelas = $colecaoNumParcelas [$i];
 		$retorno [$cdPessoa] = $vopessoaturma;
 	}
@@ -68,7 +68,7 @@ function getColecaoAlunosVOPessoaTurma() {
 }
 function getColecaoVOPessoaTurmaFromRecordset($colecaoAlunosVOPessoaTurma) {
 	$recordSet = consultarPessoasTurma ( $colecaoAlunosVOPessoaTurma );
-		
+	
 	$retorno = "";
 	foreach ( $recordSet as $registrobanco ) {
 		$voPessoaTurma = new vopessoaturma ();
@@ -76,16 +76,16 @@ function getColecaoVOPessoaTurmaFromRecordset($colecaoAlunosVOPessoaTurma) {
 		$vopessoa = new vopessoa ();
 		$vopessoa->getDadosBanco ( $registrobanco );
 		$voturma = new voturma ();
-		$voturma->getDadosBanco ( $registrobanco );	
-						
-		$voPesTurmaTela = $colecaoAlunosVOPessoaTurma[$voPessoaTurma->cdPessoa];
-		//echo $voPesTurmaTela->valor;
+		$voturma->getDadosBanco ( $registrobanco );
+		
+		$voPesTurmaTela = $colecaoAlunosVOPessoaTurma [$voPessoaTurma->cdPessoa];
+		// echo $voPesTurmaTela->valor;
 		
 		$voPessoaTurma->valor = $voPesTurmaTela->valor;
 		$voPessoaTurma->numParcelas = $voPesTurmaTela->numParcelas;
 		// cria em execucao um OTD
 		$voPessoaTurma->vopessoa = $vopessoa;
-		$voPessoaTurma->voturma = $voturma;		
+		$voPessoaTurma->voturma = $voturma;
 		
 		$retorno [$voPessoaTurma->cdPessoa] = $voPessoaTurma;
 	}
@@ -93,14 +93,14 @@ function getColecaoVOPessoaTurmaFromRecordset($colecaoAlunosVOPessoaTurma) {
 }
 function consultarPessoasTurma($colecaoPessoaTurma) {
 	if (! isColecaoVazia ( $colecaoPessoaTurma )) {
-		// var_dump($colecaoPessoaTurma);		
+		// var_dump($colecaoPessoaTurma);
 		$colecaoCdPessoa = getColecaoCdPessoa ( $colecaoPessoaTurma );
-		$cdTurma = getCdTurma ( $colecaoPessoaTurma );		
+		$cdTurma = getCdTurma ( $colecaoPessoaTurma );
 		$filtro = new filtroManterPessoa ( false );
 		$filtro->colecaoCd = $colecaoCdPessoa;
 		// se tiver turma, traz as informacoes da turmaxpessoa
 		$filtro->cdTurma = $cdTurma;
-		$colecao = consultarPessoasTurmaFiltroManterPessoa($filtro);
+		$colecao = consultarPessoasTurmaFiltroManterPessoa ( $filtro );
 	}
 	
 	return $colecao;
@@ -110,13 +110,25 @@ function consultarPessoasTurmaPorVOTurma($voturma) {
 		$cdTurma = $voturma->cd;
 		$filtro = new filtroManterPessoa ( false );
 		$filtro->cdTurma = $cdTurma;
-		$colecao = consultarPessoasTurmaFiltroManterPessoa($filtro);
+		$colecao = consultarPessoasTurmaFiltroManterPessoa ( $filtro );
+	}
+	
+	return $colecao;
+}
+function consultarPagamentoPessoa($vopessoaturma) {
+	if ($vopessoaturma != null) {
+		$filtro = new filtroManterPagamento ( false );
+		$filtro->cdTurma = $vopessoaturma->cdTurma;
+		$filtro->cdPessoa = $vopessoaturma->cdPessoa;
+		$filtro->setaFiltroConsultaSemLimiteRegistro ();
+		$db = new dbpessoaturma ();
+		$colecao = $db->consultarFiltroManterPagamento ( $filtro );
 	}
 	
 	return $colecao;
 }
 function consultarPessoasTurmaFiltroManterPessoa($filtro) {
-	if ($filtro!= null) {
+	if ($filtro != null) {
 		$filtro->setaFiltroConsultaSemLimiteRegistro ();
 		$filtro->cdAtrOrdenacao = vopessoa::$nmAtrNome;
 		$filtro->cdOrdenacao = constantes::$CD_ORDEM_CRESCENTE;
@@ -162,7 +174,7 @@ function imprimeGridAlunosTurma($voCamposDadosPessoaAjax) {
 	if (! $isLimpar) {
 		
 		if ($chave != null) {
-
+			
 			if ($isInclusao) {
 				// aqui vai a chave completa para permitir a inclusao de multiplas pessoas
 				$colecaoAlunosVOPessoaTurma = incluirArrayNoArray ( $chave, $colecaoAlunosVOPessoaTurma );
@@ -178,10 +190,10 @@ function imprimeGridAlunosTurma($voCamposDadosPessoaAjax) {
 	
 	if (! isColecaoVazia ( $colecaoAlunosVOPessoaTurma )) {
 		// var_dump($colecaoAlunosVOPessoaTurma);
-		if($isConsultarPessoa){
-			$colecaoAlunosVOPessoaTurma= getColecaoVOPessoaTurmaFromRecordset ( $colecaoAlunosVOPessoaTurma );
+		if ($isConsultarPessoa) {
+			$colecaoAlunosVOPessoaTurma = getColecaoVOPessoaTurmaFromRecordset ( $colecaoAlunosVOPessoaTurma );
 		}
-		putObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS, $colecaoAlunosVOPessoaTurma);
+		putObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS, $colecaoAlunosVOPessoaTurma );
 	} else {
 		removeObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS );
 	}
@@ -221,18 +233,18 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 		$html .= "<TH class='headertabeladados' width='1%'>Parcelas</TH> \n";
 		$html .= "<TH class='headertabeladados' width='1%'>Valor</TH> \n";
 		$html .= "<TH class='headertabeladados' width='1%'>Total</TH> \n";
-
+		
 		$html .= "</TR> \n";
 		
 		$i = 0;
 		$valorReceita = 0;
 		foreach ( $colecaoAlunos as $vopessoaturmaatual ) {
-						
+			
 			$voPessoaTurma = $vopessoaturmaatual;
 			$voAtual = $voPessoaTurma->vopessoa;
 			$voturma = $voPessoaTurma->voturma;
-			if($voturma->valor == null){
-				$voturma->valor = @$_POST["valorTurma"];
+			if ($voturma->valor == null) {
+				$voturma->valor = @$_POST ["valorTurma"];
 			}
 			
 			if ($voAtual != null) {
@@ -248,12 +260,12 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 					 * $html .= "</TD> \n";
 					 */
 					
-					//echo "NAO eh detalhamento";
+					// echo "NAO eh detalhamento";
 					$classValor = "camponaoobrigatorioalinhadodireita";
 					$javaScript = " onChange=\"formataCamposPagamento('$voAtual->cd');\"";
 					$readonly = "required";
-				}else{
-					//echo "eh detalhamento";
+				} else {
+					// echo "eh detalhamento";
 				}
 				
 				$doc = $voAtual->docCPF;
@@ -263,7 +275,7 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 				
 				$classColuna = "tabeladados";
 				$valorAcompararPessoa = $voPessoaTurma->valor * $voPessoaTurma->numParcelas;
-				//echo "voturma valor = $voturma->valor && vopessoaturma valor = $voPessoaTurma->valor";
+				// echo "voturma valor = $voturma->valor && vopessoaturma valor = $voPessoaTurma->valor";
 				
 				$temValorDiferenciado = $voturma->valor != $valorAcompararPessoa;
 				$mensagemAlerta = "";
@@ -278,11 +290,11 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 				$html .= "<TD class='tabeladados' nowrap>" . complementarCharAEsquerda ( $voAtual->cd, "0", TAMANHO_CODIGOS ) . "</TD> \n";
 				$html .= "<TD class='tabeladados' >" . $voAtual->nome . "</TD> \n";
 				$html .= "<TD class='tabeladados' nowrap>" . documentoPessoa::getNumeroDocFormatado ( $doc ) . "</TD> \n";
-				$html .= "<TD class='tabeladados' nowrap>" . getInputText ( vopessoaturma::$nmAtrNumParcelas.$voAtual->cd, vopessoaturma::$nmAtrNumParcelas."[]", $voPessoaTurma->numParcelas, $classValor, 2, 2, "$readonly onkeyup='validarCampoNumericoPositivo(this, 2, event);' $javaScript" ) . " x</TD> \n";
-				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$nmAtrValor.$voAtual->cd, vopessoaturma::$nmAtrValor."[]", getMoeda ( $voPessoaTurma->valor, true ), $classValor, constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "$readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);' $javaScript" ) . "</TD> \n";
+				$html .= "<TD class='tabeladados' nowrap>" . getInputText ( vopessoaturma::$nmAtrNumParcelas . $voAtual->cd, vopessoaturma::$nmAtrNumParcelas . "[]", $voPessoaTurma->numParcelas, $classValor, 2, 2, "$readonly onkeyup='validarCampoNumericoPositivo(this, 2, event);' $javaScript" ) . " x</TD> \n";
+				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$nmAtrValor . $voAtual->cd, vopessoaturma::$nmAtrValor . "[]", getMoeda ( $voPessoaTurma->valor, true ), $classValor, constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "$readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);' $javaScript" ) . "</TD> \n";
 				
 				$total = $voPessoaTurma->valor * $voPessoaTurma->numParcelas;
-				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$ID_REQ_VALOR_TOTAL.$voAtual->cd, vopessoaturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $total, true ), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, " readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);'" ) . "</TD> \n";
+				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$ID_REQ_VALOR_TOTAL . $voAtual->cd, vopessoaturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $total, true ), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, " readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);'" ) . "</TD> \n";
 				
 				if (! $isDetalhamento) {
 					$html .= "<TD class='tabeladados' nowrap>" . getBorrachaJS ( "limparDadosPessoa($voAtual->cd);" ) . "</TD> \n";
@@ -294,16 +306,15 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 			}
 			// se precisar de um contador;
 			$i ++;
-			$valorReceita = $valorReceita + ($voPessoaTurma->valor*$voPessoaTurma->numParcelas);
+			$valorReceita = $valorReceita + ($voPessoaTurma->valor * $voPessoaTurma->numParcelas);
 		}
 		
-			$html .= "<TR>";
-			$html .= "<TD class='totalizadortabeladadosalinhadodireita' colspan='" . ($numColunas-1) ."'>Total: " 
-					. getInputText ( voturma::$ID_REQ_VALOR_TOTAL, voturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $valorReceita, true), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "readonly " ) . "</TD> \n";		
-			$html .= "</TR>";
+		$html .= "<TR>";
+		$html .= "<TD class='totalizadortabeladadosalinhadodireita' colspan='" . ($numColunas - 1) . "'>Total: " . getInputText ( voturma::$ID_REQ_VALOR_TOTAL, voturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $valorReceita, true ), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "readonly " ) . "</TD> \n";
+		$html .= "</TR>";
 		
 		$html .= "<TR>";
-		$html .= "<TD class='totalizadortabeladadosalinhadodireita' colspan='" . ($numColunas-1) ."'>Total de registro(s): $tamanho</TD>";
+		$html .= "<TD class='totalizadortabeladadosalinhadodireita' colspan='" . ($numColunas - 1) . "'>Total de registro(s): $tamanho</TD>";
 		// $html .= "</DIV> \n";
 	} else {
 		$msg = "&nbsp;Selecione alunos clicando na lupa acima.";
@@ -320,6 +331,84 @@ function mostrarGridAlunos($colecaoAlunos, $isDetalhamento) {
 	$html .= "</TABLE> \n";
 	$html .= "</TH>\n";
 	$html .= "</TR>\n";
+	
+	return $html;
+}
+function mostrarGridFinanceiro($vopessoaturma, $isDetalhamento) {
+	// $vopessoaturma = new vopessoaturma ();
+	$html = "";
+	
+	$html .= " <TR>\n ";
+	$html .= "<TD class='conteinerfiltro' colspan='4'>\n";
+	$html .= "<TABLE cellpadding='0' cellspacing='0'>";
+	$html .= "<TBODY>";
+	
+	$html .= "<TR>\n";
+	$html .= "<TH class='textoseparadorgrupocampos' halign='left' colspan='4'>&nbsp;&nbsp;Pagamentos\n";
+	
+	$html .= "<TABLE id='table_tabeladados' class='tabeladados' cellpadding='0' cellspacing='0'> \n";
+	$html .= " <TBODY>  \n";
+	$html .= "        <TR>    \n";
+	
+	$numColunas = 3;
+	
+	$html .= "<TH class='headertabeladados' width='1%' nowrap>Parcela</TH>   \n";
+	$html .= "<TH class='headertabeladados' width='1%'>Valor</TH> \n";
+	$html .= "<TH class='headertabeladados' width='1%' nowrap> Pago";
+	if(!$isDetalhamento){
+		$html .= getXGridConsulta ( vopagamento::$nmAtrNumParcelaPaga, true, true );		
+	}else{
+		$disabled = "disabled";
+	}
+	$html .= "</TH> \n";
+	$html .= "<TH class='headertabeladados' width='1%'>Dt.Registro</TH> \n";
+	
+	$html .= "</TR> \n";
+	
+	$valorParcela = $vopessoaturma->valor;
+	$numParcela = $vopessoaturma->numParcelas;
+	$cdPessoa = $vopessoaturma->cdPessoa;
+	
+	$classValor = "camporeadonlyalinhadodireita";
+	$valorTotal = 0;
+	// var_dump($vopessoaturma->colecaoParcelasPagas);
+	for($i = 1; $i <= $numParcela; $i ++) {
+		
+		$checked = $vopessoaturma->isParcelaPaga ( $i );
+		
+		$vopagamento = $vopessoaturma->colecaoParcelasPagas[$i];
+		
+		$html .= "<TR class='dados'> \n";
+		$html .= "<TD class='tabeladados' nowrap>" . getInputText ( "", "", $i, $classValor, 2, 2, " readonly " ) . " x</TD> \n";
+		$html .= "<TD class='tabeladados' nowrap>" . getInputText ( "", "", getMoeda ( $valorParcela, true ), $classValor, constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "readonly " ) . "</TD> \n";
+		$html .= "<TD class='tabeladados' nowrap>" . getCheckBoxBoolean ( vopagamento::$nmAtrNumParcelaPaga, vopagamento::$nmAtrNumParcelaPaga . "[]", $i, $checked, $disabled) . "</TD> \n";
+		$html .= "<TD class='tabeladados' nowrap>" . getDataHora($vopagamento->dhUltAlteracao) . "</TD> \n";
+		$html .= "</TR> \n";
+		
+		$valorTotal = $valorTotal + $valorParcela;
+	}
+	
+	$html .= "<TR>";
+	$html .= "<TD class='totalizadortabeladadosalinhadodireita' colspan='" . ($numColunas - 1) . "'>Total: " . getInputText ( "", "", getMoeda ( $valorTotal, true ), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "readonly " ) . "</TD> \n";
+	$colecaoPArcelasPagasAnteriores = null;	
+	if($vopessoaturma->colecaoParcelasPagas != null){
+		$colecaoPArcelasPagasAnteriores = array_keys($vopessoaturma->colecaoParcelasPagas);
+	}
+	$strParcelasPagas = getColecaoEntreSeparador($colecaoPArcelasPagasAnteriores, constantes::$CD_CAMPO_SEPARADOR_ARRAY);
+	$html .= getInputHidden(vopessoaturma::$ID_REQ_COLECAO_PARCELAS_PAGAS, vopessoaturma::$ID_REQ_COLECAO_PARCELAS_PAGAS, $strParcelasPagas) . "\n";
+	$html .= "</TR>";
+	//$html .= "</TR>";
+	
+	$html .= "</TBODY> \n";
+	$html .= "</TABLE> \n";
+	$html .= "</TH>\n";
+	$html .= "</TR>\n";
+	
+	$html .= "</TBODY>\n";
+	$html .= "</TABLE>\n";
+	$html .= "</TD>\n";
+	$html .= "</TR>\n";
+			
 	
 	return $html;
 }

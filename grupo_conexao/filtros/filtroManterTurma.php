@@ -6,6 +6,7 @@ class filtroManterTurma extends filtroManter {
 
 	static $NM_COL_VALOR_IDEAL = "NM_COL_VALOR_IDEAL"; 
 	static $NM_COL_VALOR_REAL = "NM_COL_VALOR_REAL";
+	static $NM_COL_VALOR_PAGO = "NM_COL_VALOR_PAGO";
 	static $NM_COL_QTD_ALUNOS = "NM_COL_QTD_ALUNOS";
 	var $nomePessoa;
 	var $cdPessoa;

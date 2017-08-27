@@ -4,66 +4,76 @@ include_once(caminho_util."bibliotecaHTML.php");
 
 try{
 //inicia os parametros
-inicioComValidacaoUsuario(true);
+inicio();
 
 $vo = new vopessoaturma();
 //var_dump($vo->varAtributos);
+$vo->getVOExplodeChave($chave);
+$isHistorico = ($vo->sqHist != null && $vo->sqHist != "");
 
-$funcao = @$_GET["funcao"];
-
-$readonly = "";
-$isInclusao = $funcao == constantes::$CD_FUNCAO_INCLUIR;
-
-$nmFuncao = "";
-if($isInclusao){    
-	$nmFuncao = "INCLUIR ";	
-}else{
-    $readonly = "readonly";
-    $vo->getVOExplodeChave($chave);
-    $isHistorico = ($vo->sqHist != null && $vo->sqHist != "");
+$vo->cd = $array[0];
+$vo->cdHistorico = $array[1];
     
-	$dbprocesso = $vo->dbprocesso;					
-	$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
-	$vo->getDadosBanco($colecao);
-	putObjetoSessao($vo->getNmTabela(), $vo);
-
-    $nmFuncao = "ALTERAR ";
+if($isHistorico){
+    $sqHist = $array[2];
+    $vo->sqHist = $sqHist;
 }
 
-$titulo = $vo->getTituloJSP();
-$titulo = $nmFuncao . $titulo;
-setCabecalho($titulo);
+$readonly = "";
+$nmFuncao = "";
+$readonly = "readonly";
+$dbprocesso = $vo->dbprocesso;					
+$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
+$vo->getDadosBancoPorChave($colecao);
+putObjetoSessao($vo->getNmTabela(), $vo);
+    
+$dhInclusao = $vo->dhInclusao;
+$dhUltAlteracao = $vo->dhUltAlteracao;
+$cdUsuarioInclusao = $vo->cdUsuarioInclusao;
+$cdUsuarioUltAlteracao = $vo->cdUsuarioUltAlteracao;
 
-$nome  = $vo->descricao;
-   
+$nmFuncao = "FINANCEIRO ";
+$titulo = $vo->getTituloJSP();
+$complementoTit = "";
+$isExclusao = false;
+if($isHistorico)
+    $complementoTit = " Histórico";
+
+$funcao = @$_GET["funcao"];
+if($funcao == constantes::$CD_FUNCAO_EXCLUIR){
+	$nmFuncao = "EXCLUIR ";
+    $isExclusao = true;
+}
+
+$titulo = $nmFuncao. $titulo. $complementoTit;
+setCabecalho($titulo);  
 ?>
 <!DOCTYPE html>
 <HEAD>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_moeda.js"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>mensagens_globais.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_cnpfcnpj.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_checkbox.js"></SCRIPT>
 
 <SCRIPT language="JavaScript" type="text/javascript">
 // Verifica se o formulario esta valido para alteracao, exclusao ou detalhamento
 function isFormularioValido() {
-	if (!isCampoMoedaComSeparadorMilharValido(document.frm_principal.<?=vopessoaturma::$nmAtrValor?>, 2, false))
+	if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
 		return false;		
 	return true;
 }
 
-function cancela() {
+function cancelar() {
 	//history.back();
-	location.href="index.php?consultar=S";	
+	lupa = document.frm_principal.lupa.value;	
+	location.href="index.php?consultar=S&lupa="+ lupa;	
 }
 
 function confirmar() {
-	if(!isFormularioValido())
-		return false;
-	
 	return confirm("Confirmar Alteracoes?");    
 }
 
 </SCRIPT>
+
 </HEAD>
 <?=setTituloPagina($vo->getTituloJSP())?>
 <BODY class="paginadados" onload="">
@@ -72,7 +82,7 @@ function confirmar() {
 
 <INPUT type="hidden" id="funcao" name="funcao" value="<?=$funcao?>">
 <INPUT type="hidden" id="<?=vousuario::$nmAtrID?>" name="<?=vousuario::$nmAtrID?>" value="<?=id_user?>">
-<INPUT type="hidden" id="<?=voturma::$nmAtrCd?>" name="<?=voturma::$nmAtrCd?>" value="<?=$vo->cdTurma?>">
+<INPUT type="hidden" id="<?=voturma::$nmAtrCd?>" name="<?=voturma::$nmAtrCd?>" value="<?=$vo->cd?>">
  
 <TABLE id="table_conteiner" class="conteiner" cellpadding="0" cellspacing="0">
     <TBODY>
@@ -84,7 +94,6 @@ function confirmar() {
             <DIV id="div_filtro" class="div_filtro">
             <TABLE id="table_filtro" class="filtro" cellpadding="0" cellspacing="0">
             <TBODY>
-            
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Pessoa:</TH>
                 <TD class="campoformulario" colspan=3><INPUT type="text" value="<?php echo($vo->getCodigoDEscricaoFormatado($vo->cdPessoa, $colecao[vopessoa::$nmAtrNome]));?>"  class="camporeadonly" size="50" readonly></TD>
@@ -94,22 +103,26 @@ function confirmar() {
                 
 				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo($vo->cdTurma);?>">
 				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdPessoa?>" name="<?=vopessoaturma::$nmAtrCdPessoa?>"  value="<?php echo($vo->cdPessoa);?>">						
-            </TR>            
-			<TR>
-	            <TH class="campoformulario" nowrap width=1%>Valor a pagar:</TH>
-	            <TD class="campoformulario" colspan="3">
-	            <INPUT type="text" id="<?=vopessoaturma::$nmAtrNumParcelas?>" name="<?=vopessoaturma::$nmAtrNumParcelas?>" value="<?php echo($vo->numParcelas);?>" class="camponaoobrigatorioalinhadodireita" size="2" required> x
-	            <INPUT type="text" id="<?=vopessoaturma::$nmAtrValor?>" name="<?=vopessoaturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
-	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" class="camponaoobrigatorioalinhadodireita" size="15" required></TD>
-	        </TR>
+            </TR>
+            <TR>
+	            <TH class="campoformulario" nowrap width=1%>Valor Mensal:</TH>
+	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
+	            class="camporeadonlyalinhadodireita" size="15" readonly></TD>
+	        </TR>					            
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Observação:</TH>
                 <TD class="campoformulario" colspan=3>
-                				<textarea rows="2" cols="60" id="<?=vopessoaturma::$nmAtrObservacao?>" name="<?=vopessoaturma::$nmAtrObservacao?>" class="camponaoobrigatorio" maxlength="300"><?php echo($vo->obs);?></textarea>
+                				<textarea rows="2" cols="60" id="<?=voturma::$nmAtrObservacao?>" name="<?=voturma::$nmAtrObservacao?>" class="camporeadonly" maxlength="300" readonly><?php echo($vo->obs);?></textarea>
 				</TD>
-            </TR>                 
-
-        <?php if(!$isInclusao){
+            </TR>
+            
+            <?php
+            	echo mostrarGridFinanceiro($vo, false);
+			?>            
+                             
+            
+        <?php        
+        if(!$isInclusao){
             echo "<TR>" . incluirUsuarioDataHoraDetalhamento($vo) .  "</TR>";
         }?>
             </TBODY>
@@ -125,13 +138,7 @@ function confirmar() {
 						<TD>
                     		<TABLE class="barraacoesaux" cellpadding="0" cellspacing="0">
 	                    	<TR>
-								<?php
-								if($funcao == "I" || $funcao == "A"){
-								?>
-                                    <TD class="botaofuncao"><?=getBotaoConfirmar()?></TD>
-								<?php
-								}?>
-								<TD class="botaofuncao"><button id="cancelar" onClick="javascript:cancela();" class="botaofuncaop" type="button" accesskey="c">Cancelar</button></TD>                                
+	                    	<?=getBotoesRodape();?>
 						    </TR>
 		                    </TABLE>
 	                    </TD>

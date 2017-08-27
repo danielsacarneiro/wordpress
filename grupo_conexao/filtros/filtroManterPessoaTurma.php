@@ -5,6 +5,8 @@ include_once(caminho_lib ."filtroManter.php");
 class filtroManterPessoaTurma extends filtroManter{
     
     var $nmFiltro = "filtroManterPessoaTurma";
+    static $NM_COL_VALOR_PAGO = "NM_COL_VALOR_PAGO";
+    static $NM_COL_VALOR_TOTAL = "NM_COL_VALOR_TOTAL";
     
     // ...............................................................
 	// construtor

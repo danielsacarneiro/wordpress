@@ -27,6 +27,7 @@ class voentidade extends multiplosConstrutores {
 	var $dhInclusao;
 	var $dhUltAlteracao;
 	var $dhOperacao;
+	var $inDesativado;
 	var $cdUsuarioInclusao;
 	var $cdUsuarioOperacao;
 	// id_user eh o usuario logado no sistema
@@ -161,6 +162,7 @@ class voentidade extends multiplosConstrutores {
 		$this->cdUsuarioInclusao = $registrobanco [voentidade::$nmAtrCdUsuarioInclusao];
 		$this->cdUsuarioUltAlteracao = $registrobanco [voentidade::$nmAtrCdUsuarioUltAlteracao];
 		$this->sqHist = $registrobanco [voentidade::$nmAtrSqHist];
+		$this->inDesativado = $registrobanco [voentidade::$nmAtrInDesativado];
 		// $this->cdHistorico = $registrobanco[voentidade::$nmAtrcdSqHist];
 		
 		$this->nmUsuarioInclusao = $registrobanco [voentidade::$nmAtrNmUsuarioInclusao];

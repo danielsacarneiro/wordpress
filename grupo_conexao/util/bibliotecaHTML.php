@@ -606,10 +606,18 @@ function getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, $isCheck
 	
 	return $retorno;
 }
-function getXGridConsulta($nmRadio, $isCheckBox) {
+function getXGridConsulta($nmRadio, $isCheckBox, $comParenteses = null) {
+	if($comParenteses == null){
+		$comParenteses = false;
+	}
 	$retorno = "&nbsp;&nbsp;X";
+	if($comParenteses){
+		$retorno = "&nbsp;&nbsp;(X)";
+	}
+	
 	if ($isCheckBox) {
-		$js = "try{marcarTodosCheckBoxes('$nmRadio');}catch(erro){;}";
+		//$js = "try{marcarTodosCheckBoxes('$nmRadio');}catch(erro){;}";
+		$js = "marcarTodosCheckBoxes('$nmRadio');";
 		$retorno = "<a onClick=\"javascript:" . $js . "\" A style='CURSOR: POINTER'>$retorno</a>\n";
 	}
 	
@@ -617,6 +625,23 @@ function getXGridConsulta($nmRadio, $isCheckBox) {
 }
 function getRadioButton($idRadio, $nmRadio, $chave, $checked, $complementoHTML) {
 	$retorno = "<INPUT type='radio' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $checked . " $complementoHTML>";
+	return $retorno;
+}
+
+function getCheckBox($idRadio, $nmRadio, $chave, $checked = null, $complementoHTML = null) {
+	$retorno = "<INPUT type='checkbox' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $checked . " $complementoHTML>";
+	return $retorno;
+}
+
+function getCheckBoxBoolean($idRadio, $nmRadio, $chave, $checked = null, $complementoHTML = null) {
+	if($checked == null){
+		$checked = false;
+	}
+	if($checked){
+		$strchecked = "checked";
+	}
+	
+	$retorno = "<INPUT type='checkbox' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $strchecked. " $complementoHTML>";
 	return $retorno;
 }
 
@@ -635,7 +660,12 @@ function getInputText($idText, $nmText, $value, $class=null, $size=null, $maxlen
 														
 	return $retorno;
 }
-												
+
+function getInputHidden($idText, $nmText, $value,$complementoHTML=null) {	
+	$retorno = "<INPUT type='hidden' id='" . $idText . "' name='" . $nmText . "' value='" . $value. "' $complementoHTML>";	
+	return $retorno;
+}
+
 function getSelectGestor() {
 	$dbgestor = new dbgestor ();
 	$registros = $dbgestor->consultarSelect ();

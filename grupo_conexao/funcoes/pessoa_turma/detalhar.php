@@ -24,7 +24,7 @@ $nmFuncao = "";
 $readonly = "readonly";
 $dbprocesso = $vo->dbprocesso;					
 $colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
-$vo->getDadosBanco($colecao);
+$vo->getDadosBancoPorChave($colecao);
 putObjetoSessao($vo->getNmTabela(), $vo);
     
 $dhInclusao = $vo->dhInclusao;
@@ -114,7 +114,11 @@ function confirmar() {
                 <TD class="campoformulario" colspan=3>
                 				<textarea rows="2" cols="60" id="<?=voturma::$nmAtrObservacao?>" name="<?=voturma::$nmAtrObservacao?>" class="camporeadonly" maxlength="300" readonly><?php echo($vo->obs);?></textarea>
 				</TD>
-            </TR>                 
+            </TR>        
+            <?php
+            	echo mostrarGridFinanceiro($vo, true);					  
+			?>            
+                     
             
         <?php if(!$isInclusao){
             echo "<TR>" . incluirUsuarioDataHoraDetalhamento($vo) .  "</TR>";
