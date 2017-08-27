@@ -13,20 +13,13 @@ Class config {
           // ...............................................................
          // Construtor
 
-Function config (){
-
+      Function config (){
                  $this->db        = "sistemasgep";
-
                  $this->login     = "grupoconexao";
-
                  $this->senha     = "grupoconexao123";
-
                  $this->odbc      = "";
-
                  $this->driver    = "";
-
                  $this->servidor  = "mysql796.umbler.com:41890";
-
       }
 		
 }
