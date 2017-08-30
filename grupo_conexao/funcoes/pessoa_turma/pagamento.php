@@ -4,7 +4,7 @@ include_once(caminho_util."bibliotecaHTML.php");
 
 try{
 //inicia os parametros
-inicio();
+inicioComValidacaoUsuario(true);
 
 $vo = new vopessoaturma();
 //var_dump($vo->varAtributos);

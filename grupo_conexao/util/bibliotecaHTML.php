@@ -275,19 +275,6 @@ function getDsEspecie($voContrato) {
 	}
 	return $retorno;
 }
-function getBotao($idBotao, $descricao, $classe, $isSubmit, $complementoHTML) {
-	$retorno = "";
-	$tipo = "button";
-	if ($isSubmit)
-		$tipo = "submit";
-	
-	if ($classe == null)
-		$classe = "botaofuncaop";
-	
-	$retorno = "<button id='$idBotao' class='$classe' type='$tipo' $complementoHTML>$descricao</button>";
-	
-	return $retorno;
-}
 function isLupa() {
 	// vem do linkPesquisa ou do campo formulario
 	$lupa = @$_GET [constantes::$ID_REQ_LUPA];
@@ -305,6 +292,19 @@ function isMultiSelecao() {
 	}
 	
 	return $flag == "S";
+}
+function getBotao($idBotao, $descricao, $classe, $isSubmit, $complementoHTML) {
+	$retorno = "";
+	$tipo = "button";
+	if ($isSubmit)
+		$tipo = "submit";
+		
+		if ($classe == null)
+			$classe = "botaofuncaop";
+			
+			$retorno = "<button id='$idBotao' class='$classe' type='$tipo' $complementoHTML>$descricao</button>";
+			
+			return $retorno;
 }
 function getBotaoValidacaoAcesso($idBotao, $descricao, $classe, $isSubmit, $imprimirNaLupa, $imprimirNaManutencao, $todosTemAcesso, $complementoHTML) {
 	return getBotaoGeral ( $idBotao, $descricao, $classe, $isSubmit, $imprimirNaLupa, $imprimirNaManutencao, $todosTemAcesso, $complementoHTML, "" );

@@ -61,9 +61,31 @@ CREATE TABLE pessoa_turma (
     pt_numparcelas INT NOT NULL,
     pt_valor DECIMAL(10,2) DEFAULT NULL,
     pt_obs VARCHAR(300) DEFAULT NULL,
+    
     dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
     cd_usuario_ultalt INT,    
+    in_desativado CHAR(1) DEFAULT 'N',
+    
     CONSTRAINT pk PRIMARY KEY (pe_cd, tu_cd)
+);
+
+drop table IF EXISTS pessoa_turma_hist;
+CREATE TABLE pessoa_turma_hist (
+	hist INT NOT NULL AUTO_INCREMENT,
+	pe_cd INT NOT NULL,
+    tu_cd INT NOT NULL,
+    pt_numparcelas INT NOT NULL,
+    pt_valor DECIMAL(10,2) DEFAULT NULL,
+    pt_obs VARCHAR(300) DEFAULT NULL,
+    
+    dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    cd_usuario_ultalt INT,    
+    in_desativado CHAR(1),
+    
+	dh_operacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cd_usuario_operacao INT,
+    
+    CONSTRAINT pk PRIMARY KEY (hist)
 );
 
 drop table IF EXISTS pagamento;
@@ -74,7 +96,7 @@ CREATE TABLE pagamento (
     dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
     cd_usuario_ultalt INT,    
     
-    FOREIGN KEY (pe_cd, tu_cd) REFERENCES pessoa_turma(pe_cd, tu_cd) ON DELETE CASCADE,
+    -- FOREIGN KEY (pe_cd, tu_cd) REFERENCES pessoa_turma(pe_cd, tu_cd) ON DELETE CASCADE,
     
     CONSTRAINT pk PRIMARY KEY (pe_cd, tu_cd, pag_parcela)
 );

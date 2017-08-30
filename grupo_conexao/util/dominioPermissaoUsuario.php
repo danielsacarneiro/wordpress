@@ -60,6 +60,7 @@ include_once("dominio.class.php");
     	if($isUserAdmin || $isUserNivel1){
     		$arrayPermissao[] = constantes::$CD_FUNCAO_ALTERAR;
     		$arrayPermissao[] = constantes::$CD_FUNCAO_EXCLUIR;
+    		$arrayPermissao[] = dbpessoaturma::$CD_FUNCAO_PAGAMENTO;
     		//echo "user 1";
     	}
     	 

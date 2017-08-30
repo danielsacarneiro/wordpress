@@ -22,7 +22,7 @@ class vopessoaturma extends voentidade {
 	// Funções ( Propriedades e métodos da classe )
 	function __construct() {
 		parent::__construct ();
-		$this->temTabHistorico = false;
+		$this->temTabHistorico = true;
 		
 		$class = self::getNmClassProcesso ();
 		$this->dbprocesso = new $class ();

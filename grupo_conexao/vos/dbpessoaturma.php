@@ -1,7 +1,7 @@
 <?php
 include_once (caminho_lib . "dbprocesso.obj.php");
 class dbpessoaturma extends dbprocesso {
-	static $NM_FUNCAO_PAGAMENTO = "pagamento";
+	static $CD_FUNCAO_PAGAMENTO = "pagamento";
 	function consultarPorChave($vo, $isHistorico) {
 		$nmTabelaPessoaTurma = $vo->getNmTabelaEntidade ( $isHistorico );
 		$nmTabelaTurma = voturma::getNmTabelaStatic ( $isHistorico );
@@ -70,8 +70,25 @@ class dbpessoaturma extends dbprocesso {
 		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, false );
 	}
 	function excluir($vopessoaturma) {
-		throw new excecaoGenerica ( "Operação permitida apenas na tela de manutenção da turma." );
-	}
+		// Start transaction
+		$this->cDb->retiraAutoCommit ();
+		try {
+			$permiteExcluirPrincipal = $this->permiteExclusaoPrincipal ( $vopessoaturma );
+			// so exclui os relacionamentos se a exclusao for de registro historico
+			// caso contrario , apenas desativa o voprincipal
+			if ($permiteExcluirPrincipal) {
+				$this->excluirPagamento( $vopessoaturma, true);
+			}
+			parent::excluir ( $vopessoaturma );
+			// End transaction
+			$this->cDb->commit ();
+		} catch ( Exception $e ) {
+			$this->cDb->rollback ();
+			throw new Exception ( $e->getMessage () );
+		}
+		
+		return $vopessoaturma;
+	}	
 	function incluirPagamento($vopessoaturma) {
 		//$vopessoaturma = new vopessoaturma();
 		$colecaoPagamento = $vopessoaturma->colecaoParcelasPagas;
@@ -87,7 +104,10 @@ class dbpessoaturma extends dbprocesso {
 		}
 		// echo "<br>incluiu pessoa vinculo:" . var_dump($vopeturma);
 	}
-	function excluirPagamento($vopessoaturma) {
+	function excluirPagamento($vopessoaturma, $excluirDireto = null) {
+		if($excluirDireto == null){
+			$excluirDireto = false;
+		}
 		// $vopessoaturma = new vopessoaturma();
 		$colecaoPagamento = $vopessoaturma->colecaoParcelasPagas;
 		$sqlNotIn = null;
@@ -101,23 +121,13 @@ class dbpessoaturma extends dbprocesso {
 		$query = "DELETE FROM " . $nmTabela;
 		$query .= "\n WHERE " . vopagamento::$nmAtrCdPessoa . " = " . $vopessoaturma->cdPessoa;
 		$query .= "\n AND " . vopagamento::$nmAtrCdTurma . " = " . $vopessoaturma->cdTurma;
-		if ($sqlNotIn) {
+		if ($sqlNotIn && !$excluirDireto) {
 			$query .= "\n AND " . vopagamento::$nmAtrNumParcelaPaga . " NOT IN (" . $sqlNotIn . ")";
 		}
 		
 		// echo $query;
 		return $this->atualizarEntidade ( $query );
 	}
-	/*function excluirPagamento($vopessoaturma) {
-		$vo = new vopagamento ();
-		$nmTabela = $vo->getNmTabelaEntidade ( false );
-		$query = "DELETE FROM " . $nmTabela;
-		$query .= "\n WHERE " . vopagamento::$nmAtrCdPessoa . " = " . $vopessoaturma->cdPessoa;
-		$query .= "\n AND " . vopagamento::$nmAtrCdTurma . " = " . $vopessoaturma->cdTurma;
-		
-		// echo $query;
-		return $this->atualizarEntidade ( $query );
-	}*/
 	function pagamento($vopessoaturma) {
 		// $vopessoaturma = new vopessoaturma();
 		// Start transaction

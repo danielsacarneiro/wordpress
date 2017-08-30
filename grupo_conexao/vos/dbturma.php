@@ -147,14 +147,6 @@ class dbturma extends dbprocesso {
 		}
 		// echo "<br>incluiu pessoa vinculo:" . var_dump($vopeturma);
 	}
-	// se for alteracao, mantem os registros das pessoas anteriores
-	function excluirPessoaTurma($voturma, $isAlteracao) {
-		if ($isAlteracao) {
-			$this->excluirPessoaTurmaAlteracao ( $voturma );
-		} else {
-			$this->excluirPessoaTurmaExclusao ( $voturma );
-		}
-	}
 	function excluirPessoaTurmaExclusao($voturma) {
 		// deve excluir todos os dados relacionados a pessoa x turma
 		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic ( false );
@@ -195,7 +187,7 @@ class dbturma extends dbprocesso {
 		// Start transaction
 		$this->cDb->retiraAutoCommit ();
 		try {
-			$this->excluirPessoaTurma ( $voturma , true);
+			$this->excluirPessoaTurmaAlteracao ( $voturma );
 			$this->incluirPessoaTurma ( $voturma );
 			
 			$voturma = parent::alterar ( $voturma );
@@ -216,8 +208,8 @@ class dbturma extends dbprocesso {
 			$permiteExcluirPrincipal = $this->permiteExclusaoPrincipal ( $voturma );
 			// so exclui os relacionamentos se a exclusao for de registro historico
 			// caso contrario , apenas desativa o voprincipal			
-			if ($permiteExcluirPrincipal) {
-				$this->excluirPessoaTurma ( $voturma, false );				
+			if ($permiteExcluirPrincipal) {				
+				$this->excluirPessoaTurmaExclusao($voturma );
 			}			
 			parent::excluir ( $voturma );
 			// End transaction

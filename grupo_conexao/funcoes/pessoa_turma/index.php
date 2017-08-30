@@ -7,10 +7,12 @@ try{
 //inicia os parametros
 inicio();
 
+$vo = new vopessoaturma();
 $titulo = "CONSULTAR " . vopessoaturma::getTituloJSP();
 setCabecalho($titulo);
 	
 $filtro  = new filtroManterPessoaTurma(true);
+$filtro->voPrincipal = $vo;
 $filtro = filtroManter::verificaFiltroSessao($filtro);
 
 $nome = $filtro->descricao;
@@ -18,7 +20,6 @@ $cdHistorico = $filtro->cdHistorico;
 $cdOrdenacao = $filtro->cdOrdenacao;
 $isHistorico = ("S" == $cdHistorico); 
 
-$vo = new vopessoaturma();
 $dbprocesso = $vo->dbprocesso;
 $colecao = $dbprocesso->consultarFiltroManterPessoaTurma($filtro);
 
@@ -65,7 +66,7 @@ function isFormularioValido() {
 }
 
 function pagamento() {    
-    funcao = "<?=dbpessoaturma::$NM_FUNCAO_PAGAMENTO?>";    
+    funcao = "<?=dbpessoaturma::$CD_FUNCAO_PAGAMENTO?>";    
     if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
             return;
         	
@@ -214,7 +215,11 @@ function pagamento() {
 	                   		);
 	                   		echo getBotoesRodapeComRestricao ( $arrayBotoesARemover, true );	                   			                   		
 	                   		?>
-							<TD class="botaofuncao"><?=getBotao("bttpagamento", "Pagamento", null, false, "onClick='javascript:pagamento();' accesskey='p'")?></TD>	                   		
+							<TD class="botaofuncao">
+							<?=
+							getBotaoPorFuncao("bttpagamento", "Pagamento", null, false, false, true, "onClick='javascript:pagamento();' accesskey='p'", dbpessoaturma::$CD_FUNCAO_PAGAMENTO)
+							?>
+							</TD>	                   		
                          </TR>
                          </TABLE>
 	                   </TD>
