@@ -1,12 +1,11 @@
 <?php
 include_once (caminho_lib . "voentidade.php");
-include_once(caminho_funcoes."turma/bibliotecaTurma.php");
-
+include_once (caminho_funcoes . "turma/bibliotecaTurma.php");
 class voturma extends voentidade {
 	static $NUM_MAXIMO_ALUNO = 15;
-	
 	static $NM_DIV_COLECAO_ALUNOS = "NM_DIV_COLECAO_ALUNOS";
 	static $ID_REQ_COLECAO_ALUNOS = "ID_REQ_COLECAO_ALUNOS";
+	static $ID_REQ_COLECAO_CDPESSOA_ANTERIOR = "ID_REQ_COLECAO_CDPESSOA_ANTERIOR";
 	static $ID_REQ_VALOR_TOTAL = "ID_REQ_VALOR_TOTAL_TURMA";
 	static $ID_REQ_DURACAO = "ID_REQ_DURACAO";
 	static $nmAtrCd = "tu_cd";
@@ -15,7 +14,6 @@ class voturma extends voentidade {
 	static $nmAtrObservacao = "tu_obs";
 	static $nmAtrDtInicio = "tu_dtinicio";
 	static $nmAtrDtFim = "tu_dtfim";
-
 	var $cd = "";
 	var $descricao = "";
 	var $valor = "";
@@ -23,6 +21,7 @@ class voturma extends voentidade {
 	var $dtInicio = "";
 	var $dtFim = "";
 	var $colecaoAlunos = "";
+	var $colecaoCdPessoasAnteriores = "";
 	
 	// ...............................................................
 	// FunÃ§Ãµes ( Propriedades e mÃ©todos da classe )
@@ -71,11 +70,11 @@ class voturma extends voentidade {
 	}
 	function getAtributosChavePrimaria() {
 		$retorno = array (
-				self::$nmAtrCd
+				self::$nmAtrCd 
 		);
 		
 		return $retorno;
-	}	
+	}
 	function getDadosRegistroBanco($registrobanco) {
 		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
 		$this->cd = $registrobanco [self::$nmAtrCd];
@@ -85,64 +84,85 @@ class voturma extends voentidade {
 		$this->dtInicio = $registrobanco [self::$nmAtrDtInicio];
 		$this->dtFim = $registrobanco [self::$nmAtrDtFim];
 		
-		$this->obs = $registrobanco [self::$nmAtrObservacao];	
+		$this->obs = $registrobanco [self::$nmAtrObservacao];
 	}
 	function getDadosChaveOperacaoMaisComplexa() {
 		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
-		$recordset = consultarPessoasTurmaPorVOTurma($this);
-		$this->setColecaoAlunosRegistroBanco($recordset);
+		$this->getESetColecaoAlunosRegistroBanco();
+	}
+	function getESetColecaoAlunosRegistroBanco() {
+		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
+		//echo "historico do voturma é ". $this->sqHist;
+		$recordset = consultarPessoasTurmaPorVOTurma ( $this );
+		$this->setColecaoAlunosRegistroBanco ( $recordset );
 	}
 	function getDadosFormulario() {
 		$this->cd = @$_POST [self::$nmAtrCd];
-		$this->descricao = strtoupper(@$_POST [self::$nmAtrDescricao]);
+		$this->descricao = strtoupper ( @$_POST [self::$nmAtrDescricao] );
 		$this->valor = @$_POST [self::$nmAtrValor];
 		
-		$this->dtInicio = @$_POST[self::$nmAtrDtInicio];
-		$this->dtFim = @$_POST[self::$nmAtrDtFim];
+		$this->dtInicio = @$_POST [self::$nmAtrDtInicio];
+		$this->dtFim = @$_POST [self::$nmAtrDtFim];
 		
-		$this->obs = @$_POST [self::$nmAtrObservacao];
+		$this->obs = @$_POST [self::$nmAtrObservacao];		
 		
-		$this->setColecaoAlunosFormulario();
+		$cdFuncao = @$_POST ["funcao"];
 		
-		/*if (existeObjetoSessao ( self::$ID_REQ_COLECAO_ALUNOS )) {
-			// echo "tem colecao alunos";
-			$this->colecaoAlunos = getObjetoSessao ( self::$ID_REQ_COLECAO_ALUNOS );
-		} else {
-			throw new excecaoGenerica ( "É preciso ter alunos para criar uma turma." ); // echo "NAO tem colecao alunos";
-		}*/
+		//se ele pegar do formulario, sobrescreve com as informacoes do formulario
+		//na funcao EXCLUIR isso nao se deseja
+		if($cdFuncao != constantes::$CD_FUNCAO_EXCLUIR){
+			$this->setColecaoAlunosFormulario ();
+		}else{
+			//pega da base
+			$this->getESetColecaoAlunosRegistroBanco();
+			//var_dump($this->colecaoAlunos);
+		}
+		
+		// para guardar pra verificacao futura
+		$this->setColecaoCdPessoasAnteriores ();
+	}
+	function setColecaoCdPessoasAnteriores() {
+		$strAlunos = @$_POST [voturma::$ID_REQ_COLECAO_CDPESSOA_ANTERIOR];
+		//echo "pessoas anteriores $strAlunos";
+		$colecao = explode ( constantes::$CD_CAMPO_SEPARADOR_ARRAY, $strAlunos );
+		// var_dump($colecaoPagamento);
+		$this->colecaoCdPessoasAnteriores = $colecao;
 	}
 	function setColecaoAlunosFormulario() {
 		$colecaoValores = @$_POST [vopessoaturma::$nmAtrValor];
 		$colecaoNumParcelas = @$_POST [vopessoaturma::$nmAtrNumParcelas];
 		$colecaoCdPessoas = @$_POST [vopessoaturma::$nmAtrCdPessoa];
-		
-		//var_dump($colecaoValores);
+		$colecaoDhAlteracao = @$_POST [vopessoaturma::$ID_REQ_COLECAO_DHALTERACAO];
 		
 		$retorno = null;
-		if (!isColecaoVazia($colecaoCdPessoas)) {
-			$retorno = array ();			
-			for ( $i = 0; $i < count($colecaoCdPessoas);$i++) {				
-				$cdPessoa = $colecaoCdPessoas[$i];
-				$vopessoaturma = new vopessoaturma();
+		if (! isColecaoVazia ( $colecaoCdPessoas )) {
+			$retorno = array ();
+			for($i = 0; $i < count ( $colecaoCdPessoas ); $i ++) {
+				$cdPessoa = $colecaoCdPessoas [$i];
+				$vopessoaturma = new vopessoaturma ();
 				$vopessoaturma->cdPessoa = $cdPessoa;
 				
-				$valor = $colecaoValores[$i];
-				$numParcela = $colecaoNumParcelas[$i];
-				//se nao colocar valor, vai ser o da turma
-				if($valor == null || $valor == ""){
+				$valor = $colecaoValores [$i];
+				$numParcela = $colecaoNumParcelas [$i];
+				$dhAlteracao = $colecaoDhAlteracao[$i];
+				// se nao colocar valor, vai ser o da turma
+				if ($valor == null || $valor == "") {
 					$valor = $this->valor;
-					$valor = $valor/$numParcela;
+					$valor = $valor / $numParcela;
 				}
 				
 				$vopessoaturma->valor = $valor;
 				$vopessoaturma->numParcelas = $numParcela;
+				$vopessoaturma->dhUltAlteracao = $dhAlteracao;
 				
-				//echo "cdPEssoa=$cdPessoa, valor=$colecaoValores[$i], numPArcelas=$colecaoNumParcelas[$i] <br>";
-				
-				$retorno [] = $vopessoaturma;
+				$retorno [$cdPessoa] = $vopessoaturma;
 			}
+		}else{
+			throw new excecaoGenerica("Selecione pelo menos 1 aluno.");
 		}
-		//var_dump($retorno);
+		/*echo "retorno";
+		var_dump($retorno);
+		echo "<br><br>";*/
 		$this->colecaoAlunos = $retorno;
 	}
 	function setColecaoAlunosRegistroBanco($colecao) {
@@ -150,9 +170,10 @@ class voturma extends voentidade {
 		if ($colecao != null) {
 			$retorno = array ();
 			foreach ( $colecao as $registrobanco ) {
-				$vopessoaturma = new vopessoaturma();
-				$vopessoaturma->getDadosBanco ( $registrobanco );				
-			
+				$vopessoaturma = new vopessoaturma ();
+				$vopessoaturma->getDadosBanco ( $registrobanco );
+				//echo "hist consultar banco:" . $vopessoaturma->sqHist;
+								
 				$vopessoa = new vopessoa ();
 				$vopessoa->getDadosBanco ( $registrobanco );
 				$voturma = new voturma ();
@@ -160,23 +181,21 @@ class voturma extends voentidade {
 				
 				// cria em execucao um OTD
 				$vopessoaturma->vopessoa = $vopessoa;
-				$vopessoaturma->voturma = $voturma;				
+				$vopessoaturma->voturma = $voturma;
 				
 				$retorno [$vopessoaturma->cdPessoa] = $vopessoaturma;
 			}
 		}
-		//var_dump($retorno);
+		// var_dump($retorno);
 		$this->colecaoAlunos = $retorno;
 	}
-	
 	function getValorChavePrimaria() {
 		return $this->cd . constantes::$CD_CAMPO_SEPARADOR . $this->sqHist;
 	}
-	function getChavePrimariaVOExplode($array){
-		$this->cd = $array [0];	
+	function getChavePrimariaVOExplode($array) {
+		$this->cd = $array [0];
 		$this->sqHist = $array [1];
 	}
-	
 	function toString() {
 		$retorno .= $this->cd . ",";
 		$retorno .= $this->descricao . ",";
@@ -189,5 +208,5 @@ class voturma extends voentidade {
 		}
 		return $retorno;
 	}
-}	
+}
 ?>
