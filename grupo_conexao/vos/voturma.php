@@ -5,7 +5,7 @@ class voturma extends voentidade {
 	static $NUM_MAXIMO_ALUNO = 15;
 	static $NM_DIV_COLECAO_ALUNOS = "NM_DIV_COLECAO_ALUNOS";
 	static $ID_REQ_COLECAO_ALUNOS = "ID_REQ_COLECAO_ALUNOS";
-	static $ID_REQ_COLECAO_CDPESSOA_ANTERIOR = "ID_REQ_COLECAO_CDPESSOA_ANTERIOR";
+	static $ID_REQ_COLECAO_ALUNOS_ANTERIOR = "ID_REQ_COLECAO_ALUNOS_ANTERIOR";
 	static $ID_REQ_VALOR_TOTAL = "ID_REQ_VALOR_TOTAL_TURMA";
 	static $ID_REQ_DURACAO = "ID_REQ_DURACAO";
 	static $nmAtrCd = "tu_cd";
@@ -21,7 +21,7 @@ class voturma extends voentidade {
 	var $dtInicio = "";
 	var $dtFim = "";
 	var $colecaoAlunos = "";
-	var $colecaoCdPessoasAnteriores = "";
+	var $colecaoAlunosAnteriores = "";
 	
 	// ...............................................................
 	// Funções ( Propriedades e métodos da classe )
@@ -119,14 +119,14 @@ class voturma extends voentidade {
 		}
 		
 		// para guardar pra verificacao futura
-		$this->setColecaoCdPessoasAnteriores ();
+		$this->setColecaoAlunosAnteriores ();
 	}
-	function setColecaoCdPessoasAnteriores() {
-		$strAlunos = @$_POST [voturma::$ID_REQ_COLECAO_CDPESSOA_ANTERIOR];
+	function setColecaoAlunosAnteriores() {
+		$strAlunos = @$_POST [self::$ID_REQ_COLECAO_ALUNOS_ANTERIOR];
 		//echo "pessoas anteriores $strAlunos";
 		$colecao = explode ( constantes::$CD_CAMPO_SEPARADOR_ARRAY, $strAlunos );
 		// var_dump($colecaoPagamento);
-		$this->colecaoCdPessoasAnteriores = $colecao;
+		$this->colecaoAlunosAnteriores = $colecao;
 	}
 	function setColecaoAlunosFormulario() {
 		$colecaoValores = @$_POST [vopessoaturma::$nmAtrValor];

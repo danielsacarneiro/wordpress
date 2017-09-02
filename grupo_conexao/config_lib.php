@@ -6,6 +6,7 @@ include_once ("util/constantes.class.php");
 //mysqli_report(MYSQLI_REPORT_ALL);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 date_default_timezone_set('America/Recife');
+//date_default_timezone_set('America/Los_Angeles');
 setlocale(LC_ALL, 'portuguese');
 set_exception_handler("pegaExcecaoSemTratamento");
 

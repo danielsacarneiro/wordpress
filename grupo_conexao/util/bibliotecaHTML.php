@@ -134,15 +134,15 @@ function complementarCharAEsquerda($texto, $char, $qtdfinal) {
 	return $retorno;
 }
 function getMoeda($valorSQL, $retornarZeroSeVazio = null) {
-	if($retornarZeroSeVazio == null){
+	if ($retornarZeroSeVazio == null) {
 		$retornarZeroSeVazio = false;
 	}
 	
 	$retorno = "";
-	if ($valorSQL != null && $valorSQL != "null"){ 
-		$retorno = number_format ( $valorSQL, 2, ',', '.' );		
-	}else if($retornarZeroSeVazio){
-		$retorno = getMoeda("0");
+	if ($valorSQL != null && $valorSQL != "null") {
+		$retorno = number_format ( $valorSQL, 2, ',', '.' );
+	} else if ($retornarZeroSeVazio) {
+		$retorno = getMoeda ( "0" );
 	}
 	return $retorno;
 }
@@ -298,13 +298,13 @@ function getBotao($idBotao, $descricao, $classe, $isSubmit, $complementoHTML) {
 	$tipo = "button";
 	if ($isSubmit)
 		$tipo = "submit";
-		
-		if ($classe == null)
-			$classe = "botaofuncaop";
-			
-			$retorno = "<button id='$idBotao' class='$classe' type='$tipo' $complementoHTML>$descricao</button>";
-			
-			return $retorno;
+	
+	if ($classe == null)
+		$classe = "botaofuncaop";
+	
+	$retorno = "<button id='$idBotao' class='$classe' type='$tipo' $complementoHTML>$descricao</button>";
+	
+	return $retorno;
 }
 function getBotaoValidacaoAcesso($idBotao, $descricao, $classe, $isSubmit, $imprimirNaLupa, $imprimirNaManutencao, $todosTemAcesso, $complementoHTML) {
 	return getBotaoGeral ( $idBotao, $descricao, $classe, $isSubmit, $imprimirNaLupa, $imprimirNaManutencao, $todosTemAcesso, $complementoHTML, "" );
@@ -452,6 +452,9 @@ function getBotoesRodapeComRestricao($arrayBotoesARemover, $restringeBotaoSemVal
 	$html .= getRodape ();
 	
 	return $html;
+}
+function getLinkHTML($link, $dsLink, $class = "linkNormal") {
+	return "<a class='$class' href='$link' >$dsLink</a>";
 }
 function getLinkPesquisa($link) {
 	return getImagemLink ( "javascript:abrirJanelaAuxiliar('" . $link . "',true, false, false);\" ", "lupa.png" );
@@ -607,16 +610,16 @@ function getHTMLGridConsulta($nmRadio, $idRadio, $voAtualOuChaveString, $isCheck
 	return $retorno;
 }
 function getXGridConsulta($nmRadio, $isCheckBox, $comParenteses = null) {
-	if($comParenteses == null){
+	if ($comParenteses == null) {
 		$comParenteses = false;
 	}
 	$retorno = "&nbsp;&nbsp;X";
-	if($comParenteses){
+	if ($comParenteses) {
 		$retorno = "&nbsp;&nbsp;(X)";
 	}
 	
 	if ($isCheckBox) {
-		//$js = "try{marcarTodosCheckBoxes('$nmRadio');}catch(erro){;}";
+		// $js = "try{marcarTodosCheckBoxes('$nmRadio');}catch(erro){;}";
 		$js = "marcarTodosCheckBoxes('$nmRadio');";
 		$retorno = "<a onClick=\"javascript:" . $js . "\" A style='CURSOR: POINTER'>$retorno</a>\n";
 	}
@@ -627,45 +630,40 @@ function getRadioButton($idRadio, $nmRadio, $chave, $checked, $complementoHTML) 
 	$retorno = "<INPUT type='radio' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $checked . " $complementoHTML>";
 	return $retorno;
 }
-
 function getCheckBox($idRadio, $nmRadio, $chave, $checked = null, $complementoHTML = null) {
 	$retorno = "<INPUT type='checkbox' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $checked . " $complementoHTML>";
 	return $retorno;
 }
-
 function getCheckBoxBoolean($idRadio, $nmRadio, $chave, $checked = null, $complementoHTML = null) {
-	if($checked == null){
+	if ($checked == null) {
 		$checked = false;
 	}
-	if($checked){
+	if ($checked) {
 		$strchecked = "checked";
 	}
 	
-	$retorno = "<INPUT type='checkbox' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $strchecked. " $complementoHTML>";
+	$retorno = "<INPUT type='checkbox' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $strchecked . " $complementoHTML>";
 	return $retorno;
 }
-
-function getInputText($idText, $nmText, $value, $class=null, $size=null, $maxlength=null,$complementoHTML=null) {
-	if($maxlength == null){
+function getInputText($idText, $nmText, $value, $class = null, $size = null, $maxlength = null, $complementoHTML = null) {
+	if ($maxlength == null) {
 		$maxlength = 20;
 	}
-	if($size == null){
-		$size= 20;
+	if ($size == null) {
+		$size = 20;
 	}
-	if($class== null){
-		$class= "camponaoobrigatorio";
+	if ($class == null) {
+		$class = "camponaoobrigatorio";
 	}
 	
-	$retorno = "<INPUT type='text' id='" . $idText . "' name='" . $nmText . "' value='" . $value. "' class='$class' size='$size' maxlength='$maxlength' $complementoHTML>";
-														
+	$retorno = "<INPUT type='text' id='" . $idText . "' name='" . $nmText . "' value='" . $value . "' class='$class' size='$size' maxlength='$maxlength' $complementoHTML>";
+	
 	return $retorno;
 }
-
-function getInputHidden($idText, $nmText, $value,$complementoHTML=null) {	
-	$retorno = "<INPUT type='hidden' id='" . $idText . "' name='" . $nmText . "' value='" . $value. "' $complementoHTML>";	
+function getInputHidden($idText, $nmText, $value, $complementoHTML = null) {
+	$retorno = "<INPUT type='hidden' id='" . $idText . "' name='" . $nmText . "' value='" . $value . "' $complementoHTML>";
 	return $retorno;
 }
-
 function getSelectGestor() {
 	$dbgestor = new dbgestor ();
 	$registros = $dbgestor->consultarSelect ();
@@ -863,9 +861,8 @@ function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFu
 	
 	return $html;
 }
-
 function getDetalhamentoHTMLCodigoAno($ano, $cd, $tamanhoCodigo = null) {
-	if($tamanhoCodigo == null){
+	if ($tamanhoCodigo == null) {
 		$tamanhoCodigo = TAMANHO_CODIGOS;
 	}
 	$retorno .= "Ano: <INPUT type='text' value='$ano'  class='camporeadonly' size='5' readonly>";

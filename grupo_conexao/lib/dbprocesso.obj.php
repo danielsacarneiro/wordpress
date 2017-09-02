@@ -57,9 +57,9 @@ class dbprocesso {
 		$dhValidacao = $registro [0] [voentidade::$nmAtrDhUltAlteracao];
 		
 		if ($dhValidacao != $voEntidade->dhUltAlteracao) {
-			$msg = "Registro desatualizado.";
-			$msg .= "<br>data banco: " . $dhValidacao;
-			$msg .= "<br>data registro: " . $voEntidade->dhUltAlteracao;
+			$msg = "Registro desatualizado '". $voEntidade->getNmTabela ()."'.";
+			$msg .= "<br>data banco: " . getDataHora($dhValidacao);
+			$msg .= "<br>data registro: " . getDataHora($voEntidade->dhUltAlteracao);
 			
 			throw new Exception ( $msg );
 		}
@@ -389,12 +389,17 @@ class dbprocesso {
 			throw new excecaoGenerica ( "Operação com registro de histórico não pode ser realizada por ausência do SQ Histórico." );
 		}
 	}
-	function excluir($voEntidade) {
+	function excluir($voEntidade, $isChamadaEncadeadaPorOutraEntidade = false) {
 		// Start transaction
 		$this->cDb->retiraAutoCommit ();
 		try {
 			// echo $voEntidade->sqHist;
-			$this->validaExclusaoHistorico ( $voEntidade );
+			if(!$isChamadaEncadeadaPorOutraEntidade){
+				//a outra entidade encadeada ja validou a exclusao por historico
+				//por isso nao precisa validar de novo
+				//isto porque so pode haver um VO na sessao na validacao do historico, que eh o que vem da pagina
+				$this->validaExclusaoHistorico ( $voEntidade );
+			}
 			
 			$isExcluirHistorico = $voEntidade->isHistorico ();
 			if ($isExcluirHistorico) {
@@ -697,6 +702,14 @@ class dbprocesso {
 		$this->cDb->fecharConexao ();
 	}
 	
+	Function tratarExcecao($e) {
+		//$e = new excecaoGenerica();		
+		if(!isExcecaoSucesso($e)){		
+			$this->cDb->rollback ();
+		}
+		
+		throw new Exception ( $e->getMessage () );		
+	}
 	/**
 	 * FUNCOES MANIPULACAO
 	 * pega na bibliotecaSQL

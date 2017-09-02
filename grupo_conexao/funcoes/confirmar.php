@@ -34,6 +34,9 @@ $isAlteracao = $funcao == constantes::$CD_FUNCAO_ALTERAR;
 $msgErro = "";
 $nmFuncao = "";
 
+$classMensagem = "campomensagemverde";
+$msg = "OPERACÃO $nmFuncao REALIZADA COM SUCESSO";
+
 try{
     $vo = new $class();
     $dbprocesso = $vo->dbprocesso;
@@ -65,12 +68,9 @@ try{
     		call_user_func_array(array($dbprocesso,$funcao),$argumentos);
     	}    	 
     }
-        
-    $classMensagem = "campomensagemverde";
-    $msg = "OPERACÃO $nmFuncao REALIZADA COM SUCESSO";
-    
-    if($vo->getMensagemComplementarTelaSucesso() != ""){
-    	$msgComplementar = $vo->getMensagemComplementarTelaSucesso();
+            
+    if($vo->getMensagemComplementarTelaSucessoVOEntidade() != ""){
+    	$msgComplementar = $vo->getMensagemComplementarTelaSucessoVOEntidade();
     	$msg .= "<br>" . $msgComplementar; 
     }    
     
@@ -78,10 +78,16 @@ try{
     //var_dump($vo);
     putObjetoSessao($vo->getNmTabela(), $vo);
     
-}catch(Exception $e) {
-    $msgErro = $e->getMessage();
-    $classMensagem = "campomensagemvermelho";
-    $msg = "OPERACAO $nmFuncao FALHOU.<br>$msgErro";
+}catch(Exception $e) {  
+	//mais uma alternativa de usar a excecao para msgs na tela
+	//mas ainda nao esta sendo utilizado
+	if(!isExcecaoSucesso($e)){	
+		$msgErro = $e->getMessage();
+	    $classMensagem = "campomensagemvermelho";
+	    $msg = "OPERACAO $nmFuncao FALHOU.<br>$msgErro";
+	}else{
+		$msg .= "<BR>". $e->getMessage();
+	}
 }
 
 

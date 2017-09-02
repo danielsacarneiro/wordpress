@@ -67,7 +67,7 @@ function confirmar() {
 <?=setTituloPagina($vo->getTituloJSP())?>
 <BODY class="paginadados" onload="">
 	  
-<FORM name="frm_principal" method="post" action="../confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();">
+<FORM name="frm_principal" method="post" action="confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();">
 
 <INPUT type="hidden" id="funcao" name="funcao" value="<?=$funcao?>">
 <INPUT type="hidden" id="<?=vousuario::$nmAtrID?>" name="<?=vousuario::$nmAtrID?>" value="<?=id_user?>">
@@ -144,9 +144,16 @@ function confirmar() {
             <TABLE cellpadding="0" cellspacing="0" id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
             <TBODY>
             		<?php
-					  $voCamposDadosPessoaAjax = $vo;
-					  echo mostrarGridAlunos($voCamposDadosPessoaAjax->colecaoAlunos, true);
-					 ?>
+            		$voCamposDadosPessoaAjax = $vo;
+            		$colecaoAlunosAntesCadastrados = $vo->colecaoAlunos;
+            		if($colecaoAlunosAntesCadastrados!= null){
+            			$colecaoCdPessoasCadastradas = array_keys($colecaoAlunosAntesCadastrados);
+            		}
+            		$strCdPessoasCadastradas = getColecaoEntreSeparador($colecaoCdPessoasCadastradas, constantes::$CD_CAMPO_SEPARADOR_ARRAY);
+            		//deixa gravado na pagina os alunos anteriormente cadastrados
+            		echo getInputHidden(voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, $strCdPessoasCadastradas) . "\n";					
+            		echo mostrarGridAlunos($colecaoAlunosAntesCadastrados, true);					  					  
+					?>
             
             </TBODY>
             </TABLE>

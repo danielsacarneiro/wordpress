@@ -44,25 +44,34 @@ class dbpessoa extends dbprocesso {
 		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, false );
 	}
 	function consultarFiltroManterPessoaTurma($filtro) {
+		$isHistorico = $filtro->isHistorico();
 		$nmTabela = vopessoa::getNmTabela ();
 		$nmTabelaPessoaVinculo = vopessoavinculo::getNmTabela ();
-		$nmTabelaPessoaTurma = vopessoaturma::getNmTabela ();
+		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic($isHistorico);
 		$nmTabelaTurma = voturma::getNmTabela ();
 		
 		$atributosConsulta = $nmTabela . "." . vopessoa::$nmAtrCd;
 		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrNome;
 		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrDocCPF;
-		$atributosConsulta .= "," . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCd;		
+		$atributosConsulta .= "," . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCd;
 		$temTurma = $filtro->cdTurma != null;
 		
 		if($temTurma){
-			//echo "tem turma";
+			//echo "tem turma<br>";
 			$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrValor;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrCdTurma;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrCdPessoa;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrObservacao;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrNumParcelas;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrValor;
+			//para validacao numa posterior exclusao
+			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrDhUltAlteracao;
+			
+			if($isHistorico){
+				//echo "tem historico<br>";
+				$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrSqHist;
+			}
+			
 			//$atributosConsulta .= ",COALESCE(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "," . $nmTabelaTurma. "." . voturma::$nmAtrValor. ") AS " . vopessoaturma::$nmAtrValor;
 		}else{
 			//echo "NAO tem turma";

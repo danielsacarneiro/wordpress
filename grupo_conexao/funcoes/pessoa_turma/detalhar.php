@@ -11,14 +11,6 @@ $vo = new vopessoaturma();
 $vo->getVOExplodeChave($chave);
 $isHistorico = ($vo->sqHist != null && $vo->sqHist != "");
 
-$vo->cd = $array[0];
-$vo->cdHistorico = $array[1];
-    
-if($isHistorico){
-    $sqHist = $array[2];
-    $vo->sqHist = $sqHist;
-}
-
 $readonly = "";
 $nmFuncao = "";
 $readonly = "readonly";

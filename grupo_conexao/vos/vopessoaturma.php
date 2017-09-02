@@ -4,6 +4,7 @@ class vopessoaturma extends voentidade {
 
 	static $ID_REQ_VALOR_TOTAL = "ID_REQ_VALOR_TOTAL";
 	static $ID_REQ_COLECAO_PARCELAS_PAGAS = "ID_REQ_COLECAO_PARCELAS_PAGAS";
+	static $ID_REQ_COLECAO_DHALTERACAO = "ID_REQ_COLECAO_DHALTERACAO";
 	
 	static $nmAtrCdPessoa = "pe_cd";
 	static $nmAtrCdTurma = "tu_cd";

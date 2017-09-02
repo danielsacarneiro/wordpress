@@ -4,8 +4,8 @@ class dbpessoaturma extends dbprocesso {
 	static $CD_FUNCAO_PAGAMENTO = "pagamento";
 	function consultarPorChave($vo, $isHistorico) {
 		$nmTabelaPessoaTurma = $vo->getNmTabelaEntidade ( $isHistorico );
-		$nmTabelaTurma = voturma::getNmTabelaStatic ( $isHistorico );
-		$nmTabelaPessoa = vopessoa::getNmTabelaStatic ( $isHistorico );
+		$nmTabelaTurma = voturma::getNmTabelaStatic ( false );
+		$nmTabelaPessoa = vopessoa::getNmTabelaStatic ( false );
 		$arrayColunasRetornadas = array (
 				$nmTabelaPessoaTurma . ".*",
 				$nmTabelaPessoa . "." . vopessoa::$nmAtrNome,
@@ -21,9 +21,10 @@ class dbpessoaturma extends dbprocesso {
 		return $this->consultarPorChaveMontandoQuery ( $vo, $arrayColunasRetornadas, $queryFrom, $isHistorico );
 	}
 	function consultarFiltroManterPessoaTurma($filtro) {
-		$nmTabelaTurma = voturma::getNmTabelaStatic ( $filtro->isHistorico () );
+		$isHistorico = $filtro->isHistorico ();
+		$nmTabelaTurma = voturma::getNmTabelaStatic ( false );
 		$nmTabelaPessoa = vopessoa::getNmTabelaStatic ( false );
-		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic ( false );
+		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic ( $filtro->isHistorico ());
 		$nmTabelaPagamento = vopagamento::getNmTabelaStatic ( false );
 		
 		$atributosConsulta = $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma;
@@ -38,6 +39,10 @@ class dbpessoaturma extends dbprocesso {
 		$atributosConsulta .= "," . $nmTabelaPessoa . "." . vopessoa::$nmAtrNome;
 		$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*COUNT($nmTabelaPagamento." . vopagamento::$nmAtrNumParcelaPaga . ") AS " . filtroManterPessoaTurma::$NM_COL_VALOR_PAGO;
 		$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas . " AS " . filtroManterPessoaTurma::$NM_COL_VALOR_TOTAL;
+		if ($isHistorico) {
+			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrSqHist;		
+		}
+		
 		
 		$querySelect = "SELECT " . $atributosConsulta;
 		
@@ -69,17 +74,31 @@ class dbpessoaturma extends dbprocesso {
 		
 		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, false );
 	}
+	function excluirAPArtirDaTurma($vopessoaturma) {
+		//porque o commit ja eh controlado pela turma
+		$this->excluirSemComitt ( $vopessoaturma, true );
+	}
 	function excluir($vopessoaturma) {
+		//funcao chamada diretamente da tela de vopessoaturma PROIBIDO
+		throw new excecaoGenerica("Operação permitida apenas na função TURMA.");
+		
+	}
+	/*function excluir($vopessoaturma, $isControleAutoCommitManual = null) {
+		if ($isControleAutoCommitManual == null) {
+			$isControleAutoCommitManual = false;
+		}
+		
+		if ($isControleAutoCommitManual) {
+			$this->excluirSemComitt ( $vopessoaturma );
+		} else {
+			$this->excluirComComitt ( $vopessoaturma );
+		}
+	}
+	function excluirComComitt($vopessoaturma) {
 		// Start transaction
 		$this->cDb->retiraAutoCommit ();
 		try {
-			$permiteExcluirPrincipal = $this->permiteExclusaoPrincipal ( $vopessoaturma );
-			// so exclui os relacionamentos se a exclusao for de registro historico
-			// caso contrario , apenas desativa o voprincipal
-			if ($permiteExcluirPrincipal) {
-				$this->excluirPagamento( $vopessoaturma, true);
-			}
-			parent::excluir ( $vopessoaturma );
+			$this->excluirSemComitt ( $vopessoaturma );
 			// End transaction
 			$this->cDb->commit ();
 		} catch ( Exception $e ) {
@@ -88,15 +107,26 @@ class dbpessoaturma extends dbprocesso {
 		}
 		
 		return $vopessoaturma;
-	}	
+	}*/
+	function excluirSemComitt($vopessoaturma, $isChamadaEncadeadaPorOutraEntidade = false) {
+		$permiteExcluirPrincipal = $this->permiteExclusaoPrincipal ( $vopessoaturma );
+		// so exclui os relacionamentos se a exclusao for de registro historico
+		// caso contrario , apenas desativa o voprincipal
+		if ($permiteExcluirPrincipal) {
+			$this->excluirPagamento ( $vopessoaturma, true );
+		}
+		parent::excluir ( $vopessoaturma, $isChamadaEncadeadaPorOutraEntidade);
+		
+		return $vopessoaturma;
+	}
 	function incluirPagamento($vopessoaturma) {
-		//$vopessoaturma = new vopessoaturma();
+		// $vopessoaturma = new vopessoaturma();
 		$colecaoPagamento = $vopessoaturma->colecaoParcelasPagas;
 		foreach ( $colecaoPagamento as $vopagamento ) {
-			//$vopagamento = new vopagamento();
-			//so inclui o que ja nao tiver incluido antes
+			// $vopagamento = new vopagamento();
+			// so inclui o que ja nao tiver incluido antes
 			$parcela = $vopagamento->numParcelaPaga;
-			if(!in_array($parcela, $vopessoaturma->colecaoParcelasPagasAnteriores)){
+			if (! in_array ( $parcela, $vopessoaturma->colecaoParcelasPagasAnteriores )) {
 				$db = $vopagamento->dbprocesso;
 				$db->cDb = $this->cDb;
 				$db->incluir ( $vopagamento );
@@ -105,7 +135,7 @@ class dbpessoaturma extends dbprocesso {
 		// echo "<br>incluiu pessoa vinculo:" . var_dump($vopeturma);
 	}
 	function excluirPagamento($vopessoaturma, $excluirDireto = null) {
-		if($excluirDireto == null){
+		if ($excluirDireto == null) {
 			$excluirDireto = false;
 		}
 		// $vopessoaturma = new vopessoaturma();
@@ -121,7 +151,7 @@ class dbpessoaturma extends dbprocesso {
 		$query = "DELETE FROM " . $nmTabela;
 		$query .= "\n WHERE " . vopagamento::$nmAtrCdPessoa . " = " . $vopessoaturma->cdPessoa;
 		$query .= "\n AND " . vopagamento::$nmAtrCdTurma . " = " . $vopessoaturma->cdTurma;
-		if ($sqlNotIn && !$excluirDireto) {
+		if ($sqlNotIn && ! $excluirDireto) {
 			$query .= "\n AND " . vopagamento::$nmAtrNumParcelaPaga . " NOT IN (" . $sqlNotIn . ")";
 		}
 		
@@ -136,7 +166,7 @@ class dbpessoaturma extends dbprocesso {
 			// inclui APENAS o pagamento das parcelas checadas
 			if (! isColecaoVazia ( $vopessoaturma->colecaoParcelasPagas )) {
 				$this->incluirPagamento ( $vopessoaturma );
-			}			
+			}
 			$this->excluirPagamento ( $vopessoaturma );
 			// End transaction
 			$this->cDb->commit ();

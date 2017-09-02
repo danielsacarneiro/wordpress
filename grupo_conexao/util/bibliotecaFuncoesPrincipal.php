@@ -1,4 +1,8 @@
 <?php
+function isExcecaoSucesso($e) {
+	return $e->getCode() == excecaoGenerica::$CD_EXCECAO_SUCESSO;
+}
+
 function isClasseFrameWork($class_name, $tipoClasse){
 	$isClasseFramework = false;
 	$pos = strpos($class_name, $tipoClasse);
@@ -402,4 +406,11 @@ function booleanToExtenso($boolean) {
 	return $retorno;
 }
 
+function getStringComoNumero($param) {
+	$retorno = getDecimalSQL ( $param );
+	if($retorno == "null"){
+		$retorno = null;
+	}
+	return $retorno;
+}
 ?>

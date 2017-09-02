@@ -4,6 +4,8 @@
  */
 class excecaoGenerica extends Exception
 {
+	
+	static $CD_EXCECAO_SUCESSO = 1;
     // Redefine a exceção de forma que a mensagem não seja opcional
     public function __construct($message, $code = 0, Exception $previous = null) {
     	if($message == null || $message == ""){

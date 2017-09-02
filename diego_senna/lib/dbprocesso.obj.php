@@ -309,7 +309,7 @@ class dbprocesso {
 			
 			// echo $filtroSQL;
 			// echo "$queryCount<br>";
-			// echo "$query<br>";
+			 echo "$query<br>";
 			
 			// removeObjetoSessao($voentidade->getNmTabela());
 			

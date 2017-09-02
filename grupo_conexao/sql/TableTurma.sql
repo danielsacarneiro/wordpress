@@ -101,6 +101,7 @@ CREATE TABLE pagamento (
     CONSTRAINT pk PRIMARY KEY (pe_cd, tu_cd, pag_parcela)
 );
 
+-- SET SQL_SAFE_UPDATES = 0;
 -- ALTER TABLE pessoa_materia ADD CONSTRAINT fk_pessoa_materia FOREIGN KEY ( pe_cd ) REFERENCES pessoa (pe_cd) 
 -- ON DELETE RESTRICT
 -- ON UPDATE RESTRICT;

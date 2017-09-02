@@ -269,7 +269,7 @@ class filtroManter extends multiplosConstrutores {
 		$this->qtdRegistrosPorPag = null;
 	}
 	function isHistorico() {
-		return $this->isHistorico;
+		return $this->isHistorico || $this->cdHistorico == "S";
 	}
 	static function isAtributoArrayVazio($colecao) {
 		return is_array ( $colecao ) && count ( $colecao ) == 1 && $colecao [0] == "";

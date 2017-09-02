@@ -38,6 +38,8 @@ class voentidade extends multiplosConstrutores {
 	var $nmUsuarioOperacao;
 	var $sqHist;
 	
+	private $msgComplementar = "";
+	
 	// var $dbprocesso;
 	function __construct0() {
 		// exemplo de chamada de construtor da classe pai em caso de override
@@ -145,15 +147,16 @@ class voentidade extends multiplosConstrutores {
 		return $atributo . " = " . $valor;
 	}
 	function getDadosFormularioEntidade() {
-		
-		// chama o getdadosformulario do filho
-		$this->getDadosFormulario ();
-		
+				
 		// completa com os dados da entidade se existirem
 		$this->dhUltAlteracao = @$_POST [self::$nmAtrDhUltAlteracao];
 		$this->sqHist = @$_POST [self::$nmAtrSqHist];
 		// usuario de ultima manutencao sempre sera o id_user
 		$this->cdUsuarioUltAlteracao = id_user;
+		
+		// chama o getdadosformulario do filho
+		$this->getDadosFormulario ();
+		
 	}
 	function getDadosBancoEntidade($registrobanco) {
 		$this->dhInclusao = $registrobanco [voentidade::$nmAtrDhInclusao];
@@ -315,6 +318,23 @@ class voentidade extends multiplosConstrutores {
 			unlink ( $enderecoArquivo );
 		}
 	}
+	
+	function getMensagemComplementarTelaSucessoVOEntidade(){
+		$retorno = ""; 
+		if (method_exists ( $this, "getMensagemComplementarTelaSucesso" )) {
+			$retorno = $this->getMensagemComplementarTelaSucesso();
+		}
+		
+		if($this->msgComplementar != null && $this->msgComplementar != ""){		
+			$retorno .= "<br>" . $this->msgComplementar;
+		}	
+		
+		return $retorno;
+	}
+	
+	function setMensagemComplementar($msgComplementar){
+		$this->msgComplementar .= $msgComplementar;
+	}	
 	
 	/*
 	 * function validaExclusaoRelacionamentoHistorico(){

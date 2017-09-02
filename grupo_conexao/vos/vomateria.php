@@ -78,5 +78,11 @@ class vomateria extends voentidade {
 		$retorno .= $this->descricao . ",";
 		return $retorno;
 	}
+	
+	function getMensagemComplementarTelaSucesso() {
+		$retorno = $this->getMensagemComplementarTelaSucessoPadrao ( $this->getTituloJSP (), $this->cd, $this->descricao, $this->sqHist );
+		return $retorno;
+	}
+	
 }
 ?>

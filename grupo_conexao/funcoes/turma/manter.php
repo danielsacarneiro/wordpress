@@ -37,6 +37,7 @@ $titulo = $nmFuncao . $titulo;
 setCabecalho($titulo);
 
 $nome  = $vo->descricao;
+$strCdPessoasCadastradas= getStringValueColecaoAlunosAnteriores($vo->colecaoAlunos);
    
 ?>
 <!DOCTYPE html>
@@ -99,13 +100,15 @@ function listarAlunos(cdPessoa, cdTurma, operacao) {
 	    url: "../pessoa/campoDadosPessoaAjax.php",	    
 	    data: {
 	      //cdPessoa: $('#seu_nome').val()
+	      funcao: "<?=$funcao?>",
 	      chavePessoa: cdPessoa,
 	      cdTurma: cdTurma,
 	      valorTurma: valorTurma,
 	      operacao: operacao,
 	      <?=vopessoaturma::$nmAtrNumParcelas?>: parcelas,
 	      <?=vopessoaturma::$nmAtrValor?>: valores,
-	      <?=vopessoaturma::$nmAtrCdPessoa?>: cdsPessoa
+	      <?=vopessoaturma::$nmAtrCdPessoa?>: cdsPessoa,
+	      <?=voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR?>: "<?=$strCdPessoasCadastradas?>"
 	    },
 		beforeSend: function() { 
 			$('#<?=voturma::$NM_DIV_COLECAO_ALUNOS?>').html("<img  title='Limpar' src='<?=caminho_imagens?>loading/loading26.gif'>");			 
@@ -261,39 +264,23 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 		arrayValoresTotal = document.getElementsByName("<?=vopessoaturma::$ID_REQ_VALOR_TOTAL?>");
 		arrayParcelas = document.getElementsByName("<?=vopessoaturma::$nmAtrNumParcelas?>[]");
 		if(arrayValores != null){
-			distribuiPeloMenos1 = false;
+			
 			for(i=0; i < arrayValores.length ;i++){ 
 				valor = 0;
 				campoValor = arrayValores[i];
 				if(!apenasSeVazio || (campoValor.value == null || campoValor.value == "" || getValorCampoMoedaComoNumero(campoValor) == 0)){					
-
-					if(campoValor.value != "")
-						valor = getValorCampoMoedaComoNumero(campoValor);
-					
-					if(valor == null || isNaN(valor)){
-						valor = 0;
-					}		
-					
-					if(valor == 0 || zerar){
 						if(zerar){
 							valor = 0;
 							valorTurma = 0;
-						}
-						else if(valor == 0){
+						}else{
+							//distribuir igualmente
 							parcela = eval(arrayParcelas[i].value);
 							valor = valorTurma/parcela;
-
-							distribuiPeloMenos1 = true;
 						}
 						
 						setValorCampoMoedaComSeparadorMilhar(campoValor, valor, 2);
 						setValorCampoMoedaComSeparadorMilhar(arrayValoresTotal[i], valorTurma, 2);
-					}
 				}
-			}
-
-			if(!zerar && !distribuiPeloMenos1){
-				exibirMensagem("Para distribuir o valor pelo menos 1 campo deve estar igual a 0 (zero).");
 			}
 		}
 	}catch(erro){
@@ -306,7 +293,7 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 <?=setTituloPagina($vo->getTituloJSP())?>
 <BODY class="paginadados" onload="">
 	  
-<FORM name="frm_principal" method="post" action="../confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();">
+<FORM name="frm_principal" method="post" action="confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();">
 
 <INPUT type="hidden" id="funcao" name="funcao" value="<?=$funcao?>">
 <INPUT type="hidden" id="<?=vousuario::$nmAtrID?>" name="<?=vousuario::$nmAtrID?>" value="<?=id_user?>">
@@ -335,7 +322,7 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 			<TR>
 	            <TH class="campoformulario" nowrap width=1%>Investimento:</TH>
 	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" required value="<?php echo(getMoeda($vo->valor));?>"
-	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" class="camponaoobrigatorioalinhadodireita" size="15" ></TD>
+	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" onChange="distribuirValoresPessoas(false, false);" class="camponaoobrigatorioalinhadodireita" size="15" ></TD>	            
 	        </TR>
 			<TR>
 	            <TH class="campoformulario" nowrap width="1%">Período:</TH>
@@ -379,7 +366,7 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 				include_once(caminho_funcoes. "pessoa/dominioVinculoPessoa.php");
 				echo getLinkPesquisa("../pessoa/index.php?".constantes::$ID_REQ_MULTISELECAO."=S&" . vopessoavinculo::$nmAtrCd . "=" . dominioVinculoPessoa::$CD_VINCULO_ALUNO);
 				echo "&nbsp;&nbsp; Limpar tudo" . getBorrachaJS("limparDadosPessoa(-1);");
-				echo "&nbsp;&nbsp; Distribuir Valor Turma " . getBotao ( "", "Distribuir valor", $classe, false, " onClick='javascript:distribuirValoresPessoas(false, true);'" );
+				echo "&nbsp;&nbsp; Distribuir Valor Turma " . getBotao ( "", "Distribuir valor", $classe, false, " onClick='javascript:distribuirValoresPessoas(false, false);'" );
 				echo "&nbsp;&nbsp; Zerar valores " . getBotao ( "", "zerar valores", $classe, false, " onClick='javascript:distribuirValoresPessoas(true);'" );
 				?>
 				</DIV>
@@ -387,13 +374,14 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 			</TR>
 						
 			<TR>	
-            <TD class="conteinerfiltro" colspan="4">            
+            <TD class="conteinerfiltro" colspan="4">
+            <?php echo getInputHidden ( voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, $strCdPessoasCadastradas ) . "\n";?>            
             <TABLE cellpadding="0" cellspacing="0" id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
             <TBODY>
-            					  <?php
-					  $voCamposDadosPessoaAjax = $vo;
-					  include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");					  
-					  ?>
+            		<?php
+					$voCamposDadosPessoaAjax = $vo;
+					include_once(caminho_funcoes. "pessoa/campoDadosPessoaAjax.php");					  
+					?>
             
             </TBODY>
             </TABLE>

@@ -69,6 +69,11 @@ function pagamento() {
     funcao = "<?=dbpessoaturma::$CD_FUNCAO_PAGAMENTO?>";    
     if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
             return;
+
+    <?php
+    if($isHistorico){
+    	echo "exibirMensagem('Registro de historico nao permite pagamento.');return";
+   	}?>    
         	
 	chave = document.frm_principal.rdb_consulta.value;	
 	lupa = document.frm_principal.lupa.value;
@@ -129,6 +134,13 @@ function pagamento() {
              <TBODY>
                 <TR>
                   <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
+                  <?php 
+                  if($isHistorico){
+                  	?>
+                  	<TH class="headertabeladados" width="1%">Sq.Hist</TH>
+                  <?php 
+                  }
+                  ?>                  
                     <TH class="headertabeladados" width="1%">Cd.Pessoa</TH>
                     <TH class="headertabeladados" width="1%">Cd.Turma</TH>                    
                     <TH class="headertabeladados" width="60%">Nome</TH>
@@ -173,6 +185,13 @@ function pagamento() {
                     <TD class="tabeladados">
                     <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
                     </TD>
+                  <?php                  
+                  if($isHistorico){                  	
+                  	?>
+                  	<TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->sqHist);?></TD>
+                  <?php 
+                  }
+                  ?>                    
                     <TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->cdPessoa);?></TD>
                     <TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->cdTurma);?></TD>                    
                     <TD class="tabeladados"><?php echo $colecao[$i][vopessoa::$nmAtrNome];?></TD>
