@@ -13,11 +13,11 @@ class filtroManterPessoa extends filtroManter{
 	// construtor
     var $cd;
     var $cdTurma;
-    var $colecaoCd;
+    var $colecaoCdPessoa;
     var $doc;
     var $nome;
     var $cdvinculo;
-    var $dtReferenciaContrato;    
+    var $dtReferenciaContrato;
 	
 	function getFiltroFormulario(){		
 		$this->cd = @$_POST[vopessoa::$nmAtrCd];
@@ -55,11 +55,11 @@ class filtroManterPessoa extends filtroManter{
             ;                        
 		}
             		
-		if($this->colecaoCd != null){
+		if($this->colecaoCdPessoa != null){
 			$filtro = $filtro . $conector
 						. $nmTabela. "." .vopessoa::$nmAtrCd
 						. " IN ("
-						. getSQLStringFormatadaColecaoIN($this->colecaoCd, false)
+						. getSQLStringFormatadaColecaoIN($this->colecaoCdPessoa, false)
 						. ")";
 			
 			$conector  = "\n AND ";
@@ -122,7 +122,15 @@ class filtroManterPessoa extends filtroManter{
 			;
 		
 					$conector  = "\n AND ";
-		}		
+		}
+		
+		/*if($this->inDesativado != null){
+			$filtro = $filtro . $conector
+			. $nmTabela. "." .vopessoa::$nmAtrInDesativado
+			. "=" . getVarComoString($this->inDesativado);
+	
+			$conector  = "\n AND ";
+		}*/		
 
 		$this->formataCampoOrdenacao(new vopessoa());
 		//finaliza o filtro		
@@ -131,7 +139,7 @@ class filtroManterPessoa extends filtroManter{
 
 		return $filtro;
 	}
-	
+		
 	function getAtributosOrdenacao(){
 		$varAtributos = array(
 				vopessoa::$nmAtrNome => "Nome",

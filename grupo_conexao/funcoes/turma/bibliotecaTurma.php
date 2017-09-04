@@ -1,14 +1,13 @@
 <?php
 function incluirChaveNoArray($chave, $array, $cdTurma = null) {
 	if ($chave != null && ! existeItemNoArray ( $chave, $array )) {
-		
 		$vopessoaturma = new vopessoaturma ();
 		$vopessoaturma->cdPessoa = vopessoa::getCdPessoaChaveExplode ( $chave );
 		if ($cdTurma != null) {
 			$vopessoaturma->cdTurma = $cdTurma;
 		}
-		// $array [] = vopessoa::getCdPessoaChaveExplode ( $chave );
 		$array [$vopessoaturma->cdPessoa] = $vopessoaturma;
+		// var_dump($vopessoaturma);
 	}
 	
 	return $array;
@@ -64,7 +63,7 @@ function getColecaoAlunosVOPessoaTurma() {
 	return $retorno;
 }
 function getColecaoVOPessoaTurmaFromRecordset($colecaoAlunosVOPessoaTurma, $cdTurma) {
-	$recordSet = consultarPessoasTurma ( $colecaoAlunosVOPessoaTurma, $cdTurma);
+	$recordSet = consultarPessoasTurma ( $colecaoAlunosVOPessoaTurma, $cdTurma );
 	
 	$retorno = "";
 	foreach ( $recordSet as $registrobanco ) {
@@ -90,15 +89,19 @@ function getColecaoVOPessoaTurmaFromRecordset($colecaoAlunosVOPessoaTurma, $cdTu
 	return $retorno;
 }
 function consultarPessoasTurma($colecaoPessoaTurma, $cdTurma) {
-	if (! isColecaoVazia ( $colecaoPessoaTurma )) {		
-		//var_dump($colecaoPessoaTurma);
+	if (! isColecaoVazia ( $colecaoPessoaTurma )) {
+		// var_dump($colecaoPessoaTurma);
 		
 		$colecaoCdPessoa = getColecaoCdPessoa ( $colecaoPessoaTurma );
-		$filtro = new filtroManterPessoa ( false );
-		$filtro->colecaoCd = $colecaoCdPessoa;
+		$filtro = new filtroManterPessoaTurma ( false );
+		$filtro->colecaoCdPessoa = $colecaoCdPessoa;
 		// se tiver turma, traz as informacoes da turmaxpessoa
-		$filtro->cdTurma = $cdTurma;
-		$colecao = consultarPessoasTurmaFiltroManterPessoa ( $filtro );
+		if ($cdTurma != null && $cdTurma != "") {
+			$filtro->inTemTurma = constantes::$CD_SIM;
+			$filtro->cdTurma = $cdTurma;
+		}
+		
+		$colecao = consultarPessoasManutencaoTurma ( $filtro );
 	}
 	
 	return $colecao;
@@ -114,10 +117,14 @@ function consultarPessoasTurmaPorVOTurma($voturma) {
 		
 		$cdTurma = $voturma->cd;
 		// echo "o codigo da turma é $cdTurma e o cdHistorico é $cdHistorico e o historico do voregistro é " . $voturma->sqHist;
-		$filtro = new filtroManterPessoa ( false );
+		$filtro = new filtroManterPessoaTurma ( false );
+		$filtro->inTemTurma = constantes::$CD_SIM;
+		// $filtro->voPrincipal = new vopessoaturma();
 		$filtro->cdTurma = $cdTurma;
 		$filtro->cdHistorico = $cdHistorico;
-		$colecao = consultarPessoasTurmaFiltroManterPessoa ( $filtro );
+		
+		// FAZER UM NOVO FILTRO AQUI
+		$colecao = consultarPessoasManutencaoTurma ( $filtro );
 	}
 	
 	return $colecao;
@@ -131,26 +138,26 @@ function consultarPagamentoPessoa($vopessoaturma) {
 		$db = new dbpessoaturma ();
 		$colecao = $db->consultarFiltroManterPagamento ( $filtro );
 	}
-	
 	return $colecao;
 }
-function consultarPessoasTurmaFiltroManterPessoa($filtro) {
+function consultarPessoasManutencaoTurma($filtro) {
 	if ($filtro != null) {
 		$filtro->setaFiltroConsultaSemLimiteRegistro ();
 		$filtro->cdAtrOrdenacao = vopessoa::$nmAtrNome;
 		$filtro->cdOrdenacao = constantes::$CD_ORDEM_CRESCENTE;
+		$filtro->setMetodoFiltroConsulta ( filtroManterPessoaTurma::$NM_METODO_CONSULTA_PESSOA_TURMA );
+		//$filtro->voPrincipal = new vopessoaturma ();
 		
-		$db = new dbpessoa ();
-		$colecao = $db->consultarFiltroManterPessoaTurma ( $filtro );
+		$db = new dbpessoaturma ();
+		$colecao = $db->consultarPessoaManutencaoTurma ( $filtro );
 	}
-	
 	return $colecao;
 }
 function imprimeGridAlunosTurma($voCamposDadosPessoaAjax) {
 	$chave = @$_POST ["chavePessoa"];
 	$funcao = @$_POST ["funcao"];
 	$operacao = @$_POST ["operacao"];
-
+	
 	$isConsultarPessoa = false;
 	
 	// pega do $voCamposDadosPessoaAjax que foi chamado no detalhamento da turma
@@ -168,9 +175,7 @@ function imprimeGridAlunosTurma($voCamposDadosPessoaAjax) {
 			// echo "pegou da sessao";
 		}
 	}
-
 	// echo "turma = $cdTurma chave = $chave and funcao = $funcao and operacao = $operacao";
-	
 	$html = "";
 	$isInclusao = $operacao == constantes::$CD_FUNCAO_INCLUIR;
 	// $isDetalhamento = $funcao == constantes::$CD_FUNCAO_DETALHAR || $funcao == constantes::$CD_FUNCAO_EXCLUIR;
@@ -183,19 +188,20 @@ function imprimeGridAlunosTurma($voCamposDadosPessoaAjax) {
 		if ($chave != null) {
 			
 			if ($isInclusao) {
-				//echo $chave;
-				$pessoaAindaNaoPertenceATurma = isPessoaAindaNaoPertenceATurma ( $chave);
+				// echo $chave;
+				$pessoaAindaNaoPertenceATurma = isPessoaAindaNaoPertenceATurma ( $chave );
 				// se a pessoa esta na turma, mas ela esta sendo incluida novamente, deve emitir um alerta
 				$emitirAlerta = ! $pessoaAindaNaoPertenceATurma;
 				if ($emitirAlerta) {
-					//header("Location: ../confirmar.php?class=".$vo->getNmClassVO(),TRUE,307);
-					//$html = "<SCRIPT language='JavaScript' type='text/javascript'>exibirMensagem('Aluno já existente. Reinicie a operação.');</SCRIPT>\n";
-					$link = getLinkHTML("../../" . caminho_funcoesHTML . "pessoa_turma", "Pessoa X Turma");					
+					// header("Location: ../confirmar.php?class=".$vo->getNmClassVO(),TRUE,307);
+					// $html = "<SCRIPT language='JavaScript' type='text/javascript'>exibirMensagem('Aluno já existente. Reinicie a operação.');</SCRIPT>\n";
+					$link = getLinkHTML ( "../../" . caminho_funcoesHTML . "pessoa_turma", "Pessoa X Turma" );
 					$html = "INCLUSÃO DE ALUNO JÁ EXISTENTE NÃO PERMITIDA. <BR> PARA ALTERÁ-LO, SIGA PARA $link OU CANCELE E TENTE NOVAMENTE.";
 				}
 				
 				// aqui vai a chave completa para permitir a inclusao de multiplas pessoas
 				$colecaoAlunosVOPessoaTurma = incluirArrayNoArray ( $chave, $colecaoAlunosVOPessoaTurma );
+				// var_dump($colecaoAlunosVOPessoaTurma);
 			} else {
 				// se for exclusao, a chave eh o cdpessoa
 				$cdPessoaAexcluir = $chave;
@@ -208,51 +214,41 @@ function imprimeGridAlunosTurma($voCamposDadosPessoaAjax) {
 	
 	if (! isColecaoVazia ( $colecaoAlunosVOPessoaTurma )) {
 		// var_dump($colecaoAlunosVOPessoaTurma);
-		if ($isConsultarPessoa) {			
-			$colecaoAlunosVOPessoaTurma = getColecaoVOPessoaTurmaFromRecordset ( $colecaoAlunosVOPessoaTurma, $cdTurma);
+		if ($isConsultarPessoa) {
+			$colecaoAlunosVOPessoaTurma = getColecaoVOPessoaTurmaFromRecordset ( $colecaoAlunosVOPessoaTurma, null );
 		}
 		putObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS, $colecaoAlunosVOPessoaTurma );
 	} else {
 		removeObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS );
 	}
 	
-	if(!$emitirAlerta){
+	if (! $emitirAlerta) {
 		$html = mostrarGridAlunos ( $colecaoAlunosVOPessoaTurma );
 	}
 	
 	return $html;
 }
-function getValorTotal($vopessoaturma) {
-	;
-}
-function getArrayCdPessoasCadastradasAnterior() {
-	$strCdPessoasCadastradasAnterior = @$_POST [voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR];
-	$arrayCdPessoasCadastradasAnterior = null;
-	if ($strCdPessoasCadastradasAnterior != null) {
-		$arrayCdPessoasCadastradasAnterior = explode ( constantes::$CD_CAMPO_SEPARADOR_ARRAY, $strCdPessoasCadastradasAnterior );
-	}
-	
-	return $arrayCdPessoasCadastradasAnterior;
-}
 function isPessoaAindaNaoPertenceATurma($cdPessoa) {
-	$arrayCdPessoasCadastradasAnterior = getArrayCdPessoasCadastradasAnterior ();
-	$retorno = false;	
+	$colecaoAlunosAnteriores = getObjetoSessao ( voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR );
+	$retorno = false;
 	
-	if ($arrayCdPessoasCadastradasAnterior != null) {
+	if ($colecaoAlunosAnteriores != null) {
+		$arrayCdPessoasCadastradasAnterior = array_keys ( $colecaoAlunosAnteriores );
+		
 		if (! is_array ( $cdPessoa )) {
 			$retorno = ! in_array ( $cdPessoa, $arrayCdPessoasCadastradasAnterior );
 		} else {
-			foreach ($cdPessoa as $cd){				
-				//cd vem no formato de chaveprimaria de vopessoa
-				$cd = vopessoa::getCdPessoaChaveExplode($cd);
-				//echo "$cd<br>";
+			foreach ( $cdPessoa as $cd ) {
+				// cd vem no formato de chaveprimaria de vopessoa
+				$cd = vopessoa::getCdPessoaChaveExplode ( $cd );
+				// echo "$cd<br>";
 				$retorno = ! in_array ( $cd, $arrayCdPessoasCadastradasAnterior );
-				if(!$retorno){
+				if (! $retorno) {
 					break;
 				}
-			}			
+			}
 		}
-	}else{
+	} else {
 		$retorno = true;
 	}
 	return $retorno;
@@ -311,15 +307,15 @@ function mostrarGridAlunos($colecaoAlunos) {
 			}
 			
 			$pessoaAindaNaoPertenceATurma = isPessoaAindaNaoPertenceATurma ( $voPessoaTurma->cdPessoa );
-						
+			
 			if ($voAtual != null) {
 				
 				$html .= "<TR class='dados'> \n";
 				
 				$classValor = "camporeadonlyalinhadodireita";
 				$readonly = " readonly";
-				if ((! $isDetalhamento && ! $isAlteracao) || ($pessoaAindaNaoPertenceATurma)) {
-					// echo "NAO eh detalhamento";
+				
+				if ($pessoaAindaNaoPertenceATurma) {
 					$classValor = "camponaoobrigatorioalinhadodireita";
 					$javaScript = " onChange=\"formataCamposPagamento('$voAtual->cd');\"";
 					$readonly = "required";
@@ -358,8 +354,8 @@ function mostrarGridAlunos($colecaoAlunos) {
 				}
 				
 				// o campo nome eh um array porque sao varias pessoas a incluir
-				$html .= "<INPUT TYPE='HIDDEN' NAME='" . vopessoaturma::$nmAtrCdPessoa . "[]' VALUE='" . $voAtual->cd . "'> \n";				
-				$html .= getInputHidden ( vopessoaturma::$ID_REQ_COLECAO_DHALTERACAO. $voAtual->cd, vopessoaturma::$ID_REQ_COLECAO_DHALTERACAO."[]", $voPessoaTurma->dhUltAlteracao) . "\n";
+				$html .= "<INPUT TYPE='HIDDEN' NAME='" . vopessoaturma::$nmAtrCdPessoa . "[]' VALUE='" . $voAtual->cd . "'> \n";
+				$html .= getInputHidden ( vopessoaturma::$ID_REQ_COLECAO_DHALTERACAO . $voAtual->cd, vopessoaturma::$ID_REQ_COLECAO_DHALTERACAO . "[]", $voPessoaTurma->dhUltAlteracao ) . "\n";
 				$html .= "</TR> \n";
 			}
 			// se precisar de um contador;

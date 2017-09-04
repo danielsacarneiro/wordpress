@@ -189,7 +189,7 @@ class dbturma extends dbprocesso {
 		$retorno = null;
 		foreach ( $colecao as $vopessoaturma ) {
 			$cdPessoa = $vopessoaturma->cdPessoa;
-			if (! in_array ( $cdPessoa, $voturma->colecaoAlunosAnteriores)) {
+			if (! in_array ( $cdPessoa, array_keys ($voturma->colecaoAlunosAnteriores))) {
 				$retorno [$cdPessoa] = $vopessoaturma;
 			}
 		}
@@ -198,14 +198,12 @@ class dbturma extends dbprocesso {
 	function getColecaoVOPessoaTurmaARemoverDaTurma($voturma) {
 		// $voturma = new voturma ();
 		$colecao = $voturma->colecaoAlunosAnteriores;
-		foreach ( $colecao as $cdPessoa ) {
+		
+		foreach ( $colecao as $vopessoaturma) {
+			$cdPessoa = $vopessoaturma->cdPessoa;
+			
 			if (! in_array ( $cdPessoa, array_keys ( $voturma->colecaoAlunos ) )) {
-				$vopessoaturma = new vopessoaturma ();
-				$vopessoaturma->cdPessoa = $cdPessoa;
-				$vopessoaturma->cdTurma = $voturma->cd;
 				$retorno [$cdPessoa] = $vopessoaturma;
-				
-				 AQUI
 			}
 		}
 		return $retorno;
@@ -215,12 +213,7 @@ class dbturma extends dbprocesso {
 		// var_dump($colecaoVOPessoaTurma);
 		$retorno = false;
 		if (! isColecaoVazia ( $colecaoVOPessoaTurma )) {
-			foreach ( $colecaoVOPessoaTurma as $vopessoaturma ) {
-				/*
-				 * $vopessoaturma->cdTurma = $voturma->cd;
-				 * $vopessoaturma->dhUltAlteracao= getDataHoraAtualSQL();
-				 */
-				// echo "<br>hist:" . $vopessoaturma->sqHist;
+			foreach ( $colecaoVOPessoaTurma as $vopessoaturma ) {				
 				$db = $vopessoaturma->dbprocesso;
 				$db->cDb = $this->cDb;
 				$db->excluirAPArtirDaTurma ( $vopessoaturma );

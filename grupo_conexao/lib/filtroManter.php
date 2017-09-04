@@ -32,6 +32,7 @@ class filtroManter extends multiplosConstrutores {
 	var $groupby;
 	private $QUERY_SELECT;
 	private $QUERY_FROM;
+	private $NM_METODO_FILTRO_CONSULTA;
 	var $voPrincipal;
 	function __construct0() {
 		// echo "teste0";
@@ -45,6 +46,7 @@ class filtroManter extends multiplosConstrutores {
 	function __construct2($temPaginacao, $pegarFiltrosDaTela) {
 		$this->cdConsultarArquivo = constantes::$CD_NAO;
 		$this->tpVigencia = constantes::$CD_OPCAO_TODOS;
+		$this->NM_METODO_FILTRO_CONSULTA = "getFiltroConsultaSQL";
 		
 		if ($pegarFiltrosDaTela) {
 			$this->pegarFiltroDaTela ();
@@ -132,8 +134,17 @@ class filtroManter extends multiplosConstrutores {
 		
 		return $filtro;
 	}
+	
+	function setMetodoFiltroConsulta($nmMetodo){
+		if($nmMetodo != null){
+			$this->NM_METODO_FILTRO_CONSULTA = $nmMetodo;
+		}
+	}
+	
 	function getSQLWhere($comAtributoOrdenacao) {
-		return $this->getFiltroConsultaSQL ( $comAtributoOrdenacao );
+		//return $this->getFiltroConsultaSQL ( $comAtributoOrdenacao );
+		$nmMetodo = $this->NM_METODO_FILTRO_CONSULTA;
+		return $this->$nmMetodo( $comAtributoOrdenacao );		
 	}
 	function getFiltroConsulta($filtro) {
 		return $this->getFiltroSQL ( $filtro, true );

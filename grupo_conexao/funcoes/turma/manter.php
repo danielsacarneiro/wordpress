@@ -37,7 +37,8 @@ $titulo = $nmFuncao . $titulo;
 setCabecalho($titulo);
 
 $nome  = $vo->descricao;
-$strCdPessoasCadastradas= getStringValueColecaoAlunosAnteriores($vo->colecaoAlunos);
+
+putObjetoSessao(voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, $vo->colecaoAlunos);
    
 ?>
 <!DOCTYPE html>
@@ -107,8 +108,7 @@ function listarAlunos(cdPessoa, cdTurma, operacao) {
 	      operacao: operacao,
 	      <?=vopessoaturma::$nmAtrNumParcelas?>: parcelas,
 	      <?=vopessoaturma::$nmAtrValor?>: valores,
-	      <?=vopessoaturma::$nmAtrCdPessoa?>: cdsPessoa,
-	      <?=voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR?>: "<?=$strCdPessoasCadastradas?>"
+	      <?=vopessoaturma::$nmAtrCdPessoa?>: cdsPessoa
 	    },
 		beforeSend: function() { 
 			$('#<?=voturma::$NM_DIV_COLECAO_ALUNOS?>').html("<img  title='Limpar' src='<?=caminho_imagens?>loading/loading26.gif'>");			 
@@ -149,6 +149,10 @@ function isFormularioValido() {
 		return false;
 	}
 
+	if (!isValoresPreenchidos()){
+		return false;	
+	}
+	
 	return true;
 }
 
@@ -178,21 +182,18 @@ function getNumDuracao(){
 }
 
 function formataCamposPagamento(pCdPessoa){
+	
 	campoParcelas = document.getElementById("<?=vopessoaturma::$nmAtrNumParcelas?>"+pCdPessoa);
 	campoValor = document.getElementById("<?=vopessoaturma::$nmAtrValor?>"+pCdPessoa);
 	campoTotal = document.getElementById("<?=vopessoaturma::$ID_REQ_VALOR_TOTAL?>"+pCdPessoa);
 
-	//if(pCampo.name = "")
-
+	if(!isCampoNumericoPositivoValido(campoParcelas, true, 1)){
+		return false;
+	}
+	
 	numParcelas = campoParcelas.value;	
 	valor = campoValor.value;
 	
-	if(numParcelas == null || numParcelas == ""){
-		numParcelas = 1;
-	}
-
-//	isCampoMoedaComSeparadorMilharValido(pCampo, pQtCasasDecimais, pInObrigatorio, pVlMinimo, pVlMaximo, pSemMensagem, pSemFocarCampo)
-
 	if(!isCampoMoedaComSeparadorMilharValido(campoValor, 2, true, 0.01, null, true, true)){
 		valor = getValorCampoMoedaComoNumero(document.frm_principal.<?=voturma::$nmAtrValor?>);
 		valor = valor/numParcelas;
@@ -216,6 +217,32 @@ function formataCamposPagamento(pCdPessoa){
 	setValorCampoMoedaComSeparadorMilhar(campoTotal, total, 2);
 	setValorCampoMoedaComSeparadorMilhar(campoValor, valor, 2);
 	getSomatorioValoresPessoas();	
+}
+
+function isValoresPreenchidos(){
+	try{
+		arrayValores = document.getElementsByName("<?=vopessoaturma::$nmAtrValor?>[]");
+		arrayParcelas = document.getElementsByName("<?=vopessoaturma::$nmAtrNumParcelas?>[]");
+	}catch(err){
+		arrayValores = null;
+		arrayParcelas = null;
+	}
+	if(arrayValores != null){
+		for(i=0; i < arrayValores.length ;i++){
+			campoValor  = arrayValores[i];
+			campoParcela = arrayParcelas[i];
+
+			if(!isCampoMoedaComSeparadorMilharValido(campoValor, 2, true, 0.01)){
+				return false;
+			}
+			
+			if(!isCampoNumericoPositivoValido(campoParcela, true, 1)){
+				return false;
+			}
+		}		
+	}
+
+	return true;
 }
 
 function getSomatorioValoresPessoas(){
@@ -268,7 +295,9 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 			for(i=0; i < arrayValores.length ;i++){ 
 				valor = 0;
 				campoValor = arrayValores[i];
-				if(!apenasSeVazio || (campoValor.value == null || campoValor.value == "" || getValorCampoMoedaComoNumero(campoValor) == 0)){					
+				isCampoAtivo = !campoValor.readOnly;
+				//alert(isCampoAtivo); 
+				if(isCampoAtivo && (!apenasSeVazio || (campoValor.value == null || campoValor.value == "" || getValorCampoMoedaComoNumero(campoValor) == 0))){					
 						if(zerar){
 							valor = 0;
 							valorTurma = 0;
@@ -374,8 +403,7 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 			</TR>
 						
 			<TR>	
-            <TD class="conteinerfiltro" colspan="4">
-            <?php echo getInputHidden ( voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, $strCdPessoasCadastradas ) . "\n";?>            
+            <TD class="conteinerfiltro" colspan="4">            
             <TABLE cellpadding="0" cellspacing="0" id="<?=voturma::$NM_DIV_COLECAO_ALUNOS?>">
             <TBODY>
             		<?php

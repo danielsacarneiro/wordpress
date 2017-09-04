@@ -43,61 +43,6 @@ class dbpessoa extends dbprocesso {
 		
 		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, false );
 	}
-	function consultarFiltroManterPessoaTurma($filtro) {
-		$isHistorico = $filtro->isHistorico();
-		$nmTabela = vopessoa::getNmTabela ();
-		$nmTabelaPessoaVinculo = vopessoavinculo::getNmTabela ();
-		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic($isHistorico);
-		$nmTabelaTurma = voturma::getNmTabela ();
-		
-		$atributosConsulta = $nmTabela . "." . vopessoa::$nmAtrCd;
-		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrNome;
-		$atributosConsulta .= "," . $nmTabela . "." . vopessoa::$nmAtrDocCPF;
-		$atributosConsulta .= "," . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCd;
-		$temTurma = $filtro->cdTurma != null;
-		
-		if($temTurma){
-			//echo "tem turma<br>";
-			$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrValor;
-			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrCdTurma;
-			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrCdPessoa;
-			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrObservacao;
-			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrNumParcelas;
-			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrValor;
-			//para validacao numa posterior exclusao
-			$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrDhUltAlteracao;
-			
-			if($isHistorico){
-				//echo "tem historico<br>";
-				$atributosConsulta .= "," . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrSqHist;
-			}
-			
-			//$atributosConsulta .= ",COALESCE(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "," . $nmTabelaTurma. "." . voturma::$nmAtrValor. ") AS " . vopessoaturma::$nmAtrValor;
-		}else{
-			//echo "NAO tem turma";
-			//se a turma nao for passada, eh p consultar apenas as pessoas, ignorando os dados que tenham de turmas existentes
-			//por isso o groupby, para nao trazer pessoas repetidas
-			$groupby = $nmTabela . "." . vopessoa::$nmAtrCd;
-			$filtro->groupby = $groupby;
-		}
-		
-		$querySelect = "SELECT " . $atributosConsulta;
-		
-		$queryFrom = "\n FROM " . $nmTabela;
-		$queryFrom .= "\n INNER JOIN " . $nmTabelaPessoaVinculo;
-		$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaVinculo . "." . vopessoavinculo::$nmAtrCdPessoa;
-		
-		if($temTurma){		
-			$queryFrom .= "\n LEFT JOIN " . $nmTabelaPessoaTurma;
-			$queryFrom .= "\n ON " . $nmTabela . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa;
-			$queryFrom .= "\n LEFT JOIN " . $nmTabelaTurma;
-			$queryFrom .= "\n ON " . $nmTabelaTurma. "." . voturma::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma;
-		}		
-		// echo $querySelect."<br>";
-		// echo $queryFrom;
-		
-		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, false );
-	}
 	function consultarPessoaManter($filtro, $validarConsulta) {		
 		$nmTabela = vopessoa::getNmTabelaStatic($filtro->isHistorico());
 		$atributosConsulta = $nmTabela . "." . vopessoa::$nmAtrCd;

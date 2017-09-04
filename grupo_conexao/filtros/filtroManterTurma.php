@@ -61,6 +61,12 @@ class filtroManterTurma extends filtroManter {
 			$conector = "\n AND ";
 		}
 		
+		if (!$this->isHistorico()) {
+			$filtro = $filtro . $conector . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrInDesativado . "= 'N'";
+			
+			$conector = "\n AND ";
+		}
+		
 		// finaliza o filtro
 		$filtro = parent::getFiltroConsulta ( $filtro );
 		

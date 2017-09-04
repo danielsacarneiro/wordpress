@@ -391,7 +391,9 @@ class dbprocesso {
 	}
 	function excluir($voEntidade, $isChamadaEncadeadaPorOutraEntidade = false) {
 		// Start transaction
-		$this->cDb->retiraAutoCommit ();
+		if(!$isChamadaEncadeadaPorOutraEntidade){
+			$this->cDb->retiraAutoCommit ();
+		}
 		try {
 			// echo $voEntidade->sqHist;
 			if(!$isChamadaEncadeadaPorOutraEntidade){
@@ -415,9 +417,13 @@ class dbprocesso {
 					$retorno = $this->excluirPrincipal ( $voEntidade );
 				}
 			}
-			$this->cDb->commit ();
+			if(!$isChamadaEncadeadaPorOutraEntidade){
+				$this->cDb->commit ();
+			}
 		} catch ( Exception $e ) {
-			$this->cDb->rollback ();
+			if(!$isChamadaEncadeadaPorOutraEntidade){
+				$this->cDb->rollback ();
+			}
 			throw new Exception ( $e->getMessage () );
 		}
 		

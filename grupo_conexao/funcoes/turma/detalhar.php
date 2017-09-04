@@ -151,6 +151,7 @@ function confirmar() {
             		}
             		$strCdPessoasCadastradas = getColecaoEntreSeparador($colecaoCdPessoasCadastradas, constantes::$CD_CAMPO_SEPARADOR_ARRAY);
             		//deixa gravado na pagina os alunos anteriormente cadastrados
+            		//para usa-los na exclusao???
             		echo getInputHidden(voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, $strCdPessoasCadastradas) . "\n";					
             		echo mostrarGridAlunos($colecaoAlunosAntesCadastrados, true);					  					  
 					?>

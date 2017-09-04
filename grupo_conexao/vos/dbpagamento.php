@@ -19,33 +19,6 @@ class dbpagamento extends dbprocesso {
 		
 		return $this->consultarPorChaveMontandoQuery ( $vo, $arrayColunasRetornadas, $queryFrom, $isHistorico );
 	}
-	function consultarFiltroManterPessoaTurma($filtro) {
-		$nmTabelaTurma = voturma::getNmTabelaStatic ( $filtro->isHistorico () );
-		$nmTabelaPessoa = vopessoa::getNmTabelaStatic ( $filtro->isHistorico () );
-		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic ( $filtro->isHistorico () );
-		
-		$atributosConsulta = $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma;
-		$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa;
-		$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor;
-		$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas;
-		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrDescricao;
-		$atributosConsulta .= "," . $nmTabelaPessoa . "." . vopessoa::$nmAtrNome;
-		
-		$querySelect = "SELECT " . $atributosConsulta;
-		
-		$queryFrom = "\n FROM " . $nmTabelaTurma;
-		$queryFrom .= "\n INNER JOIN " . $nmTabelaPessoaTurma;
-		$queryFrom .= "\n ON " . $nmTabelaTurma . "." . voturma::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma;
-		$queryFrom .= "\n LEFT JOIN " . $nmTabelaPessoa;
-		$queryFrom .= "\n ON " . $nmTabelaPessoa . "." . vopessoa::$nmAtrCd . "=" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa;
-		
-		// $filtro->groupby = $atributosConsulta;
-		
-		// echo $querySelect."<br>";
-		// echo $queryFrom;
-		
-		return $this->consultarFiltro ( $filtro, $querySelect, $queryFrom, true );
-	}
 	function incluirSQL($vopessoaturma) {
 		$arrayAtribRemover = array (
 				vopessoaturma::$nmAtrDhInclusao,

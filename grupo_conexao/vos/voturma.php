@@ -118,16 +118,9 @@ class voturma extends voentidade {
 			//var_dump($this->colecaoAlunos);
 		}
 		
-		// para guardar pra verificacao futura
-		$this->setColecaoAlunosAnteriores ();
+		$this->colecaoAlunosAnteriores = getObjetoSessao(self::$ID_REQ_COLECAO_ALUNOS_ANTERIOR);
 	}
-	function setColecaoAlunosAnteriores() {
-		$strAlunos = @$_POST [self::$ID_REQ_COLECAO_ALUNOS_ANTERIOR];
-		//echo "pessoas anteriores $strAlunos";
-		$colecao = explode ( constantes::$CD_CAMPO_SEPARADOR_ARRAY, $strAlunos );
-		// var_dump($colecaoPagamento);
-		$this->colecaoAlunosAnteriores = $colecao;
-	}
+	
 	function setColecaoAlunosFormulario() {
 		$colecaoValores = @$_POST [vopessoaturma::$nmAtrValor];
 		$colecaoNumParcelas = @$_POST [vopessoaturma::$nmAtrNumParcelas];
