@@ -15,7 +15,7 @@ CREATE TABLE materia (
 
 drop table IF EXISTS turma;
 CREATE TABLE turma (
-	tu_cd INT NOT NULL AUTO_INCREMENT,
+    tu_cd INT NOT NULL AUTO_INCREMENT,
     tu_ds VARCHAR(150) NOT NULL, 
     tu_valor DECIMAL(10,2),
     tu_obs VARCHAR(300),
@@ -72,6 +72,8 @@ CREATE TABLE pessoa_turma (
 drop table IF EXISTS pessoa_turma_hist;
 CREATE TABLE pessoa_turma_hist (
 	hist INT NOT NULL AUTO_INCREMENT,
+	tu_hist INT NOT NULL, 
+    
 	pe_cd INT NOT NULL,
     tu_cd INT NOT NULL,
     pt_numparcelas INT NOT NULL,

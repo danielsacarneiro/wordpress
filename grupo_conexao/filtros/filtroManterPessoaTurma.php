@@ -11,6 +11,7 @@ class filtroManterPessoaTurma extends filtroManter {
 	// construtor
 	var $cdPessoa;
 	var $cdTurma;
+	var $sqHistTurma;
 	var $doc;
 	var $nome;
 	var $dsTurma;
@@ -52,6 +53,12 @@ class filtroManterPessoaTurma extends filtroManter {
 		
 		if ($this->cdTurma != null) {
 			$filtro = $filtro . $conector . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma . " = " . $this->cdTurma;
+			
+			$conector = "\n AND ";
+		}
+		
+		if ($this->sqHistTurma != null) {
+			$filtro = $filtro . $conector . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrSqHistTurma . " = " . $this->sqHistTurma;
 			
 			$conector = "\n AND ";
 		}
@@ -129,6 +136,12 @@ class filtroManterPessoaTurma extends filtroManter {
 			
 			$conector = "\n AND ";
 		}
+		
+		if ($this->sqHistTurma != null) {
+			$filtro = $filtro . $conector . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrSqHistTurma . " = " . $this->sqHistTurma;
+			
+			$conector = "\n AND ";
+		}		
 		
 		if ($this->nome != null) {
 			$filtro = $filtro . $conector . $nmTabela . "." . vopessoa::$nmAtrNome . " LIKE '%" . utf8_encode ( $this->nome ) . "%'";

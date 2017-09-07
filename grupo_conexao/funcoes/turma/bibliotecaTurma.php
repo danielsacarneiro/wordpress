@@ -110,14 +110,16 @@ function consultarPessoasTurmaPorVOTurma($voturma) {
 	// $voturma = new voturma();
 	if ($voturma != null) {
 		
+		$filtro = new filtroManterPessoaTurma ( false );
+		
 		$cdHistorico = "N";
 		if ($voturma->isHistorico ()) {
 			$cdHistorico = "S";
+			$filtro->sqHistTurma =  $voturma->sqHist;
 		}
 		
 		$cdTurma = $voturma->cd;
 		// echo "o codigo da turma é $cdTurma e o cdHistorico é $cdHistorico e o historico do voregistro é " . $voturma->sqHist;
-		$filtro = new filtroManterPessoaTurma ( false );
 		$filtro->inTemTurma = constantes::$CD_SIM;
 		// $filtro->voPrincipal = new vopessoaturma();
 		$filtro->cdTurma = $cdTurma;
@@ -319,6 +321,7 @@ function mostrarGridAlunos($colecaoAlunos) {
 					$classValor = "camponaoobrigatorioalinhadodireita";
 					$javaScript = " onChange=\"formataCamposPagamento('$voAtual->cd');\"";
 					$readonly = "required";
+					//echo "aqui";
 				}
 				
 				$doc = $voAtual->docCPF;
@@ -349,10 +352,14 @@ function mostrarGridAlunos($colecaoAlunos) {
 				$total = $voPessoaTurma->valor * $voPessoaTurma->numParcelas;
 				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$ID_REQ_VALOR_TOTAL . $voAtual->cd, vopessoaturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $total, true ), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, " readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);'" ) . "</TD> \n";
 				
+				if($voPessoaTurma->dhUltAlteracao != null){
+					$html .= "<TD class='tabeladados' nowrap>" . getDataHora ( $voPessoaTurma->dhUltAlteracao ) . "</TD> \n";
+				}
+					
 				if (! $isDetalhamento) {
 					$html .= "<TD class='tabeladados' nowrap>" . getBorrachaJS ( "limparDadosPessoa($voAtual->cd);" ) . "</TD> \n";
 				}
-				
+								
 				// o campo nome eh um array porque sao varias pessoas a incluir
 				$html .= "<INPUT TYPE='HIDDEN' NAME='" . vopessoaturma::$nmAtrCdPessoa . "[]' VALUE='" . $voAtual->cd . "'> \n";
 				$html .= getInputHidden ( vopessoaturma::$ID_REQ_COLECAO_DHALTERACAO . $voAtual->cd, vopessoaturma::$ID_REQ_COLECAO_DHALTERACAO . "[]", $voPessoaTurma->dhUltAlteracao ) . "\n";

@@ -11,6 +11,10 @@ class vopessoaturma extends voentidade {
 	static $nmAtrValor = "pt_valor";
 	static $nmAtrNumParcelas = "pt_numparcelas";
 	static $nmAtrObservacao = "pt_obs";
+	
+	//apenas usado na inclusao de historico
+	static $nmAtrSqHistTurma = "tu_hist";
+	
 	var $cdPessoa = "";
 	var $cdTurma = "";
 	var $valor = "";
@@ -18,6 +22,7 @@ class vopessoaturma extends voentidade {
 	var $colecaoParcelasPagas = "";
 	var $colecaoParcelasPagasAnteriores = "";
 	var $obs = "";
+	var $sqHistTurma = "";
 		
 	// ...............................................................
 	// Funções ( Propriedades e métodos da classe )
@@ -168,5 +173,12 @@ class vopessoaturma extends voentidade {
 		$retorno .= $this->cdTurma . ",";
 		return $retorno;
 	}
+	
+	function getAtributosExtrasInclusaoHistorico() {
+		$retorno = array();
+		$retorno[self::$nmAtrSqHistTurma] = getVarComoNumero($this->sqHistTurma);
+		return $retorno;
+	}
+	
 }
 ?>

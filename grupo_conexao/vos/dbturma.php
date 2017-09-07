@@ -6,7 +6,7 @@ include_once (caminho_util . "bibliotecaFuncoesPrincipal.php");
 class dbturma extends dbprocesso {
 	function consultarPorChave($vo, $isHistorico) {
 		$nmTabelaTurma = $vo->getNmTabelaEntidade ( $isHistorico );
-		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic ( false );
+		$nmTabelaPessoaTurma = vopessoaturma::getNmTabelaStatic ( $isHistorico);
 		
 		$arrayColunasRetornadas = array (
 				$nmTabelaTurma . ".*" 
@@ -117,7 +117,8 @@ class dbturma extends dbprocesso {
 			$voturma = $this->incluirTurma ( $voturma );
 			
 			if (! isColecaoVazia ( $voturma->colecaoAlunos )) {
-				$this->incluirPessoaTurma ( $voturma->colecaoAlunos, $voturma->cd );
+				$voturma->colecaoVOPessoaTurmaAIncluir= $voturma->colecaoAlunos;
+				$this->incluirPessoaTurma ($voturma);
 			} else {
 				throw new excecaoGenerica ( "Não é permitido incluir turma sem alunos." );
 			}
@@ -132,8 +133,11 @@ class dbturma extends dbprocesso {
 		
 		return $voturma;
 	}
-	function incluirPessoaTurma($colecaoVOPessoaTurma, $cdTurma = null) {
-		$retorno = false;
+	function incluirPessoaTurma($voturma) {
+		$retorno = false;		
+		$colecaoVOPessoaTurma = $voturma->colecaoVOPessoaTurmaAIncluir;
+		$cdTurma = $voturma->cd;
+		
 		if (! isColecaoVazia ( $colecaoVOPessoaTurma )) {
 			foreach ( $colecaoVOPessoaTurma as $vopessoaturma ) {
 				// $vopeturma = new vopessoaturma ();
@@ -208,12 +212,15 @@ class dbturma extends dbprocesso {
 		}
 		return $retorno;
 	}
-	function excluirPessoaTurma($colecaoVOPessoaTurma) {
-		// $voturma= new voturma();
+	function excluirPessoaTurma($voturma) {		
+		$colecaoVOPessoaTurma = $voturma->colecaoVOPessoaTurmaARemover;
 		// var_dump($colecaoVOPessoaTurma);
 		$retorno = false;
 		if (! isColecaoVazia ( $colecaoVOPessoaTurma )) {
-			foreach ( $colecaoVOPessoaTurma as $vopessoaturma ) {				
+			foreach ( $colecaoVOPessoaTurma as $vopessoaturma ) {
+				//$vopessoaturma = new vopessoaturma();
+				//guarda o sqhistorico da turma
+				$vopessoaturma->sqHistTurma = $voturma->sqHist;
 				$db = $vopessoaturma->dbprocesso;
 				$db->cDb = $this->cDb;
 				$db->excluirAPArtirDaTurma ( $vopessoaturma );
@@ -244,10 +251,12 @@ class dbturma extends dbprocesso {
 			$colecaoVOPessoaTurmaARemover = $this->getColecaoVOPessoaTurmaARemoverDaTurma ( $voturma );
 			$colecaoVOPessoaTurmaAIncluir = $this->getColecaoVOPessoaTurmaAIncluirNaTurma ( $voturma );
 			
-			$fezExclusao= $this->excluirPessoaTurma ( $colecaoVOPessoaTurmaARemover );
-			$fezInclusao= $this->incluirPessoaTurma ( $colecaoVOPessoaTurmaAIncluir, $voturma->cd);
-			
 			parent::alterar ( $voturma );
+			
+			$voturma->colecaoVOPessoaTurmaARemover = $colecaoVOPessoaTurmaARemover;
+			$voturma->colecaoVOPessoaTurmaAIncluir= $colecaoVOPessoaTurmaAIncluir;
+			$fezExclusao= $this->excluirPessoaTurma ( $voturma);
+			$fezInclusao= $this->incluirPessoaTurma ( $voturma);
 						
 			// End transaction
 			$this->cDb->commit ();
@@ -267,12 +276,11 @@ class dbturma extends dbprocesso {
 		$this->cDb->retiraAutoCommit ();
 		try {
 			$permiteExcluirPrincipal = $this->permiteExclusaoPrincipal ( $voturma );
-			// so exclui os relacionamentos se a exclusao for de registro historico
-			// caso contrario , apenas desativa o voprincipal
-			// if ($permiteExcluirPrincipal) {
-			$this->excluirPessoaTurma ( $voturma->colecaoAlunos );
-			// }
+						
 			parent::excluir ( $voturma );
+			$voturma->colecaoVOPessoaTurmaARemover = $voturma->colecaoAlunos;
+			$this->excluirPessoaTurma ( $voturma);
+			
 			// End transaction
 			$this->cDb->commit ();
 		} catch ( Exception $e ) {

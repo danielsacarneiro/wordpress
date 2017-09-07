@@ -272,9 +272,9 @@ function getColecaoEntreSeparadorAspas($colecaoAtributos, $separador, $comAspas)
 		$tamanho = count ( $colecaoAtributos );
 		// echo "<br> qtd registros: " . $tamanho;
 		
-		for($i = 0; $i <= $tamanho; $i ++) {
-			$atrib = $colecaoAtributos [$i];
-			
+		/*for($i = 0; $i <= $tamanho; $i ++) {
+			$atrib = $colecaoAtributos [$i];*/
+		foreach ($colecaoAtributos as $atrib){
 			if ($atrib != null && $atrib != "") {
 				
 				if ($comAspas)

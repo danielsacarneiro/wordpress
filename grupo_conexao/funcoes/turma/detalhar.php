@@ -37,6 +37,8 @@ if($funcao == constantes::$CD_FUNCAO_EXCLUIR){
 
 $titulo = $nmFuncao. $titulo. $complementoTit;
 setCabecalho($titulo);  
+
+putObjetoSessao(voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, $vo->colecaoAlunos);
 ?>
 <!DOCTYPE html>
 <HEAD>
@@ -136,6 +138,10 @@ function confirmar() {
             <TR>
 				<TH class="textoseparadorgrupocampos" halign="left" colspan="4">
 				<DIV class="campoformulario">&nbsp;&nbsp;Alunos na turma&nbsp;&nbsp;
+				<?php
+				if($isHistorico) 
+					echo "Os Alunos abaixo foram excluídos na última operação.";
+				?>
 				</DIV>
 				</TH>
 			</TR>

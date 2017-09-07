@@ -210,5 +210,4 @@ function getDecimalSQL($param) {
 	
 	return $retorno;
 }
-
 ?>

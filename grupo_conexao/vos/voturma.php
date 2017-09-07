@@ -22,6 +22,8 @@ class voturma extends voentidade {
 	var $dtFim = "";
 	var $colecaoAlunos = "";
 	var $colecaoAlunosAnteriores = "";
+	var $colecaoVOPessoaTurmaARemover = "";
+	var $colecaoVOPessoaTurmaAIncluir = "";
 	
 	// ...............................................................
 	// Funções ( Propriedades e métodos da classe )
@@ -51,8 +53,9 @@ class voturma extends voentidade {
 		$nmTabela = $this->getNmTabelaEntidade ( $isHistorico );
 		$query = $nmTabela . "." . self::$nmAtrCd . "=" . $this->cd;
 		// $query.= " AND ". $nmTabela . "." . self::$nmAtrCd . "=" . $this->cd;
-		if ($isHistorico)
+		if ($isHistorico){
 			$query .= " AND " . $nmTabela . "." . self::$nmAtrSqHist . "=" . $this->sqHist;
+		}
 		
 		return $query;
 	}

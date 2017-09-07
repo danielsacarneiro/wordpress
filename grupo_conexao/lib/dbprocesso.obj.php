@@ -21,7 +21,7 @@ class dbprocesso {
 		$this->cDb = new db ();
 		$this->cDb->abrirConexao ( $this->cConfig->db, $this->cConfig->login, $this->cConfig->senha, $this->cConfig->odbc, $this->cConfig->driver, $this->cConfig->servidor );
 	}
-	function incluirHistorico($voEntidade) {
+	function incluirHistorico($voEntidade, $retornaSqHist = false) {
 		// par ao historico funcionar, a tabela de historico deve estar adequada a estrutura da query abaixo
 		/*
 		 * deve possuir sempre:
@@ -29,12 +29,30 @@ class dbprocesso {
 		 * 2 - o dhoperacao (CURRENT TIMESTAMP) que diz a hora em q o registro foi historiado
 		 * 3 - o usuario da operacao id_user logado que fez a operacao
 		 */
-		$tabelaHistorico = $voEntidade->getNmTabelaEntidade ( true );
 		
-		$novoSeq = " SELECT MAX(" . voentidade::$nmAtrSqHist . ")+1 FROM " . $tabelaHistorico;
+		$isHistorico = true;
+		$tabelaHistorico = $voEntidade->getNmTabelaEntidade ( $isHistorico);
+		
+		if(!$retornaSqHist){
+			$novoSeq = " SELECT MAX(" . voentidade::$nmAtrSqHist . ")+1 FROM " . $tabelaHistorico;
+		}else{		
+			$novoSeq = $this->getProximoSequencial ( voentidade::$nmAtrSqHist , $voEntidade, $isHistorico);
+		}
+		
+		//metodo que traz um array com atributos a serem incluidos no historico
+		//A ORDEM DA TABELA EH IMPORTANTE, pois os atributos ficam logo apos o sqhistorico da tabela
+		if (method_exists ( $voEntidade, "getAtributosExtrasInclusaoHistorico" )) {
+			$arrayAtrib = $voEntidade->getAtributosExtrasInclusaoHistorico();
+			$strArrayAtrib = getColecaoEntreSeparador($arrayAtrib, ",");
+		}		
 		
 		$query = "INSERT INTO " . $tabelaHistorico;
 		$query .= " SELECT ($novoSeq),";
+		
+		if($strArrayAtrib != null){
+			$query .= $strArrayAtrib . ",";
+		}
+		
 		$query .= $voEntidade->getNmTabela () . ".*,";
 		$query .= " CURRENT_TIMESTAMP, ";
 		$query .= id_user;
@@ -42,9 +60,14 @@ class dbprocesso {
 		$query .= " WHERE ";
 		$query .= $voEntidade->getValoresWhereSQLChave ( false );
 		
-		// echo $query;
-		
+		// echo $query;		
 		$retorno = $this->cDb->atualizar ( $query );
+		
+		if($retornaSqHist){
+			$voEntidade->sqHist = $novoSeq;
+			$retorno = $novoSeq;
+		}
+		
 		return $retorno;
 	}
 	function validaAlteracao($voEntidade) {
@@ -411,7 +434,7 @@ class dbprocesso {
 			} else {
 				// echo "nao EH HISTORICO";
 				if ($voEntidade->temTabHistorico) {
-					$retorno = $this->excluirHistoriando ( $voEntidade );
+					$retorno = $this->excluirHistoriando ( $voEntidade, true );
 				} else {
 					// exclui principal direto
 					$retorno = $this->excluirPrincipal ( $voEntidade );
@@ -467,10 +490,12 @@ class dbprocesso {
 		$retorno = $this->cDb->atualizar ( $query );
 		return $retorno;
 	}
-	function excluirHistoriando($voEntidade) {
+	function excluirHistoriando($voEntidade, $retornaSqHist = false) {
 		$this->validaAlteracao ( $voEntidade );
-		$this->incluirHistorico ( $voEntidade );
+		$retorno = $this->incluirHistorico ( $voEntidade, $retornaSqHist);
 		$this->desativarOuExcluirPrincipal ( $voEntidade );
+		
+		return $retorno;
 	}
 	function excluirDesativandoSQL($voEntidade) {
 		$nmTabela = $voEntidade->getNmTabelaEntidade ( false );
@@ -550,7 +575,7 @@ class dbprocesso {
 		if (! $temTabHistorico)
 			$retorno = $this->alterarPorCima ( $voEntidade );
 		else
-			$retorno = $this->alterarHistoriando ( $voEntidade );
+			$retorno = $this->alterarHistoriando ( $voEntidade, true );
 		
 		return $retorno;
 	}
@@ -560,15 +585,22 @@ class dbprocesso {
 		$retorno = $this->cDb->atualizar ( $query );
 		return $retorno;
 	}
-	function alterarHistoriando($voEntidade) {
+	function alterarHistoriando($voEntidade, $retornaSqHist = false) {
 		// Start transaction
 		$this->cDb->retiraAutoCommit ();
+		$retorno = array();
 		try {
 			$this->validaAlteracao ( $voEntidade );
-			$this->incluirHistorico ( $voEntidade );
+			$sqHist = $this->incluirHistorico ( $voEntidade , $retornaSqHist);
 			
 			// altera o registro sendo este o mais vigente
 			$this->alterarPorCima ( $voEntidade );
+			
+			$retorno[0] = $voEntidade;
+			$newVo = clone $voEntidade;
+			$newVo->sqHist = $sqHist;
+			$retorno[1] = $newVo;
+			
 			// End transaction
 			$this->cDb->commit ();
 		} catch ( Exception $e ) {
@@ -593,8 +625,8 @@ class dbprocesso {
 		
 		return $query;
 	}
-	function getProximoSequencial($nmColuna, $voEntidade) {
-		$query = " SELECT MAX(" . $nmColuna . ")+1 AS " . $nmColuna . " FROM " . $voEntidade->getNmTabela () . " ";
+	function getProximoSequencial($nmColuna, $voEntidade, $isHistorico = false) {
+		$query = " SELECT MAX(" . $nmColuna . ")+1 AS " . $nmColuna . " FROM " . $voEntidade->getNmTabelaEntidade ( $isHistorico ) . " ";
 		// echo $query;
 		$registro = $this->consultarEntidade ( $query, false );
 		
