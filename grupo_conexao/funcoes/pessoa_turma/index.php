@@ -230,7 +230,8 @@ function pagamento() {
 	                   		<?php 
 	                   		
 	                   		$arrayBotoesARemover = array (
-	                   				constantes::$CD_FUNCAO_INCLUIR
+	                   				constantes::$CD_FUNCAO_INCLUIR,
+	                   				constantes::$CD_FUNCAO_EXCLUIR
 	                   		);
 	                   		echo getBotoesRodapeComRestricao ( $arrayBotoesARemover, true );	                   			                   		
 	                   		?>

@@ -29,27 +29,26 @@ class dbprocesso {
 		 * 2 - o dhoperacao (CURRENT TIMESTAMP) que diz a hora em q o registro foi historiado
 		 * 3 - o usuario da operacao id_user logado que fez a operacao
 		 */
-		
 		$isHistorico = true;
-		$tabelaHistorico = $voEntidade->getNmTabelaEntidade ( $isHistorico);
+		$tabelaHistorico = $voEntidade->getNmTabelaEntidade ( $isHistorico );
 		
-		if(!$retornaSqHist){
+		if (! $retornaSqHist) {
 			$novoSeq = " SELECT MAX(" . voentidade::$nmAtrSqHist . ")+1 FROM " . $tabelaHistorico;
-		}else{		
-			$novoSeq = $this->getProximoSequencial ( voentidade::$nmAtrSqHist , $voEntidade, $isHistorico);
+		} else {
+			$novoSeq = $this->getProximoSequencial ( voentidade::$nmAtrSqHist, $voEntidade, $isHistorico );
 		}
 		
-		//metodo que traz um array com atributos a serem incluidos no historico
-		//A ORDEM DA TABELA EH IMPORTANTE, pois os atributos ficam logo apos o sqhistorico da tabela
+		// metodo que traz um array com atributos a serem incluidos no historico
+		// A ORDEM DA TABELA EH IMPORTANTE, pois os atributos ficam logo apos o sqhistorico da tabela
 		if (method_exists ( $voEntidade, "getAtributosExtrasInclusaoHistorico" )) {
-			$arrayAtrib = $voEntidade->getAtributosExtrasInclusaoHistorico();
-			$strArrayAtrib = getColecaoEntreSeparador($arrayAtrib, ",");
-		}		
+			$arrayAtrib = $voEntidade->getAtributosExtrasInclusaoHistorico ();
+			$strArrayAtrib = getColecaoEntreSeparador ( $arrayAtrib, "," );
+		}
 		
 		$query = "INSERT INTO " . $tabelaHistorico;
 		$query .= " SELECT ($novoSeq),";
 		
-		if($strArrayAtrib != null){
+		if ($strArrayAtrib != null) {
 			$query .= $strArrayAtrib . ",";
 		}
 		
@@ -60,10 +59,10 @@ class dbprocesso {
 		$query .= " WHERE ";
 		$query .= $voEntidade->getValoresWhereSQLChave ( false );
 		
-		// echo $query;		
+		// echo $query;
 		$retorno = $this->cDb->atualizar ( $query );
 		
-		if($retornaSqHist){
+		if ($retornaSqHist) {
 			$voEntidade->sqHist = $novoSeq;
 			$retorno = $novoSeq;
 		}
@@ -80,9 +79,9 @@ class dbprocesso {
 		$dhValidacao = $registro [0] [voentidade::$nmAtrDhUltAlteracao];
 		
 		if ($dhValidacao != $voEntidade->dhUltAlteracao) {
-			$msg = "Registro desatualizado '". $voEntidade->getNmTabela ()."'.";
-			$msg .= "<br>data banco: " . getDataHora($dhValidacao);
-			$msg .= "<br>data registro: " . getDataHora($voEntidade->dhUltAlteracao);
+			$msg = "Registro desatualizado '" . $voEntidade->getNmTabela () . "'.";
+			$msg .= "<br>data banco: " . getDataHora ( $dhValidacao );
+			$msg .= "<br>data registro: " . getDataHora ( $voEntidade->dhUltAlteracao );
 			
 			throw new Exception ( $msg );
 		}
@@ -414,15 +413,15 @@ class dbprocesso {
 	}
 	function excluir($voEntidade, $isChamadaEncadeadaPorOutraEntidade = false) {
 		// Start transaction
-		if(!$isChamadaEncadeadaPorOutraEntidade){
+		if (! $isChamadaEncadeadaPorOutraEntidade) {
 			$this->cDb->retiraAutoCommit ();
 		}
 		try {
 			// echo $voEntidade->sqHist;
-			if(!$isChamadaEncadeadaPorOutraEntidade){
-				//a outra entidade encadeada ja validou a exclusao por historico
-				//por isso nao precisa validar de novo
-				//isto porque so pode haver um VO na sessao na validacao do historico, que eh o que vem da pagina
+			if (! $isChamadaEncadeadaPorOutraEntidade) {
+				// a outra entidade encadeada ja validou a exclusao por historico
+				// por isso nao precisa validar de novo
+				// isto porque so pode haver um VO na sessao na validacao do historico, que eh o que vem da pagina
 				$this->validaExclusaoHistorico ( $voEntidade );
 			}
 			
@@ -440,20 +439,17 @@ class dbprocesso {
 					$retorno = $this->excluirPrincipal ( $voEntidade );
 				}
 			}
-			if(!$isChamadaEncadeadaPorOutraEntidade){
+			if (! $isChamadaEncadeadaPorOutraEntidade) {
 				$this->cDb->commit ();
 			}
 		} catch ( Exception $e ) {
-			if(!$isChamadaEncadeadaPorOutraEntidade){
-				$this->cDb->rollback ();
-			}
-			throw new Exception ( $e->getMessage () );
+			$this->tratarExcecao ( $e, $isChamadaEncadeadaPorOutraEntidade );
 		}
 		
 		return $retorno;
 	}
 	function desativarOuExcluirPrincipal($voEntidade) {
-		// exclui o principal em caso de nao ter historico 
+		// exclui o principal em caso de nao ter historico
 		// a desativacao soh eh necessaria quando ha tabelas de relacionamento que impedem a exclusao direta
 		if (! $voEntidade->temTabHistorico ()) {
 			// exclusao simples
@@ -492,7 +488,7 @@ class dbprocesso {
 	}
 	function excluirHistoriando($voEntidade, $retornaSqHist = false) {
 		$this->validaAlteracao ( $voEntidade );
-		$retorno = $this->incluirHistorico ( $voEntidade, $retornaSqHist);
+		$retorno = $this->incluirHistorico ( $voEntidade, $retornaSqHist );
 		$this->desativarOuExcluirPrincipal ( $voEntidade );
 		
 		return $retorno;
@@ -588,24 +584,23 @@ class dbprocesso {
 	function alterarHistoriando($voEntidade, $retornaSqHist = false) {
 		// Start transaction
 		$this->cDb->retiraAutoCommit ();
-		$retorno = array();
+		$retorno = array ();
 		try {
 			$this->validaAlteracao ( $voEntidade );
-			$sqHist = $this->incluirHistorico ( $voEntidade , $retornaSqHist);
+			$sqHist = $this->incluirHistorico ( $voEntidade, $retornaSqHist );
 			
 			// altera o registro sendo este o mais vigente
 			$this->alterarPorCima ( $voEntidade );
 			
-			$retorno[0] = $voEntidade;
+			$retorno [0] = $voEntidade;
 			$newVo = clone $voEntidade;
 			$newVo->sqHist = $sqHist;
-			$retorno[1] = $newVo;
+			$retorno [1] = $newVo;
 			
 			// End transaction
 			$this->cDb->commit ();
 		} catch ( Exception $e ) {
-			$this->cDb->rollback ();
-			throw new Exception ( $e->getMessage () );
+			$this->tratarExcecao ( $e );
 		}
 		
 		return $retorno;
@@ -706,24 +701,24 @@ class dbprocesso {
 		$querySelect .= " WHERE ";
 		$querySelect .= $vo->getValoresWhereSQLChaveSemNomeTabela ( false );
 		
-		 //echo "<br>" . $querySelect;
-		 $temDesativado = false;
+		// echo "<br>" . $querySelect;
+		$temDesativado = false;
 		try {
 			$colecao = $this->consultarEntidadeComValidacao ( $querySelect, false, true );
 			
-			foreach ($colecao as $registro){
-				if($registro[voentidade::$nmAtrTemDesativado] == 1){
+			foreach ( $colecao as $registro ) {
+				if ($registro [voentidade::$nmAtrTemDesativado] == 1) {
 					$temDesativado = true;
 					break;
 				}
 			}
-			$countColecao= count ( $colecao );
+			$countColecao = count ( $colecao );
 		} catch ( excecaoConsultaVazia $ex ) {
-			//throw new excecaoGenerica ( "Erro ao excluir histórico. Inexiste histórico a ser excluído." );
-			$countColecao= 0;
+			// throw new excecaoGenerica ( "Erro ao excluir histórico. Inexiste histórico a ser excluído." );
+			$countColecao = 0;
 		}
 		// se consulta vazia levanta excecao
-
+		
 		// se a qtd de registro for igual a 2, eh o proprio registro consultado, temos o registro de historico + o registro desativado
 		// eh essa situacao que permite a exclusao do principal quando a desativacao eh implementada
 		$retorno = ($vo->isHistorico () && $countColecao == 2 && $temDesativado);
@@ -739,14 +734,13 @@ class dbprocesso {
 	Function finalizar() {
 		$this->cDb->fecharConexao ();
 	}
-	
-	Function tratarExcecao($e) {
-		//$e = new excecaoGenerica();		
-		if(!isExcecaoSucesso($e)){		
+	Function tratarExcecao($e, $isChamadaEncadeadaPorOutraEntidade = false) {
+		if (! isExcecaoSucesso ( $e ) && ! $isChamadaEncadeadaPorOutraEntidade) {
 			$this->cDb->rollback ();
+			//echo "deu rollback";
 		}
-		
-		throw new Exception ( $e->getMessage () );		
+		// throw new Exception ( $e->getMessage () );
+		throw $e;
 	}
 	/**
 	 * FUNCOES MANIPULACAO

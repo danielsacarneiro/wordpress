@@ -352,7 +352,7 @@ function mostrarGridAlunos($colecaoAlunos) {
 				$total = $voPessoaTurma->valor * $voPessoaTurma->numParcelas;
 				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$ID_REQ_VALOR_TOTAL . $voAtual->cd, vopessoaturma::$ID_REQ_VALOR_TOTAL, getMoeda ( $total, true ), "camporeadonlyalinhadodireita", constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, " readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);'" ) . "</TD> \n";
 				
-				if($voPessoaTurma->dhUltAlteracao != null){
+				if($isDetalhamento && $voPessoaTurma->dhUltAlteracao != null){
 					$html .= "<TD class='tabeladados' nowrap>" . getDataHora ( $voPessoaTurma->dhUltAlteracao ) . "</TD> \n";
 				}
 					

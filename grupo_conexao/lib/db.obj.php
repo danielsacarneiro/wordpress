@@ -6,12 +6,15 @@
 class db {
 	var $id_conexao;
 	var $resultado;
+	private $contadorTransacao; 
 	
 	// ...............................................................
 	// Construtor
 	function db() {
 		$this->id_conexao = "";
 		$this->resultado = "";
+		
+		$this->contadorTransacao= 0;
 	}
 	
 	// ...............................................................
@@ -102,11 +105,20 @@ class db {
 		return $this->resultado;
 	}
 	function levantaExcecaoGenerica($query, $ex = null) {
-		$msg = "<br>----ERROR------:<br>" . mysqli_error ( $this->id_conexao ) . "<br>";
-		$msg .= $ex->getMessage () . "<br>";
+		//$msg = "<br>----ERROR------:<br>" . mysqli_error ( $this->id_conexao ) . "<br>";
 		$msg = "$msg. Query: $query";
 		
-		throw new Exception ( $msg );
+		if ($ex != null) {
+			$msg .= "<br>". $ex->getMessage ();
+			$code = $ex->getCode ();
+		}
+		
+		$excecao = new excecaoGenerica ( $msg, $code ,$ex);
+		if($code == excecaoGenerica::$CD_EXCECAO_CHAVE_DUPLICADA){
+			$excecao = new excecaoChaveDuplicada($msg, $ex);
+		}
+		
+		throw $excecao;
 	}
 	
 	/**
@@ -189,13 +201,25 @@ class db {
 		$mysqli->commit ();
 		// End transaction
 	}
+	function isControleTransacaoOK() {
+		return $this->contadorTransacao == 1;
+		
+	}
 	function retiraAutoCommit() {
 		// Start transaction
-		mysqli_autocommit ( $this->id_conexao, FALSE );
+		$this->contadorTransacao = $this->contadorTransacao +1;
+		
+		if($this->isControleTransacaoOK()){		
+			mysqli_autocommit ( $this->id_conexao, FALSE );			
+		}
 	}
 	function commit() {
 		// End transaction
-		mysqli_commit ( $this->id_conexao );
+		if($this->isControleTransacaoOK()){
+			mysqli_commit ( $this->id_conexao );
+		}else{
+			$this->contadorTransacao = $this->contadorTransacao - 1;
+		}
 	}
 	function rollback() {
 		mysqli_rollback ( $this->id_conexao );

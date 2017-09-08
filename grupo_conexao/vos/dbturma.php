@@ -125,8 +125,7 @@ class dbturma extends dbprocesso {
 			// End transaction
 			$this->cDb->commit ();
 		} catch ( Exception $e ) {
-			$this->cDb->rollback ();
-			throw new Exception ( $e->getMessage () );
+			$this->tratarExcecao($e);
 		}
 		
 		// var_dump($voturma->colecaoAlunos);
@@ -250,11 +249,11 @@ class dbturma extends dbprocesso {
 		try {
 			$colecaoVOPessoaTurmaARemover = $this->getColecaoVOPessoaTurmaARemoverDaTurma ( $voturma );
 			$colecaoVOPessoaTurmaAIncluir = $this->getColecaoVOPessoaTurmaAIncluirNaTurma ( $voturma );
-			
-			parent::alterar ( $voturma );
-			
+								
 			$voturma->colecaoVOPessoaTurmaARemover = $colecaoVOPessoaTurmaARemover;
 			$voturma->colecaoVOPessoaTurmaAIncluir= $colecaoVOPessoaTurmaAIncluir;
+ 
+			parent::alterar ( $voturma );
 			$fezExclusao= $this->excluirPessoaTurma ( $voturma);
 			$fezInclusao= $this->incluirPessoaTurma ( $voturma);
 						
@@ -284,8 +283,7 @@ class dbturma extends dbprocesso {
 			// End transaction
 			$this->cDb->commit ();
 		} catch ( Exception $e ) {
-			$this->cDb->rollback ();
-			throw new Exception ( $e->getMessage () );
+			$this->tratarExcecao($e);
 		}
 		
 		return $voturma;

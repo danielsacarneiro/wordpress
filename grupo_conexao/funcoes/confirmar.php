@@ -85,6 +85,9 @@ try{
 		$msgErro = $e->getMessage();
 	    $classMensagem = "campomensagemvermelho";
 	    $msg = "OPERACAO $nmFuncao FALHOU.<br>$msgErro";
+	    $msg.= "<BR> Código Exceção: ". $e->getCode();
+	    $msg.= "<BR> Nome Exceção: ". get_class($e);
+	    
 	}else{
 		$msg .= "<BR>". $e->getMessage();
 	}

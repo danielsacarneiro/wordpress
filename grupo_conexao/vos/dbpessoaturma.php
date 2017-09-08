@@ -128,7 +128,7 @@ class dbpessoaturma extends dbprocesso {
 		
 		$queryFrom = "\n FROM " . $nmTabela;
 		
-		if ($filtro->inTemTurma != null && getAtributoComoBooleano ( $filtro->inTemTurma)) {
+		if ($filtro->inTemTurma != null && getAtributoComoBooleano ( $filtro->inTemTurma )) {
 			$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrValor;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa;
@@ -274,6 +274,21 @@ class dbpessoaturma extends dbprocesso {
 		// var_dump($voturma->colecaoAlunos);
 		
 		return $voturma;
+	}
+	// o incluir eh implementado para nao usar da voentidade
+	// por ser mais complexo
+	//POR ENQUANTO SO EH PERMITIDO INCLUIR ATRAVES DA FUNCAO TURMA
+	function incluir($vopessoaturma) {
+		//como quem manda na transacao eh o voturma
+		//aqui nao havera controle de transacao
+		try {
+			parent::incluir ( $vopessoaturma );
+		} catch ( excecaoChaveDuplicada $e ) {
+			parent::excluirPrincipal($vopessoaturma);
+			parent::incluir ( $vopessoaturma );
+		}
+		
+		return $vopessoaturma;
 	}
 	function incluirSQL($vopessoaturma) {
 		$arrayAtribRemover = array (
