@@ -1,5 +1,6 @@
 <?php
-include_once ("../wp-config.php");
+include_once("config_lib.php");
+include_once (caminho. "../wp-config.php");
 
 $funcao = @$_GET["funcao"];    
 

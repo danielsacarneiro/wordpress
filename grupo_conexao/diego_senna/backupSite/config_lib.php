@@ -5,10 +5,7 @@ include_once ("util/constantes.class.php");
 
 //mysqli_report(MYSQLI_REPORT_ALL);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-error_reporting( E_ALL ^E_NOTICE );
-
 date_default_timezone_set('America/Recife');
-//date_default_timezone_set('America/Los_Angeles');
 setlocale(LC_ALL, 'portuguese');
 set_exception_handler("pegaExcecaoSemTratamento");
 
@@ -19,24 +16,12 @@ function pegaExcecaoSemTratamento($exception){
 	throw $exception;
 }
 
-
 //configuracao
-if($site_cliente == null){
-	$site_cliente = "http://www.grupoeducacionalconexao.com.br";
-}
-if($pasta_aplicacao== null){
-	$pasta_aplicacao = "/grupo_conexao";
-}
-
-if($pasta_raiz_wordpress == null){
-	$pasta_raiz_wordpress = "/desenv/wordpress";
-}
-
+define('site_cliente', "http://www.grupoeducacionalconexao.com.br");
 define('nome_hospedagem', "econti.consulting");
 define('site_hospedagem', "http://econti-consulting.umbler.net");
-define('site_cliente', $site_cliente);
-define('pasta_aplicacao', $pasta_aplicacao);
-define('pasta_raiz_wordpress', $pasta_raiz_wordpress);
+define('pasta_aplicacao', "/grupo_conexao");
+define('pasta_raiz_wordpress', "/GEP/wordpress");
 define('pasta_raiz_sistema', pasta_raiz_wordpress . pasta_aplicacao);
 
 header ('Content-type: text/html; charset=ISO-8859-1');
@@ -99,16 +84,7 @@ spl_autoload_register(function ($class_name) {
 	
 });
 	
-
-if($GLOBAL_PASTA_POR_SISTEMA== null){
-	$GLOBAL_PASTA_POR_SISTEMA = "";
-}
-
-if($GLOBAL_IS_PASTA_MENU == null){
-	$GLOBAL_IS_PASTA_MENU= false;
-}
-
-$isPastaRaiz  = $GLOBAL_IS_PASTA_MENU || isPastaRaiz();
+$isPastaRaiz  = isPastaRaiz();
 $pastaRaiz = "";
 $caminhoJS = "lib/js/";
 $caminhoCSS = "lib/css/";
@@ -125,9 +101,9 @@ if(!$isPastaRaiz){
 }
 
 define('caminho_menu', $caminhoMenu);
-define('caminho_css', $GLOBAL_PASTA_POR_SISTEMA. $caminhoCSS);
-define('caminho_js', $GLOBAL_PASTA_POR_SISTEMA. $caminhoJS);
-define('caminho_imagens', $GLOBAL_PASTA_POR_SISTEMA. $caminhoIMG);
+define('caminho_css', $caminhoCSS);
+define('caminho_js', $caminhoJS);
+define('caminho_imagens', $caminhoIMG);
 
 //define uma variavem javascript para que as imagens em js sejam recuperadas corretamente
 $varGlobalJS = 
@@ -142,8 +118,5 @@ define('TAMANHO_CODIGOS', constantes::$TAMANHO_CODIGOS);
 define('TAMANHO_CODIGOS_SAFI', constantes::$TAMANHO_CODIGOS_SAFI);
 define('CAMPO_SEPARADOR', constantes::$CD_CAMPO_SEPARADOR);
 define('CAMPO_SUBSTITUICAO', constantes::$CD_CAMPO_SUBSTITUICAO);
-
-//echo caminho_imagens;
-//echo caminho_menu;
 
 ?>

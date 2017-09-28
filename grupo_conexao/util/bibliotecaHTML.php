@@ -47,6 +47,21 @@ function setTituloPagina($titulo) {
 function setCabecalho($titulo) {
 	return setCabecalhoPorNivel ( $titulo, null );
 }
+function getTitulo($titulo) {
+	$nomeSistema = GLOBAL_NOME_SISTEMA;
+	if ($nomeSistema == "GLOBAL_NOME_SISTEMA") {
+		// significa que a constante nao foi iniciada
+		$nomeSistema = constantes::$nomeSistema;
+	}	
+	
+	if ($titulo != null) {
+		$titulo = $nomeSistema . " : " . $titulo;
+	}else{
+		$titulo = $nomeSistema;
+	}
+	
+	return $titulo;
+}
 function setTituloPaginaPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	$pastaCSS = caminho_css;
 	$pastaCSS = subirNivelPasta ( $pastaCSS, $qtdNiveisAcimaEmSeEncontraPagina );
@@ -54,11 +69,7 @@ function setTituloPaginaPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	$pastaJS = caminho_js;
 	$pastaJS = subirNivelPasta ( $pastaJS, $qtdNiveisAcimaEmSeEncontraPagina );
 	
-	if ($titulo == null) {
-		$titulo = constantes::$nomeSistema;
-	} else {
-		$titulo = constantes::$nomeSistema . " : $titulo";
-	}
+	$titulo = getTitulo ( $titulo );
 	
 	$codificacaoHTML = "\n<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>";
 	$html = $codificacaoHTML;
@@ -83,37 +94,55 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	// ECHO $pastaMenu;
 	
 	define ( 'pasta_imagens', $pastaImagens );
-	if ($titulo != null) {
-		$titulo = " - " . $titulo;
+	
+	$logo = GLOBAL_IMAGEM_LOGO;
+	if ($logo == "GLOBAL_IMAGEM_LOGO") {
+		// significa que a constante nao foi iniciada
+		$logo = $pastaImagens . "bg_topo_trapezio.gif";
+	} else {
+		$logo = GLOBAL_PASTA_IMAGEM_APLICACAO . "/" . GLOBAL_IMAGEM_LOGO;
 	}
 	
-	// $diaExtenso = date ( 'l jS \of F Y' );
-	//descomentar a linha extension=php_intl.dll no php.ini
-	date_default_timezone_set('America/Recife');
-	setlocale( LC_ALL, 'pt_BR', 'pt_BR.iso-8859-1', 'pt_BR.utf-8', 'portuguese' );
-	/*$data = new DateTime();
-	$formatter = new IntlDateFormatter('pt_BR',
-			IntlDateFormatter::FULL,
-			IntlDateFormatter::GREGORIAN);
-	//$diaExtenso = $formatter->format($data);*/
+	$pastaMenu = GLOBAL_PASTA_MENU;	
+	if ($pastaMenu == "GLOBAL_PASTA_MENU") {
+		// significa que a constante nao foi iniciada
+		$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
+		$pastaLogin = $pastaMenu;
+	}
+		
+	//echo $pastaLogin;
 	
-	$hour = date("H");
-	$minute = date("i");		
-	$diaExtenso = strftime ( '%A, %d de %B de %Y', strtotime ( 'today' ) ) . ", " .  $hour . ":" . $minute;
+	$titulo = getTitulo ( $titulo );
+	
+	// $diaExtenso = date ( 'l jS \of F Y' );
+	// descomentar a linha extension=php_intl.dll no php.ini
+	date_default_timezone_set ( 'America/Recife' );
+	setlocale ( LC_ALL, 'pt_BR', 'pt_BR.iso-8859-1', 'pt_BR.utf-8', 'portuguese' );
+	/*
+	 * $data = new DateTime();
+	 * $formatter = new IntlDateFormatter('pt_BR',
+	 * IntlDateFormatter::FULL,
+	 * IntlDateFormatter::GREGORIAN);
+	 * //$diaExtenso = $formatter->format($data);
+	 */
+	
+	$hour = date ( "H" );
+	$minute = date ( "i" );
+	$diaExtenso = strftime ( '%A, %d de %B de %Y', strtotime ( 'today' ) ) . ", " . $hour . ":" . $minute;
 	
 	$cabecalho = "		<TABLE id='table_conteiner' class='conteiner' cellpadding='0' cellspacing='0'>
                         <TBODY>
                                 <TR>
                                 <TH class=headertabeladados colspan=2>
-                                    <a href='" . site_cliente . "' ><img id=imgLogotipoSefaz src='" . $pastaImagens . "bg_topo_trapezio.gif' alt='SEFAZ-PE'></a> " . $diaExtenso . "
+                                    <a href='" . site_cliente . "' ><img id=imgLogo src='$logo' alt='Início'></a> " . $diaExtenso . "
                                 </TH>
                                 </TR>                                
                                 <TR>
-                                <TH class=headertabeladados>&nbsp;" . constantes::$nomeSistema . "$titulo<br></TH>
+                                <TH class=headertabeladados>&nbsp;$titulo<br></TH>
                                 <TH class=headertabeladadosalinhadodireita width='1%' nowrap>&nbsp" . utf8_decode ( name_user ) . ",
                                 <a class='linkbranco' href='" . $pastaMenu . "index.php' >Menu</a>
-                                <a href='" . $pastaMenu . "login.php?funcao=I' ><img  title='Entrar' src='" . $pastaImagens . "botao_home_laranja.gif' width='20' height='20'></a>
-                                <a href='" . $pastaMenu . "login.php?funcao=O' ><img  title='Sair' src='" . $pastaImagens . "logout.gif' width='25' height='20'></a>";
+                                <a href='" . $pastaLogin. "login.php?funcao=I' ><img  title='Entrar' src='" . $pastaImagens . "botao_home_laranja.gif' width='20' height='20'></a>
+                                <a href='" . $pastaLogin. "login.php?funcao=O' ><img  title='Sair' src='" . $pastaImagens . "logout.gif' width='25' height='20'></a>";
 	
 	if (isUsuarioAdmin ()) {
 		$cabecalho .= "<a href='" . site_wordpress . "' ><img  title='WORDPRESS' src='" . $pastaImagens . "w-logo-white.png' width='25' height='20'></a>";
