@@ -1,6 +1,9 @@
 <?php
-include_once("../../config_lib.php");
-include_once(caminho_util."bibliotecaHTML.php");
+//include_once("../../config_lib.php");
+include_once("../../configuracao_geral.php");
+getIncludeConfiguracao(configuracao_geral::$CD_TIPO_PAGINA_FUNCAO_GERAL);
+
+//include_once("../../diego_senna/config_lib.php");
 include_once(caminho_util."constantes.class.php");
 include_once(caminho_util. "select.php");
 include_once(caminho_filtros . "filtroManterPessoa.php");

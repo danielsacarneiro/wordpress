@@ -1,4 +1,7 @@
 <?php
+include_once("configuracao_geral.php");
+setTipoPagina(configuracao_geral::$CD_TIPO_PAGINA_MENU_GERAL);
+
 include_once("config_lib.php");
 include_once(caminho_util."bibliotecaHTML.php");
 include_once(caminho_util."constantes.class.php");

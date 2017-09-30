@@ -6,7 +6,9 @@ class excecaoGenerica extends Exception
 {	
 	static $CD_EXCECAO_SUCESSO = 1;
 	static $CD_EXCECAO_OBJETO_SESSAO_INEXISTENTE = 2;
+	static $CD_EXCECAO_CLASS_NAO_ENCONTRADA = 3;
 	static $CD_EXCECAO_CHAVE_DUPLICADA = 1062;
+
     // Redefine a exceção de forma que a mensagem não seja opcional
     public function __construct($message, $code = 0, Exception $previous = null) {
     	if($message == null || $message == ""){

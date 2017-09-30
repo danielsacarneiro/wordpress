@@ -7,6 +7,7 @@ include_once ("dominioPermissaoUsuario.php");
 include_once ("dominioSimNao.php");
 include_once ("dominioQtdObjetosPagina.php");
 include_once ("radiobutton.php");
+include_once ("sessao.php");
 include_once (caminho_vos . "vousuario.php");
 require_once (caminho_funcoes . "contrato/dominioTipoContrato.php");
 
@@ -48,15 +49,16 @@ function setCabecalho($titulo) {
 	return setCabecalhoPorNivel ( $titulo, null );
 }
 function getTitulo($titulo) {
-	$nomeSistema = GLOBAL_NOME_SISTEMA;
-	if ($nomeSistema == "GLOBAL_NOME_SISTEMA") {
+	if (!defined("GLOBAL_NOME_SISTEMA")) {
 		// significa que a constante nao foi iniciada
 		$nomeSistema = constantes::$nomeSistema;
-	}	
+	}else{
+		$nomeSistema = GLOBAL_NOME_SISTEMA;
+	}
 	
 	if ($titulo != null) {
 		$titulo = $nomeSistema . " : " . $titulo;
-	}else{
+	} else {
 		$titulo = $nomeSistema;
 	}
 	
@@ -90,27 +92,58 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	// se precisar fazer o mesmo para pasta menu
 	$pastaImagens = getPastaImagensPorNivel ( $qtdNiveisAcimaEmSeEncontraPagina );
 	$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
+	// $pastaMenu = "../";
 	
 	// ECHO $pastaMenu;
 	
 	define ( 'pasta_imagens', $pastaImagens );
 	
-	$logo = GLOBAL_IMAGEM_LOGO;
-	if ($logo == "GLOBAL_IMAGEM_LOGO") {
+	if (! defined ( 'GLOBAL_IMAGEM_LOGO' )) {
 		// significa que a constante nao foi iniciada
+		// vai para o valor default
 		$logo = $pastaImagens . "bg_topo_trapezio.gif";
 	} else {
-		$logo = GLOBAL_PASTA_IMAGEM_APLICACAO . "/" . GLOBAL_IMAGEM_LOGO;
+		$logo = GLOBAL_IMAGEM_LOGO;
 	}
 	
-	$pastaMenu = GLOBAL_PASTA_MENU;	
-	if ($pastaMenu == "GLOBAL_PASTA_MENU") {
-		// significa que a constante nao foi iniciada
-		$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
-		$pastaLogin = $pastaMenu;
+	if (defined ( 'CD_TIPO_PAGINA' )) {
+		$isPaginaFuncaoGeral = CD_TIPO_PAGINA == configuracao_geral::$CD_TIPO_PAGINA_FUNCAO_GERAL;
+		$isPaginaMenu = CD_TIPO_PAGINA == configuracao_geral::$CD_TIPO_PAGINA_MENU_GERAL || CD_TIPO_PAGINA == configuracao_geral::$CD_TIPO_PAGINA_MENU_APLICACAO;
+		if ($isPaginaMenu) {	
+			$pastaMenu = "";
+
+		} elseif ($isPaginaFuncaoGeral) {
+			if (! defined ( 'GLOBAL_PASTA_MENU' )) {
+				// significa que a constante nao foi iniciada
+				// $pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
+				$pastaMenu = "../../index.php";
+				$pastaLogin = "../../";
+			} else {
+				$pastaMenu = GLOBAL_PASTA_MENU . "/index.php";
+				$pastaLogin = GLOBAL_PASTA_MENU . "/";
+			}
+		}
 	}
-		
-	//echo $pastaLogin;
+	else{
+		//nao eh menu nem funcao geral
+		//echo "NAO EH FUNCAO GERAL NEM MENU";
+	}
+	
+	if($pastaLogin == null)
+		$pastaLogin = $pastaMenu;
+	
+	/*
+	 * if (!defined('GLOBAL_PASTA_MENU')) {
+	 * // significa que a constante nao foi iniciada
+	 * //$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
+	 * //$pastaMenu = "../../index.php";
+	 * $pastaLogin = $pastaMenu;
+	 * }else{
+	 * $pastaMenu = GLOBAL_PASTA_MENU;
+	 * }
+	 */
+	
+	// echo $pastaLogin;
 	
 	$titulo = getTitulo ( $titulo );
 	
@@ -140,9 +173,9 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
                                 <TR>
                                 <TH class=headertabeladados>&nbsp;$titulo<br></TH>
                                 <TH class=headertabeladadosalinhadodireita width='1%' nowrap>&nbsp" . utf8_decode ( name_user ) . ",
-                                <a class='linkbranco' href='" . $pastaMenu . "index.php' >Menu</a>
-                                <a href='" . $pastaLogin. "login.php?funcao=I' ><img  title='Entrar' src='" . $pastaImagens . "botao_home_laranja.gif' width='20' height='20'></a>
-                                <a href='" . $pastaLogin. "login.php?funcao=O' ><img  title='Sair' src='" . $pastaImagens . "logout.gif' width='25' height='20'></a>";
+                                <a class='linkbranco' href='$pastaMenu' >Menu</a>
+                                <a href='" . $pastaLogin . "login.php?funcao=I' ><img  title='Entrar' src='" . $pastaImagens . "botao_home_laranja.gif' width='20' height='20'></a>
+                                <a href='" . $pastaLogin . "login.php?funcao=O' ><img  title='Sair' src='" . $pastaImagens . "logout.gif' width='25' height='20'></a>";
 	
 	if (isUsuarioAdmin ()) {
 		$cabecalho .= "<a href='" . site_wordpress . "' ><img  title='WORDPRESS' src='" . $pastaImagens . "w-logo-white.png' width='25' height='20'></a>";
@@ -407,8 +440,16 @@ function getRodape() {
 	if (isMultiSelecao ())
 		$multiSelecao = "S";
 	
-	$retorno = "<INPUT type='hidden' name='" . constantes::$ID_REQ_LUPA . "' id='" . constantes::$ID_REQ_LUPA . "' value='" . $lupa . "'>\n";
+	$idSistema = getIdSistemaSeExistir();
+
+	if($idSistema != null){
+		$retorno .= "<INPUT type='hidden' name='" . constantes::$ID_REQ_ID_SISTEMA . "' id='" . constantes::$ID_REQ_ID_SISTEMA . "' value='" . $idSistema. "'>\n";
+	}
+	
+	$retorno .= "<INPUT type='hidden' name='" . constantes::$ID_REQ_LUPA . "' id='" . constantes::$ID_REQ_LUPA . "' value='" . $lupa . "'>\n";
 	$retorno .= "<INPUT type='hidden' name='" . constantes::$ID_REQ_MULTISELECAO . "' id='" . constantes::$ID_REQ_MULTISELECAO . "' value='" . $multiSelecao . "'>\n";
+	
+	
 	return $retorno;
 }
 function getBotoesRodape() {
@@ -710,49 +751,7 @@ function getSelectGestor() {
 	
 	$select = new select ( $registros );
 }
-function putObjetoSessao($ID, $voEntidade) {
-	/*
-	 * if(!isSet($_SESSION))
-	 * session_start();
-	 * echo session_id();
-	 * if(session_id() == "" || !isSet($_SESSION)){
-	 * echo "NAO TEM SESSAO";
-	 * session_start();
-	 * }
-	 * ELSE{
-	 * echo "TEM SESSAO";
-	 * }
-	 */
-	session_start ();
-	$_SESSION [$ID] = $voEntidade;
-}
-function existeObjetoSessao($ID) {
-	session_start ();
-	return isset ( $_SESSION [$ID] ) && $_SESSION [$ID] != null;
-}
-function getObjetoSessao($ID, $levantarExcecaoSeObjetoInexistente = false) {
-	session_start ();
-	
-	$objeto = null;
-	
-	if ($_SESSION [$ID] != null) {
-		$objeto = $_SESSION [$ID];
-	} else if ($levantarExcecaoSeObjetoInexistente) {
-		throw new excecaoObjetoSessaoInexistente ( $ID );
-	}
-	
-	$isUsarSessao = @$_POST ["utilizarSessao"] != "N";
-	if (! $isUsarSessao) {
-		$objeto = null;
-		removeObjetoSessao ( $ID );
-	}
-	
-	return $objeto;
-}
-function removeObjetoSessao($ID) {
-	session_start ();
-	unset ( $_SESSION [$ID] );
-}
+
 function formatarCodigoContrato($cd, $ano, $tipo) {
 	$dominioTipoContrato = new dominioTipoContrato ();
 	$complemento = $dominioTipoContrato->getDescricao ( $tipo );
@@ -795,7 +794,12 @@ function tratarExcecaoHTML($ex, $vo = null) {
 	$msg = $ex->getMessage ();
 	$msg = str_replace ( "\n", "", $msg );
 	
-	header ( "Location: ../mensagemErro.php?texto=" . $msg, TRUE, 307 );
+	$location = "../mensagemErro.php";
+	if(isIdSistemaExistente()){
+		$location = "../../../funcoes/mensagemErro.php";
+	}
+	
+	header ( "Location: $location?texto=" . $msg, TRUE, 307 );
 }
 function getStrComPuloLinhaHTML($str) {
 	return getStrComPuloLinhaGenerico ( $str, "<br>" );
@@ -805,6 +809,14 @@ function getStrComPuloLinha($str) {
 }
 function getStrComPuloLinhaGenerico($str, $pulo) {
 	return "$str$pulo";
+}
+function getParaEnvioGETIDSistema(){
+	if(isIdSistemaExistente()){
+		$idSistema = getIdSistemaSeExistir();
+		$envioid_sistema_get = " + '&" . constantes::$ID_REQ_ID_SISTEMA . "=$idSistema'";
+	}
+
+	return $envioid_sistema_get;
 }
 function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFuncoes = null, $colecaoFuncoesARemover = null) {
 	
@@ -861,7 +873,12 @@ function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFu
 		
 		$html .= "  lupa = document.frm_principal." . constantes::$ID_REQ_LUPA . ".value;\n";
 		$html .= "  multiSelecao = document.frm_principal." . constantes::$ID_REQ_MULTISELECAO . ".value;\n";
-		$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao;\n";
+		
+		$envioid_sistema_get = getParaEnvioGETIDSistema(); 
+		
+		//$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao;\n";
+		$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao".$envioid_sistema_get.";\n";
+		
 		$html .= "}\n\n";
 	}
 	
@@ -894,7 +911,10 @@ function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFu
 		$html .= " function cancelar() {\n";
 		$html .= "  lupa = document.frm_principal." . constantes::$ID_REQ_LUPA . ".value;\n";
 		$html .= "  multiSelecao = document.frm_principal." . constantes::$ID_REQ_MULTISELECAO . ".value;\n";
-		$html .= "  location.href='index.php?consultar=S&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao;\n";
+		
+		$envioid_sistema_get = getParaEnvioGETIDSistema();
+		
+		$html .= "  location.href='index.php?consultar=S&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao$envioid_sistema_get;\n";
 		
 		$html .= "}\n\n";
 	}
@@ -909,5 +929,4 @@ function getDetalhamentoHTMLCodigoAno($ano, $cd, $tamanhoCodigo = null) {
 	$retorno .= "Número: <INPUT type='text' value='" . complementarCharAEsquerda ( $cd, "0", $tamanhoCodigo ) . "'  class='camporeadonlyalinhadodireita' size='6' readonly>";
 	return $retorno;
 }
-
 ?>

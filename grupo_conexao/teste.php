@@ -5,10 +5,13 @@
 <title>IMPORTAR PLANILHA #01</title>
 </head>
 <?php 
-$retorno = mb_stripos("asdoiasddanielsacarneiro", "dansadiel");
-if($retorno)
-	echo "VERDADEIRO";
-else
-	echo "FALSO";
+
+include_once("configuracao_geral.php");
+include_once("config_lib.php");
+
+include_once(caminho_util."bibliotecaFuncoesPrincipal.php");
+
+echo getCaminhoIncludeAplicacao("teste/vo", "daniel");
+
 ?>
 <body>

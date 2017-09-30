@@ -1,5 +1,10 @@
 <?php
-include_once ("../../config_lib.php");
+//include_once ("../../config_lib.php");
+include_once("../../configuracao_geral.php");
+$CD_TIPO_PAGINA = configuracao_geral::$CD_TIPO_PAGINA_FUNCAO_GERAL;
+setTipoPagina($CD_TIPO_PAGINA);
+getIncludeConfiguracao();
+
 include_once (caminho_util . "bibliotecaHTML.php");
 
 try {

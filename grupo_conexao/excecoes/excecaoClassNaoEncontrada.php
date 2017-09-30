@@ -1,0 +1,20 @@
+<?php
+include_once ("excecaoGenerica.php");
+/**
+ * Define uma classe de exceção
+ */
+class excecaoClassNaoEncontrada extends excecaoGenerica
+{
+	var $caminhoAlternativo;
+	// Redefine a exceção de forma que a mensagem não seja opcional
+	public function __construct($class_name, $caminhoAlternativo = null, Exception $previous = null) {
+		// código
+		
+		$message = "Classe não encontrada: $class_name.";
+		// garante que tudo está corretamente inicializado
+		parent::__construct($message, excecaoGenerica::$CD_EXCECAO_CLASS_NAO_ENCONTRADA, $previous);
+		$this->caminhoAlternativo = $caminhoAlternativo;
+	}
+	
+}
+?>

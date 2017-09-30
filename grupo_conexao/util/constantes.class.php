@@ -30,6 +30,7 @@
     
     static $ID_REQ_LUPA = "lupa";
     static $ID_REQ_MULTISELECAO = "multiSelecao";
+    static $ID_REQ_ID_SISTEMA = "ID_REQ_ID_SISTEMA";
     
     static $DS_SIM  = "Sim";
     static $DS_NAO  = "Não";

@@ -1,5 +1,8 @@
 <?php
-include_once("../../config_lib.php");
+//include_once("../../config_lib.php");
+include_once("../../configuracao_geral.php");
+getIncludeConfiguracao(configuracao_geral::$CD_TIPO_PAGINA_FUNCAO_GERAL);
+
 include_once(caminho_util."bibliotecaHTML.php");
 include_once(caminho_vos."dbpessoa.php");
 

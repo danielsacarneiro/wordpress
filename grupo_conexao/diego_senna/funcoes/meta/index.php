@@ -1,13 +1,18 @@
 <?php
-$GLOBAL_IS_PASTA_MENU = false;
-include_once("../../config_lib.php");
+include_once("../../../configuracao_geral.php");
+$CD_TIPO_PAGINA = configuracao_geral::$CD_TIPO_PAGINA_FUNCAO_APLICACAO;
+
+try{
+include_once(configuracao_geral::$PASTA_CONFIG_LIB_FUNCOES_APLICACAO . "config_lib.php");
+
 include_once(caminho_util."bibliotecaHTML.php");
 include_once(caminho_filtros . "filtroManterMateria.php");
+include_once("../../vos/voMeta.php");
 
 //inicia os parametros
 inicio();
 
-$titulo = "CONSULTAR " . vomateria::getTituloJSP();
+$titulo = "CONSULTAR " . voMeta::getTituloJSP();
 setCabecalho($titulo);
 	
 $filtro  = new filtroManterMateria(true);
@@ -18,7 +23,7 @@ $cdHistorico = $filtro->cdHistorico;
 $cdOrdenacao = $filtro->cdOrdenacao;
 $isHistorico = ("S" == $cdHistorico); 
 
-$vo = new vomateria();
+$vo = new voMeta();
 $dbprocesso = $vo->dbprocesso;
 $colecao = $dbprocesso->consultarComPaginacao($vo, $filtro);
 
@@ -131,7 +136,7 @@ function alterar() {
         <TBODY>
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Descrição:</TH>
-                <TD class="campoformulario"  colspan=3><INPUT type="text" id="<?=vomateria::$nmAtrDescricao?>" name="<?=vomateria::$nmAtrDescricao?>"  value="<?php echo($nome);?>"  class="camponaoobrigatorio" size="50" ></TD>
+                <TD class="campoformulario"  colspan=3><INPUT type="text" id="<?=voMeta::$nmAtrDescricao?>" name="<?=voMeta::$nmAtrDescricao?>"  value="<?php echo($nome);?>"  class="camponaoobrigatorio" size="50" ></TD>
             </TR>
         <?PHP echo getComponenteConsultaFiltro($vo->temTabHistorico, $filtro);?>
        </TBODY>
@@ -162,15 +167,15 @@ function alterar() {
                  }                        
                             
                 for ($i=0;$i<$tamanho;$i++) {
-                        $voAtual = new vomateria();
+                        $voAtual = new voMeta();
                         $voAtual->getDadosBanco($colecao[$i]);                                                            
                 ?>
                 <TR class="dados">
                     <TD class="tabeladados">
                     <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
                     </TD>
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($colecao[$i][vomateria::$nmAtrCd], "0", TAMANHO_CODIGOS);?></TD>
-                    <TD class="tabeladados"><?php echo $colecao[$i][vomateria::$nmAtrDescricao];?></TD>
+                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($colecao[$i][voMeta::$nmAtrCd], "0", TAMANHO_CODIGOS);?></TD>
+                    <TD class="tabeladados"><?php echo $colecao[$i][voMeta::$nmAtrDescricao];?></TD>
                     <TD class="tabeladados"><?php echo getMoeda($voAtual->valor);?></TD>                    
                 </TR>					
                 <?php
@@ -213,3 +218,9 @@ function alterar() {
 
 </BODY>
 </HTML>
+<?php 
+}catch(Exception $ex){
+	putObjetoSessao("vo", $vo);
+	tratarExcecaoHTML($ex);	
+}
+?>

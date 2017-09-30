@@ -1,12 +1,19 @@
 <?php
-$GLOBAL_IS_PASTA_MENU= true;
+include_once("../configuracao_geral.php");
+setTipoPagina(configuracao_geral::$CD_TIPO_PAGINA_MENU_APLICACAO);
+
 include_once("config_lib.php");
 include_once(caminho_util."bibliotecaHTML.php");
 include_once(caminho_util."constantes.class.php");
 
 //inicia os parametros
 inicio();
-setCabecalho($GLOBAL_TITULO_SITE_SISTEMA);
+
+if(!defined('GLOBAL_TITULO_SITE_SISTEMA')){
+	throw new Exception("Defina o sistema na config_lib.php do sistema.");
+}
+	
+setCabecalho(GLOBAL_TITULO_SITE_SISTEMA);
 
 ?>
 
@@ -21,15 +28,12 @@ setCabecalho($GLOBAL_TITULO_SITE_SISTEMA);
 	f = new Tree('Menu de Funcionalidades finalizadas e entregue a SEFAZ-PE (Homologação)', true);
 	
 	f1 = new Tree('Serviço 01 (Tabelas)');	
-    f1.adicionarItem(new Link('Documentos', '<?=caminho_funcoesHTML?>documento', ''));
-    f1.adicionarItem(new Link('Pessoas', '<?=caminho_funcoesHTML?>pessoa', ''));
+    f1.adicionarItem(new Link('Pessoas', '<?=caminho_funcoesHTML_geral?>pessoa?<?=constantes::$ID_REQ_ID_SISTEMA."=".$GLOBAL_PASTA_APLICACAO?>', ''));
     f1.adicionarItem(new Link('Matérias', '<?=caminho_funcoesHTML?>materia', ''));
 	f.adicionarItem(f1);
 	
 	f2 = new Tree('Serviço 02 (Relacionamentos)');
 	f2.adicionarItem(new Link('Metas', '<?=caminho_funcoesHTML?>meta', ''));
-    f2.adicionarItem(new Link('Pessoa x Turma', '<?=caminho_funcoesHTML?>pessoa_turma', ''));
-    f2.adicionarItem(new Link('Turmas', '<?=caminho_funcoesHTML?>turma', ''));
 	f.adicionarItem(f2);
 	
 	<?php if(isUsuarioAdmin()){?>

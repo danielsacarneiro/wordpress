@@ -5,23 +5,6 @@ include_once(caminho_util."bibliotecaHTML.php");
 $class = @$_GET["class"];
 //echo $class;
 
-/*a funcao abaixo serve para incluir a classe usada na confirmacao
- * o session precisa identificar qual classe ele serializa
- * dai o include
- */
-/*spl_autoload_register(function ($class_name) {
-
-	$caminhoClasse = caminho_vos;
-	$existe = mb_stripos($class_name, "filtro");
-	if($existe !== false){
-		//eh classe filtro
-		$caminhoClasse = caminho_filtros;
-	}
-
-	include_once $caminhoClasse.$class_name . '.php';
-});*/
-
-//inicio();
 inicioComValidacaoUsuario(true);
 
 setCabecalhoPorNivel(null,1);

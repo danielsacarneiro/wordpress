@@ -1,4 +1,31 @@
 <?php
+
+function isIdSistemaExistente() {
+	return getIdSistemaSeExistir() != null;
+}
+
+function getIdSistemaSeExistir() {
+	$retorno = null;
+	if(defined('GLOBAL_PASTA_APLICACAO')){
+		$retorno = GLOBAL_PASTA_APLICACAO;
+	}
+	
+	//ECHO "SISTEMA $retorno";
+	return $retorno;
+}
+
+function getCaminhoIncludeAplicacao($includeGeral, $nomesistema) {	
+	$indice = getIndiceBarraOuPonto($includeGeral);	
+		
+	$parte1 = substr($includeGeral, 0, $indice+1);
+	$parte2 = substr($includeGeral, $indice);	
+	$retorno = $parte1 . $nomesistema .$parte2;
+	
+	//echo "$includeGeral indice da barra é $indice <br>";
+	//echo $retorno;
+	return $retorno;
+}
+
 function isExcecaoSucesso($e) {
 	return $e->getCode() == excecaoGenerica::$CD_EXCECAO_SUCESSO;
 }
@@ -23,6 +50,7 @@ function getPastaRoot(){
 	
 	$path = $_SERVER['DOCUMENT_ROOT'];
 	$path .= pasta_raiz_wordpress . "/";
+	
 	define('caminho_wordpress', $path);
 	
 	$path .= $aplicacao;
