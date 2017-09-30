@@ -1,5 +1,12 @@
 <?php
-function putObjetoSessao($ID, $voEntidade) {
+// session_start ();
+function iniciarSessao() {
+	// if (! isSet ( $_SESSION )) {
+	session_name ( md5 ( 'sal' . $_SERVER ['REMOTE_ADDR'] . 'sal' . $_SERVER ['HTTP_USER_AGENT'] . 'sal' ) );	
+	session_start ();
+	// }
+}
+function putObjetoSessao($ID, $voEntidade, $iniciarSessao = true) {
 	/*
 	 * if(!isSet($_SESSION))
 	 * session_start();
@@ -12,19 +19,24 @@ function putObjetoSessao($ID, $voEntidade) {
 	 * echo "TEM SESSAO";
 	 * }
 	 */
-	 session_start ();
-	 $_SESSION [$ID] = $voEntidade;
+	if ($iniciarSessao) {
+		iniciarSessao ();
+	}
+	$_SESSION [$ID] = $voEntidade;
 }
-function existeObjetoSessao($ID) {
-	session_start ();
+function existeObjetoSessao($ID, $iniciarSessao = true) {
+	if($iniciarSessao){
+		iniciarSessao ();
+	}
 	return isset ( $_SESSION [$ID] ) && $_SESSION [$ID] != null;
 }
+
 function getObjetoSessao($ID, $levantarExcecaoSeObjetoInexistente = false) {
-	session_start ();
-	
+
+	iniciarSessao ();	
 	$objeto = null;
 	
-	if ($_SESSION [$ID] != null) {
+	if (existeObjetoSessao($ID, false)) {
 		$objeto = $_SESSION [$ID];
 	} else if ($levantarExcecaoSeObjetoInexistente) {
 		throw new excecaoObjetoSessaoInexistente ( $ID );
@@ -39,7 +51,7 @@ function getObjetoSessao($ID, $levantarExcecaoSeObjetoInexistente = false) {
 	return $objeto;
 }
 function removeObjetoSessao($ID) {
-	session_start ();
+	iniciarSessao ();
 	unset ( $_SESSION [$ID] );
 }
 ?>

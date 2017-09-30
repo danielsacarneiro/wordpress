@@ -107,7 +107,7 @@ class filtroManter extends multiplosConstrutores {
 	}
 	static function verificaFiltroSessao($filtro) {
 		// echo $filtro->nmFiltro;
-		session_start ();
+		iniciarSessao();
 		$utilizarSessao = @$_POST ["utilizarSessao"];
 		$isUtilizarSessao = $utilizarSessao != "N";
 		

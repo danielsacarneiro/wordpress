@@ -2,23 +2,31 @@
 include_once ("util/constantes.class.php");
 include_once ("util/sessao.php");
 
+
+
 function setTipoPagina($CD_TIPO_PAGINA) {
 	define ( 'CD_TIPO_PAGINA', $CD_TIPO_PAGINA );
 }
 function getIdSistemaGETouPOST() {
 	$retorno = @$_GET [constantes::$ID_REQ_ID_SISTEMA];
 	if ($retorno == null || $retorno == "") {		
-		$retorno = @$_POST [constantes::$ID_REQ_ID_SISTEMA];				
-	}/*elseif(existeObjetoSessao(constantes::$ID_REQ_ID_SISTEMA)){
-		$retorno = getObjetoSessao(constantes::$ID_REQ_ID_SISTEMA);
+		$retorno = @$_POST [constantes::$ID_REQ_ID_SISTEMA];
 		
+		echo ("retorno = $retorno,");
+	}
+	
+	if ($retorno == null || $retorno == "") {		
+		$retorno = getObjetoSessao(constantes::$ID_REQ_ID_SISTEMA);
+		echo ("retorno = $retorno,");
+		//$retorno = "diego_senna";
 		//$retorno = $_SESSION [constantes::$ID_REQ_ID_SISTEMA];
-	}*/
+	}
 	//echo "SISTEMA $retorno";
 	
 	return $retorno;
 }
 function getIncludeConfiguracao($CD_TIPO_PAGINA) {
+		
 	setTipoPagina($CD_TIPO_PAGINA);
 	
 	$nomesistema = getIdSistemaGETouPOST ();
@@ -30,7 +38,7 @@ function getIncludeConfigLibGeral($nomesistema) {
 	if ($nomesistema != null) {
 		
 		//poe na sessao 
-		//putObjetoSessao(constantes::$ID_REQ_ID_SISTEMA, $nomesistema);
+		putObjetoSessao(constantes::$ID_REQ_ID_SISTEMA, $nomesistema, false);
 		//aqui nao usa as funcoes definidas na biblioteca sessao.php porque estavam dando pau
 		//$_SESSION [constantes::$ID_REQ_ID_SISTEMA] = $nomesistema;
 		
