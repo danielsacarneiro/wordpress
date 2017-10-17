@@ -874,10 +874,10 @@ function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFu
 		$html .= "  lupa = document.frm_principal." . constantes::$ID_REQ_LUPA . ".value;\n";
 		$html .= "  multiSelecao = document.frm_principal." . constantes::$ID_REQ_MULTISELECAO . ".value;\n";
 		
-		$envioid_sistema_get = getParaEnvioGETIDSistema(); 
+		//$envioid_sistema_get = getParaEnvioGETIDSistema(); 
 		
-		//$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao;\n";
-		$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao".$envioid_sistema_get.";\n";
+		$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao;\n";
+		//$html .= "  location.href='detalhar.php?funcao=' + funcao + '&chave=' + chave + '&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao".$envioid_sistema_get.";\n";
 		
 		$html .= "}\n\n";
 	}
@@ -903,6 +903,10 @@ function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFu
 			$html .= "  exibirMensagem('Registro de historico nao permite alteracao.');return;\n";
 		
 		$html .= " chave = $pNmCampoConsulta.value;\n";
+		
+		//$envioid_sistema_get = getParaEnvioGETIDSistema();
+		
+		//$html .= " location.href='manter.php?funcao=" . constantes::$CD_FUNCAO_ALTERAR . "&chave=' + chave$envioid_sistema_get;\n";
 		$html .= " location.href='manter.php?funcao=" . constantes::$CD_FUNCAO_ALTERAR . "&chave=' + chave;\n";
 		$html .= "}\n\n";
 	}
@@ -911,10 +915,12 @@ function getFuncoesJSGenericas($pNmCampoConsulta, $isHistoricoFiltro, $colecaoFu
 		$html .= " function cancelar() {\n";
 		$html .= "  lupa = document.frm_principal." . constantes::$ID_REQ_LUPA . ".value;\n";
 		$html .= "  multiSelecao = document.frm_principal." . constantes::$ID_REQ_MULTISELECAO . ".value;\n";
+			
 		
-		$envioid_sistema_get = getParaEnvioGETIDSistema();
-		
-		$html .= "  location.href='index.php?consultar=S&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao$envioid_sistema_get;\n";
+		//$html .= "  location.href='index.php?consultar=S&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao;\n";
+		//$envioid_sistema_get = getParaEnvioGETIDSistema();
+		//$html .= "  location.href='index.php?consultar=S&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao$envioid_sistema_get;\n";
+		$html .= "  location.href='index.php?consultar=S&" . constantes::$ID_REQ_LUPA . "='+ lupa + '&" . constantes::$ID_REQ_MULTISELECAO . "='+ multiSelecao;\n";
 		
 		$html .= "}\n\n";
 	}

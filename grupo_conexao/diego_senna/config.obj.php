@@ -3,6 +3,8 @@
 // Classe classConfig
 
 Class config {
+	static $config_name = "diego_senna";
+	
         var $db;
         var $login;
         var $senha;

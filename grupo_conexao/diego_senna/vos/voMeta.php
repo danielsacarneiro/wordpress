@@ -1,5 +1,6 @@
 <?php
 include_once (caminho_lib . "voentidade.php");
+//include_once ("dbMeta.php");
 class voMeta extends voentidade {
 	// var $nmTable = "contrato_import";
 	// para teste
@@ -36,7 +37,7 @@ class voMeta extends voentidade {
 		return "materia";
 	}
 	public function getNmClassProcesso() {
-		return "dbmateria";
+		return "dbMeta";
 	}
 	function getValoresWhereSQLChave($isHistorico) {
 		$nmTabela = $this->getNmTabelaEntidade ( $isHistorico );

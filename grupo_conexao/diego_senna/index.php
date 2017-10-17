@@ -1,8 +1,7 @@
 <?php
-include_once("../configuracao_geral.php");
-setTipoPagina(configuracao_geral::$CD_TIPO_PAGINA_MENU_APLICACAO);
 
 include_once("config_lib.php");
+setTipoPagina(configuracao_geral::$CD_TIPO_PAGINA_MENU_APLICACAO);
 include_once(caminho_util."bibliotecaHTML.php");
 include_once(caminho_util."constantes.class.php");
 
@@ -28,7 +27,7 @@ setCabecalho(GLOBAL_TITULO_SITE_SISTEMA);
 	f = new Tree('Menu de Funcionalidades finalizadas e entregue a SEFAZ-PE (Homologação)', true);
 	
 	f1 = new Tree('Serviço 01 (Tabelas)');	
-    f1.adicionarItem(new Link('Pessoas', '<?=caminho_funcoesHTML_geral?>pessoa?<?=constantes::$ID_REQ_ID_SISTEMA."=".$GLOBAL_PASTA_APLICACAO?>', ''));
+    f1.adicionarItem(new Link('Pessoas', '<?=caminho_funcoesHTML_geral?>pessoa?<?=constantes::$ID_REQ_ID_SISTEMA."=".GLOBAL_PASTA_APLICACAO?>', ''));
     f1.adicionarItem(new Link('Matérias', '<?=caminho_funcoesHTML?>materia', ''));
 	f.adicionarItem(f1);
 	

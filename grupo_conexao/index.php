@@ -1,6 +1,7 @@
 <?php
 include_once("configuracao_geral.php");
 setTipoPagina(configuracao_geral::$CD_TIPO_PAGINA_MENU_GERAL);
+removeObjetoSessao(constantes::$ID_REQ_ID_SISTEMA);
 
 include_once("config_lib.php");
 include_once(caminho_util."bibliotecaHTML.php");

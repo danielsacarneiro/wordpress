@@ -1,10 +1,11 @@
 <?php
 include_once "db.obj.php";
-include_once (caminho . "config.obj.php");
+//include_once (caminho . "config.obj.php");
 include_once (caminho_util . "paginacao.php");
 include_once (caminho_util . "bibliotecaHTML.php");
 include_once (caminho_util . "bibliotecaSQL.php");
 include_once (caminho_util . "bibliotecaFuncoesPrincipal.php");
+
 // include_once (caminho_excecoes . "ExcecaoMaisDeUmRegistroRetornado.php");
 class dbprocesso {
 	var $cDb;
@@ -18,6 +19,7 @@ class dbprocesso {
 	// construtor
 	function __construct() {
 		$this->cConfig = new config ();
+		
 		$this->cDb = new db ();
 		$this->cDb->abrirConexao ( $this->cConfig->db, $this->cConfig->login, $this->cConfig->senha, $this->cConfig->odbc, $this->cConfig->driver, $this->cConfig->servidor );
 	}

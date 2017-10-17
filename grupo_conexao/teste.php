@@ -11,7 +11,9 @@ include_once("config_lib.php");
 
 include_once(caminho_util."bibliotecaFuncoesPrincipal.php");
 
-echo getCaminhoIncludeAplicacao("teste/vo", "daniel");
+//echo getCaminhoIncludeAplicacao("teste/vo", "daniel");
+
+getIDSistemaArquivoPropriedade(true);
 
 ?>
 <body>

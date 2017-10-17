@@ -4,7 +4,7 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
 
 // .................................................................................................................
 
-  Class dbmateria extends dbprocesso{
+  Class dbMeta extends dbprocesso{
     
   	function consultarPorChave($vo, $isHistorico) {
   		$nmTabela = $vo->getNmTabelaEntidade ( $isHistorico );

@@ -1,60 +1,81 @@
 <?php
-
-function isIdSistemaExistente() {
-	return getIdSistemaSeExistir() != null;
-}
-
-function getIdSistemaSeExistir() {
-	$retorno = null;
-	if(defined('GLOBAL_PASTA_APLICACAO')){
-		$retorno = GLOBAL_PASTA_APLICACAO;
+function getIDSistemaArquivoPropriedade($log = false) {
+	$arquivo = 'PROP.SISTEMA';
+	if (file_exists ( $arquivo )) {
+		$arquivo = fopen ( $arquivo, 'r' );
+		// Lê o conteúdo do arquivo
+		while ( ! feof ( $arquivo ) ) {
+			// Mostra uma linha do arquivo
+			$linha = fgets ( $arquivo, 1024 );
+			$array [] = $linha;
+		}
+		// Fecha arquivo aberto
+		fclose ( $arquivo );
+	} elseif ($log) {
+		echo "NÃO EXISTE ARQUIVO";
 	}
 	
-	//ECHO "SISTEMA $retorno";
-	return $retorno;
-}
-
-function getCaminhoIncludeAplicacao($includeGeral, $nomesistema) {	
-	$indice = getIndiceBarraOuPonto($includeGeral);	
-		
-	$parte1 = substr($includeGeral, 0, $indice+1);
-	$parte2 = substr($includeGeral, $indice);	
-	$retorno = $parte1 . $nomesistema .$parte2;
+	if ($log)
+		echo $array [0];
 	
-	//echo "$includeGeral indice da barra é $indice <br>";
-	//echo $retorno;
+	$retorno = null;
+	if ($array [0] != null) {
+		$retorno = $array [0];
+	}
 	return $retorno;
 }
-
-function isExcecaoSucesso($e) {
-	return $e->getCode() == excecaoGenerica::$CD_EXCECAO_SUCESSO;
+function isIdSistemaExistente() {
+	return getIdSistemaSeExistir () != null;
 }
-
-function isClasseFrameWork($class_name, $tipoClasse){
+function getIdSistemaSeExistir() {
+	$retorno = null;
+	if (defined ( 'GLOBAL_ID_SISTEMA' )) {
+		$retorno = GLOBAL_ID_SISTEMA;
+	}
+	
+	// ECHO "SISTEMA $retorno";
+	return $retorno;
+}
+function getCaminhoIncludeAplicacao($includeGeral, $nomesistema) {
+	$indice = getIndiceBarraOuPonto ( $includeGeral );
+	
+	$parte1 = substr ( $includeGeral, 0, $indice + 1 );
+	$parte2 = substr ( $includeGeral, $indice );
+	$retorno = $parte1 . $nomesistema . $parte2;
+	
+	// echo "$includeGeral indice da barra é $indice <br>";
+	// echo $retorno;
+	return $retorno;
+}
+function isExcecaoSucesso($e) {
+	return $e->getCode () == excecaoGenerica::$CD_EXCECAO_SUCESSO;
+}
+function isClasseFrameWork($class_name, $tipoClasse) {
 	$isClasseFramework = false;
-	$pos = strpos($class_name, $tipoClasse);
-	if($pos !== false && $pos == 0){
+	$pos = strpos ( $class_name, $tipoClasse );
+	if ($pos !== false && $pos == 0) {
 		$isClasseFramework = true;
 	}
 	
 	return $isClasseFramework;
 }
-
-function getPastaRoot(){
+function getPastaRoot() {
 	$aplicacao = pasta_aplicacao;
 	$ambiente = "";
-	/*$arquivo = 'PROD';
-	 if (!file_exists($arquivo)) {
-	 $aplicacao.= "DESENV_eclipse";
-	 }*/
+	/*
+	 * $arquivo = 'PROD';
+	 * if (!file_exists($arquivo)) {
+	 * $aplicacao.= "DESENV_eclipse";
+	 * }
+	 */
 	
-	$path = $_SERVER['DOCUMENT_ROOT'];
+	$path = $_SERVER ['DOCUMENT_ROOT'];
 	$path .= pasta_raiz_wordpress . "/";
 	
-	define('caminho_wordpress', $path);
+	define ( 'caminho_wordpress', $path );
 	
 	$path .= $aplicacao;
-	//include_once($path);
+	// include_once($path);
 	
 	return $path;
 }
@@ -300,9 +321,11 @@ function getColecaoEntreSeparadorAspas($colecaoAtributos, $separador, $comAspas)
 		$tamanho = count ( $colecaoAtributos );
 		// echo "<br> qtd registros: " . $tamanho;
 		
-		/*for($i = 0; $i <= $tamanho; $i ++) {
-			$atrib = $colecaoAtributos [$i];*/
-		foreach ($colecaoAtributos as $atrib){
+		/*
+		 * for($i = 0; $i <= $tamanho; $i ++) {
+		 * $atrib = $colecaoAtributos [$i];
+		 */
+		foreach ( $colecaoAtributos as $atrib ) {
 			if ($atrib != null && $atrib != "") {
 				
 				if ($comAspas)
@@ -433,10 +456,9 @@ function booleanToExtenso($boolean) {
 	
 	return $retorno;
 }
-
 function getStringComoNumero($param) {
 	$retorno = getDecimalSQL ( $param );
-	if($retorno == "null"){
+	if ($retorno == "null") {
 		$retorno = null;
 	}
 	return $retorno;

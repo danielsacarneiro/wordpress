@@ -1,4 +1,6 @@
 <?php
+include_once("../configuracao_geral.php");
+include_once ("config.obj.php");
 // configuracao
 $site_cliente = "http://www.diego_Senna.com.br";
 // $pasta_aplicacao = "/grupo_conexao/diego_senna";

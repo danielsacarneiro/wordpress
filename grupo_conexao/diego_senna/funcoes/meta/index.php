@@ -1,9 +1,8 @@
 <?php
 include_once("../../../configuracao_geral.php");
-$CD_TIPO_PAGINA = configuracao_geral::$CD_TIPO_PAGINA_FUNCAO_APLICACAO;
+getIncludeConfiguracao(configuracao_geral::$CD_TIPO_PAGINA_FUNCAO_APLICACAO);
 
 try{
-include_once(configuracao_geral::$PASTA_CONFIG_LIB_FUNCOES_APLICACAO . "config_lib.php");
 
 include_once(caminho_util."bibliotecaHTML.php");
 include_once(caminho_filtros . "filtroManterMateria.php");
