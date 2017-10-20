@@ -1,5 +1,4 @@
 <?php
-
 include_once("util/bibliotecaFuncoesPrincipal.php");
 include_once ("util/constantes.class.php");
 
@@ -34,7 +33,7 @@ define('caminho_util', "$base/util/");
 define('caminho_vos', "$base/vos/");
 define('caminho_filtros', "$base/filtros/");
 define('caminho_excecoes', "$base/excecoes/");
-define('caminho_funcoesHTML', "funcoes/");
+define('caminho_funcoesHTML', "../");
 define('caminho_funcoes', "$base/funcoes/");
 define('site_wordpress', pasta_raiz_wordpress . "/wp-admin/");
 
@@ -90,16 +89,16 @@ $pastaRaiz = "";
 $caminhoJS = "lib/js/";
 $caminhoCSS = "lib/css/";
 $caminhoIMG = "imagens/";
+$pastaRaiz = "../../";
 
-$caminhoMenu = "";
-
-if(!$isPastaRaiz){
-	$pastaRaiz = "../../";
-    $caminhoJS = $pastaRaiz . $caminhoJS;
-    $caminhoCSS = $pastaRaiz . $caminhoCSS;
-    $caminhoIMG = $pastaRaiz . $caminhoIMG;    
-    $caminhoMenu = $pastaRaiz;
+if(isSistemaInterno()){
+	$pastaRaiz = "../$pastaRaiz";
 }
+$caminhoJS = $pastaRaiz . $caminhoJS;
+$caminhoCSS = $pastaRaiz . $caminhoCSS;
+$caminhoIMG = $pastaRaiz . $caminhoIMG;    
+$caminhoMenu = $pastaRaiz;
+
 
 define('caminho_menu', $caminhoMenu);
 define('caminho_css', $caminhoCSS);

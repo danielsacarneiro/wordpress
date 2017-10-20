@@ -1,5 +1,5 @@
 <?php
-include_once (caminho_wordpress . "wp-config.php");
+include_once (caminho_wordpress . "/wp-config.php");
 include_once ("mensagens.class.php");
 include_once ("constantes.class.php");
 include_once ("bibliotecaDataHora.php");
@@ -78,7 +78,13 @@ function getPastaImagensPorNivel($qtdNiveisAcimaEmSeEncontraPagina) {
 function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	// se precisar fazer o mesmo para pasta menu
 	$pastaImagens = getPastaImagensPorNivel ( $qtdNiveisAcimaEmSeEncontraPagina );
-	$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
+	if(isSistemaInterno()){
+		$imgSistema = imgSistema;
+	}else{
+		$imgSistema = $pastaImagens . "bg_topo_trapezio.gif";
+	}	
+	
+	//$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
 	
 	// ECHO $pastaMenu;
 	
@@ -105,13 +111,13 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
                         <TBODY>
                                 <TR>
                                 <TH class=headertabeladados colspan=2>
-                                    <a href='" . site_cliente . "' ><img id=imgLogotipoSefaz src='" . $pastaImagens . "bg_topo_trapezio.gif' alt='SEFAZ-PE'></a> " . $diaExtenso . "
+                                    <a href='" . site_cliente . "' ><img id=imgLogotipoSefaz src='$imgSistema' alt='SEFAZ-PE'></a> " . $diaExtenso . "
                                 </TH>
                                 </TR>                                
                                 <TR>
                                 <TH class=headertabeladados>&nbsp;" . constantes::$nomeSistema . "$titulo<br></TH>
                                 <TH class=headertabeladadosalinhadodireita width='1%' nowrap>&nbsp" . utf8_decode ( name_user ) . ",
-                                <a class='linkbranco' href='" . $pastaMenu . "index.php' >Menu</a>
+                                <a class='linkbranco' href='../menu' >Menu</a>
                                 <a href='" . $pastaMenu . "login.php?funcao=I' ><img  title='Entrar' src='" . $pastaImagens . "botao_home_laranja.gif' width='20' height='20'></a>
                                 <a href='" . $pastaMenu . "login.php?funcao=O' ><img  title='Sair' src='" . $pastaImagens . "logout.gif' width='25' height='20'></a>";
 	

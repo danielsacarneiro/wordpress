@@ -1,4 +1,8 @@
 <?php
+function isSistemaInterno() {
+	return defined('isSistemaInterno');
+}
+
 function isExcecaoSucesso($e) {
 	return $e->getCode() == excecaoGenerica::$CD_EXCECAO_SUCESSO;
 }
@@ -22,7 +26,7 @@ function getPastaRoot(){
 	 }*/
 	
 	$path = $_SERVER['DOCUMENT_ROOT'];
-	$path .= pasta_raiz_wordpress . "/";
+	$path .= pasta_raiz_wordpress;
 	define('caminho_wordpress', $path);
 	
 	$path .= $aplicacao;
