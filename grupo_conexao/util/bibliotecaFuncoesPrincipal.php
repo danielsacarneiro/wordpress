@@ -34,6 +34,15 @@ function getPastaRoot(){
 	
 	return $path;
 }
+function imprimeLinhaHTML($texto){
+	echo $texto . "<br>";
+}
+function echoo($texto){
+	return imprimeLinhaHTML($texto);
+}
+function imprimeHtml($texto){
+	echo str_replace("\n", "<br>", $texto);
+}
 /*
  * implementa a busca insensitive de uma palavra em outra
  * diferente de strpos que eh case sensitive
@@ -43,6 +52,9 @@ function getMultiPos($haystack, $needles, $sensitive = true, $offset = 0) {
 		$result [$needle] = ($sensitive) ? strpos ( $haystack, $needle, $offset ) : stripos ( $haystack, $needle, $offset );
 	}
 	return $result;
+}
+function getPosicaoPalavraNaString($string, $noh){
+	return strpos($string, $noh);
 }
 function isColecaoVazia($recordset) {
 	return $recordset == null || $recordset == "" || (is_array ( $recordset ) && count ( $recordset ) == 0);

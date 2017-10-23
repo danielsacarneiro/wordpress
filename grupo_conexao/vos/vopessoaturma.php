@@ -35,8 +35,7 @@ class vopessoaturma extends voentidade {
 		
 		// retira os atributos padrao que nao possui
 		$arrayAtribRemover = array (
-				self::$nmAtrDhInclusao,
-				self::$nmAtrCdUsuarioInclusao 
+				self::$nmAtrDhInclusao, 
 		);
 		$this->removeAtributos ( $arrayAtribRemover );
 		//padrao

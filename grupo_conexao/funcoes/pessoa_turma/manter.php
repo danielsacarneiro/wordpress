@@ -25,6 +25,10 @@ if($isInclusao){
 	$dbprocesso = $vo->dbprocesso;					
 	$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
 	$vo->getDadosBanco($colecao);
+	
+	$voTurma = new voturma();
+	$voTurma->getDadosBanco($colecao);
+	
 	putObjetoSessao($vo->getNmTabela(), $vo);
 
     $nmFuncao = "ALTERAR ";
@@ -95,10 +99,16 @@ function confirmar() {
 				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo($vo->cdTurma);?>">
 				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdPessoa?>" name="<?=vopessoaturma::$nmAtrCdPessoa?>"  value="<?php echo($vo->cdPessoa);?>">						
             </TR>            
+             <TR>
+				<TH class="campoformulario" nowrap width=1%>Tipo Turma:</TH>
+	            <TD class="campoformulario" colspan=3><?php echo dominioTipoTurma::getDetalhamentoHtml($voTurma->tipo, voturma::$nmAtrTipo, voturma::$nmAtrTipo)?></TD>
+	        </TR>
 			<TR>
 	            <TH class="campoformulario" nowrap width=1%>Valor a pagar:</TH>
 	            <TD class="campoformulario" colspan="3">
-	            <INPUT type="text" id="<?=vopessoaturma::$nmAtrNumParcelas?>" name="<?=vopessoaturma::$nmAtrNumParcelas?>" value="<?php echo($vo->numParcelas);?>" class="camponaoobrigatorioalinhadodireita" size="2" required> x
+	            <?php if(!dominioTipoTurma::isPagamentoMensal($voTurma->tipo)){?>
+	            	<INPUT type="text" id="<?=vopessoaturma::$nmAtrNumParcelas?>" name="<?=vopessoaturma::$nmAtrNumParcelas?>" value="<?php echo($vo->numParcelas);?>" class="camponaoobrigatorioalinhadodireita" size="2" required> x
+	            <?php }?>
 	            <INPUT type="text" id="<?=vopessoaturma::$nmAtrValor?>" name="<?=vopessoaturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
 	            onkeyup="formatarCampoMoedaComSeparadorMilhar(this, 2, event);" class="camponaoobrigatorioalinhadodireita" size="15" required></TD>
 	        </TR>

@@ -169,6 +169,7 @@ function alterar() {
                   ?>                  
                     <TH class="headertabeladados" width="1%">Código</TH>
                     <TH class="headertabeladados" width="98%">Descrição</TH>
+                    <TH class="headertabeladados" width="98%">Tipo</TH>
                     <TH class="headertabeladados" width="1%">Valor.Unit</TH>
                     <TH class="headertabeladados" width="1%">Qtd.Alunos</TH>                    
                     <TH class="headertabeladados" width="1%">Receita.Ideal</TH>                    
@@ -184,7 +185,7 @@ function alterar() {
                 else 
                         $tamanho = 0;			
                
-                 $colspan=11;
+                 $colspan=12;
                  if($isHistorico){
                  	$colspan++;
                  }                        
@@ -218,6 +219,7 @@ function alterar() {
                   ?>
                     <TD class="tabeladados"><?php echo complementarCharAEsquerda($colecao[$i][voturma::$nmAtrCd], "0", TAMANHO_CODIGOS);?></TD>
                     <TD class="tabeladados"><?php echo $colecao[$i][voturma::$nmAtrDescricao];?></TD>                    
+                    <TD class="tabeladados"><?php echo dominioTipoTurma::getDescricaoStatic($voAtual->tipo);?></TD>
                     <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($voAtual->valor);?></TD>
                     <TD class="tabeladadosalinhadodireita"><?php echo $colecao[$i][filtroManterTurma::$NM_COL_QTD_ALUNOS];?></TD>                    
                     <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorIdeal);?></TD>                    

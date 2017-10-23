@@ -43,6 +43,7 @@ class dbturma extends dbprocesso {
 		}
 		$atributosConsulta .= $conector . $nmTabelaTurma . "." . voturma::$nmAtrCd;
 		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrDescricao;
+		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrTipo;
 		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrValor;
 		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrDtInicio;
 		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrDtFim;
@@ -50,7 +51,7 @@ class dbturma extends dbprocesso {
 		$groupby = $atributosConsulta;
 		
 		// a coluna abaixo fica fora do group by
-		$atributosConsulta .= ",SUM(CASE WHEN $nmTabelaPessoaTurma." . vopessoaturma::$nmAtrValor . " > 0 THEN " . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . " ELSE $nmTabelaTurma." . voturma::$nmAtrValor . " END) AS " . filtroManterTurma::$NM_COL_VALOR_REAL;
+		//$atributosConsulta .= ",SUM(CASE WHEN $nmTabelaPessoaTurma." . vopessoaturma::$nmAtrValor . " > 0 THEN " . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . " ELSE $nmTabelaTurma." . voturma::$nmAtrValor . " END) AS " . filtroManterTurma::$NM_COL_VALOR_REAL;
 		$atributosConsulta .= ",SUM(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas . ") AS " . filtroManterTurma::$NM_COL_VALOR_REAL;
 		$atributosConsulta .= ",SUM(" . $nmTabelaTurma . "." . voturma::$nmAtrValor . ") AS " . filtroManterTurma::$NM_COL_VALOR_IDEAL;
 		$atributosConsulta .= ",SUM(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*$nmTabPagamentoTemp." . vopagamento::$nmAtrNumParcelaPaga . ") AS " . filtroManterTurma::$NM_COL_VALOR_PAGO;
@@ -309,6 +310,7 @@ class dbturma extends dbprocesso {
 		$retorno = "";
 		$retorno .= $this->getVarComoNumero ( $voturma->cd ) . ",";
 		$retorno .= $this->getVarComoString ( $voturma->descricao ) . ",";
+		$retorno .= $this->getVarComoNumero($voturma->tipo) . ",";
 		$retorno .= $this->getVarComoDecimal ( $voturma->valor ) . ",";
 		$retorno .= $this->getVarComoData ( $voturma->dtInicio ) . ",";
 		$retorno .= $this->getVarComoData ( $voturma->dtFim ) . ",";

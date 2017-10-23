@@ -10,6 +10,7 @@ class dbpessoaturma extends dbprocesso {
 				$nmTabelaPessoaTurma . ".*",
 				$nmTabelaPessoa . "." . vopessoa::$nmAtrNome,
 				$nmTabelaTurma . "." . voturma::$nmAtrDescricao,
+				$nmTabelaTurma . "." . voturma::$nmAtrTipo,
 				"COALESCE ($nmTabelaPessoaTurma." . vopessoaturma::$nmAtrValor . ",$nmTabelaTurma." . voturma::$nmAtrValor . ") AS " . vopessoaturma::$nmAtrValor 
 		);
 		
@@ -129,6 +130,7 @@ class dbpessoaturma extends dbprocesso {
 		$queryFrom = "\n FROM " . $nmTabela;
 		
 		if ($filtro->inTemTurma != null && getAtributoComoBooleano ( $filtro->inTemTurma )) {
+			$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrTipo;
 			$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrValor;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdTurma;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa;

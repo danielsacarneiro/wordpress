@@ -117,7 +117,9 @@ var _estadoAtualCheckBox = 0;
 function marcarTodosCheckBoxes(pNmCheckBox) {
 	var i = 0;
 
-	checkBox = eval(pNmCheckBox);
+	//checkBox = eval(pNmCheckBox);
+	checkBox = document.getElementsByName(pNmCheckBox);
+	//alert(pNmCheckBox);
 	_estadoAtualCheckBox = 1 - _estadoAtualCheckBox;
 	
 	if (checkBox == null)

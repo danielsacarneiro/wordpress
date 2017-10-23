@@ -1,6 +1,7 @@
 <?php
 include_once (caminho_lib . "voentidade.php");
 include_once (caminho_funcoes . "turma/bibliotecaTurma.php");
+include_once (caminho_funcoes . "turma/dominioTipoTurma.php");
 class voturma extends voentidade {
 	static $NUM_MAXIMO_ALUNO = 15;
 	static $NM_DIV_COLECAO_ALUNOS = "NM_DIV_COLECAO_ALUNOS";
@@ -10,12 +11,14 @@ class voturma extends voentidade {
 	static $ID_REQ_DURACAO = "ID_REQ_DURACAO";
 	static $nmAtrCd = "tu_cd";
 	static $nmAtrDescricao = "tu_ds";
+	static $nmAtrTipo = "tu_tp";
 	static $nmAtrValor = "tu_valor";
 	static $nmAtrObservacao = "tu_obs";
 	static $nmAtrDtInicio = "tu_dtinicio";
 	static $nmAtrDtFim = "tu_dtfim";
 	var $cd = "";
 	var $descricao = "";
+	var $tipo = "";
 	var $valor = "";
 	var $obs = "";
 	var $dtInicio = "";
@@ -63,6 +66,7 @@ class voturma extends voentidade {
 		$retorno = array (
 				self::$nmAtrCd,
 				self::$nmAtrDescricao,
+				self::$nmAtrTipo,
 				self::$nmAtrValor,
 				self::$nmAtrDtInicio,
 				self::$nmAtrDtFim,
@@ -81,7 +85,8 @@ class voturma extends voentidade {
 	function getDadosRegistroBanco($registrobanco) {
 		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
 		$this->cd = $registrobanco [self::$nmAtrCd];
-		$this->descricao = $registrobanco [self::$nmAtrDescricao];
+		$this->descricao = $registrobanco [self::$nmAtrDescricao];		
+		$this->tipo = $registrobanco [self::$nmAtrTipo];
 		$this->valor = $registrobanco [self::$nmAtrValor];
 		
 		$this->dtInicio = $registrobanco [self::$nmAtrDtInicio];
@@ -102,6 +107,7 @@ class voturma extends voentidade {
 	function getDadosFormulario() {
 		$this->cd = @$_POST [self::$nmAtrCd];
 		$this->descricao = strtoupper ( @$_POST [self::$nmAtrDescricao] );
+		$this->tipo = @$_POST [self::$nmAtrTipo];
 		$this->valor = @$_POST [self::$nmAtrValor];
 		
 		$this->dtInicio = @$_POST [self::$nmAtrDtInicio];

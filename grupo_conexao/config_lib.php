@@ -2,6 +2,7 @@
 include_once("util/bibliotecaFuncoesPrincipal.php");
 include_once ("util/constantes.class.php");
 
+error_reporting ( E_ALL ^ E_NOTICE );
 //mysqli_report(MYSQLI_REPORT_ALL);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 date_default_timezone_set('America/Recife');

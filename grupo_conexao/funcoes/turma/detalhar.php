@@ -96,7 +96,11 @@ function confirmar() {
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Código:</TH>
                 <TD class="campoformulario" colspan=3><INPUT type="text" value="<?php echo(complementarCharAEsquerda($vo->cd, "0", TAMANHO_CODIGOS));?>"  class="camporeadonlyalinhadodireita" size="5" readonly></TD>
-            </TR>            
+            </TR>
+             <TR>
+				<TH class="campoformulario" nowrap width=1%>Tipo:</TH>
+	            <TD class="campoformulario" colspan=3><?php echo dominioTipoTurma::getDetalhamentoHtml($vo->tipo, voturma::$nmAtrTipo, voturma::$nmAtrTipo)?></TD>
+	        </TR>                        
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Descrição:</TH>
                 <TD class="campoformulario" colspan=3><INPUT type="text" id="<?=voturma::$nmAtrDescricao?>" name="<?=voturma::$nmAtrDescricao?>"  value="<?php echo($vo->descricao);?>"  class="camporeadonly" size="50" readonly></TD>
@@ -125,7 +129,7 @@ function confirmar() {
 	            			size="10" 
 	            			maxlength="10" readonly>
 	            Duração:
-	             <INPUT type="text" name = "<?=voturma::$ID_REQ_DURACAO?>" value="<?php if($vo->dtFim != null) echo getQtdMesesEntreDatas($vo->dtInicio, $vo->dtFim);?>"  class="camporeadonlyalinhadodireita" size="3" readonly> mes(es)
+	             <INPUT type="text" name = "<?=voturma::$ID_REQ_DURACAO?>" value="<?php if($vo->dtFim != null) echo getQtdMesesEntreDatas(getData($vo->dtInicio), getData($vo->dtFim));?>"  class="camporeadonlyalinhadodireita" size="3" readonly> mes(es)
 	             </TD>
 	        </TR>	        
 			<TR>
@@ -159,7 +163,7 @@ function confirmar() {
             		//deixa gravado na pagina os alunos anteriormente cadastrados
             		//para usa-los na exclusao???
             		echo getInputHidden(voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, $strCdPessoasCadastradas) . "\n";					
-            		echo mostrarGridAlunos($colecaoAlunosAntesCadastrados, true);					  					  
+            		echo mostrarGridAlunos($colecaoAlunosAntesCadastrados, $vo);					  					  
 					?>
             
             </TBODY>

@@ -84,9 +84,7 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 		$imgSistema = $pastaImagens . "bg_topo_trapezio.gif";
 	}	
 	
-	//$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
-	
-	// ECHO $pastaMenu;
+	$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );	
 	
 	define ( 'pasta_imagens', $pastaImagens );
 	if ($titulo != null) {
@@ -473,8 +471,13 @@ function getBotoesRodapeComRestricao($arrayBotoesARemover, $restringeBotaoSemVal
 function getLinkHTML($link, $dsLink, $class = "linkNormal") {
 	return "<a class='$class' href='$link' >$dsLink</a>";
 }
-function getLinkPesquisa($link) {
-	return getImagemLink ( "javascript:abrirJanelaAuxiliar('" . $link . "',true, false, false);\" ", "lupa.png" );
+function getLinkPesquisa($link, $funcaoValidacaoJS = null) {
+	
+	if($funcaoValidacaoJS!= null){
+		$js = "if($funcaoValidacaoJS)";
+	}
+	
+	return getImagemLink ( "javascript:$js abrirJanelaAuxiliar('" . $link . "',true, false, false);\" ", "lupa.png" );
 }
 function getImagemLink($href, $nmImagem) {
 	

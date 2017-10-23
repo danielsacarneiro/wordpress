@@ -225,7 +225,7 @@ function imprimeGridAlunosTurma($voCamposDadosPessoaAjax) {
 	}
 	
 	if (! $emitirAlerta) {
-		$html = mostrarGridAlunos ( $colecaoAlunosVOPessoaTurma );
+		$html = mostrarGridAlunos ( $colecaoAlunosVOPessoaTurma,$voCamposDadosPessoaAjax);
 	}
 	
 	return $html;
@@ -255,20 +255,37 @@ function isPessoaAindaNaoPertenceATurma($cdPessoa) {
 	}
 	return $retorno;
 }
-function mostrarGridAlunos($colecaoAlunos) {
+
+function mostrarGridAlunos($colecaoAlunos, $voTurmaGenerico = null) {
 	$funcao = @$_GET ["funcao"];
 	if ($funcao == null) {
 		$funcao = @$_POST ["funcao"];
 	}
-	$operacao = @$_POST ["operacao"];
+	$operacao = @$_POST ["operacao"];	
+	
+	//echoo($tipoTurma);
 	
 	$isAlteracao = $funcao == constantes::$CD_FUNCAO_ALTERAR;
 	$isDetalhamento = $funcao == constantes::$CD_FUNCAO_DETALHAR || $funcao == constantes::$CD_FUNCAO_EXCLUIR;
 	$isInclusaoDePessoaNova = $operacao == constantes::$CD_FUNCAO_INCLUIR;
 	
+	$numColunas = 7;
 	// var_dump($colecaoAlunos);
 	if (is_array ( $colecaoAlunos )) {
 		$tamanho = sizeof ( $colecaoAlunos );
+		
+		//var_dump($colecaoAlunos);
+		
+		$tipoTurma = @$_POST ["tipoTurma"];
+		if ($tipoTurma == null) {
+			//$tipoTurma= getTipoTurmaColecaoGenerica($colecaoAlunos);
+			$tipoTurma= $voTurmaGenerico->tipo;			
+		}
+		
+		if ($tipoTurma == null)
+			throw new excecaoGenerica("Tipo da turma não pode ser nulo.");
+		
+		$isTipoTurmaPagMensal = dominioTipoTurma::isPagamentoMensal($tipoTurma);
 		
 		// var_dump($colecaoAlunos);
 	} else {
@@ -284,14 +301,17 @@ function mostrarGridAlunos($colecaoAlunos) {
 	$html .= " <TBODY>  \n";
 	$html .= "        <TR>    \n";
 	
-	if ($tamanho > 0) {
-		
-		$numColunas = 7;
+	if ($tamanho > 0) {		
 		
 		$html .= "<TH class='headertabeladados' width='1%' nowrap>Código</TH>   \n";
 		$html .= "<TH class='headertabeladados' width='90%'>Nome</TH> \n";
 		$html .= "<TH class='headertabeladados' width='1%'>Doc.</TH> \n";
-		$html .= "<TH class='headertabeladados' width='1%'>Parcelas</TH> \n";
+		
+		if(!$isTipoTurmaPagMensal){
+			$html .= "<TH class='headertabeladados' width='1%'>Parcelas</TH> \n";
+		}else{
+			$numColunas--;
+		}
 		$html .= "<TH class='headertabeladados' width='1%'>Valor</TH> \n";
 		$html .= "<TH class='headertabeladados' width='1%'>Total</TH> \n";
 		
@@ -307,7 +327,7 @@ function mostrarGridAlunos($colecaoAlunos) {
 			if ($voturma->valor == null) {
 				$voturma->valor = @$_POST ["valorTurma"];
 			}
-			
+					
 			$pessoaAindaNaoPertenceATurma = isPessoaAindaNaoPertenceATurma ( $voPessoaTurma->cdPessoa );
 			
 			if ($voAtual != null) {
@@ -346,7 +366,11 @@ function mostrarGridAlunos($colecaoAlunos) {
 				$html .= "<TD class='tabeladados' nowrap>" . complementarCharAEsquerda ( $voAtual->cd, "0", TAMANHO_CODIGOS ) . "</TD> \n";
 				$html .= "<TD class='tabeladados' >" . $voAtual->nome . "</TD> \n";
 				$html .= "<TD class='tabeladados' nowrap>" . documentoPessoa::getNumeroDocFormatado ( $doc ) . "</TD> \n";
-				$html .= "<TD class='tabeladados' nowrap>" . getInputText ( vopessoaturma::$nmAtrNumParcelas . $voAtual->cd, vopessoaturma::$nmAtrNumParcelas . "[]", $voPessoaTurma->numParcelas, $classValor, 2, 2, "$readonly onkeyup='validarCampoNumericoPositivo(this, 2, event);' $javaScript" ) . " x</TD> \n";
+				if(!$isTipoTurmaPagMensal){
+					$html .= "<TD class='tabeladados' nowrap>" . getInputText ( vopessoaturma::$nmAtrNumParcelas . $voAtual->cd, vopessoaturma::$nmAtrNumParcelas . "[]", $voPessoaTurma->numParcelas, $classValor, 2, 2, "$readonly onkeyup='validarCampoNumericoPositivo(this, 2, event);' $javaScript" ) . " x</TD> \n";
+				}else{
+					$html .= getInputHidden(vopessoaturma::$nmAtrNumParcelas . $voAtual->cd, vopessoaturma::$nmAtrNumParcelas . "[]", 1) . "\n";
+				}
 				$html .= "<TD class='$classColuna' $mensagemAlerta>" . getInputText ( vopessoaturma::$nmAtrValor . $voAtual->cd, vopessoaturma::$nmAtrValor . "[]", getMoeda ( $voPessoaTurma->valor, true ), $classValor, constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "$readonly onkeyup='formatarCampoMoedaComSeparadorMilhar(this, 2, event);' $javaScript" ) . "</TD> \n";
 				
 				$total = $voPessoaTurma->valor * $voPessoaTurma->numParcelas;
@@ -395,8 +419,16 @@ function mostrarGridAlunos($colecaoAlunos) {
 	
 	return $html;
 }
-function mostrarGridFinanceiro($vopessoaturma, $isDetalhamento) {
+function mostrarGridFinanceiro($vopessoaturma, $isDetalhamento, $voturma = null) {
 	// $vopessoaturma = new vopessoaturma ();
+	
+	$tipoTurma = $voturma->tipo;
+	$isPagamentoMensal = dominioTipoTurma::isPagamentoMensal($tipoTurma);
+	
+	if(!$isDetalhamento && $isPagamentoMensal){
+		$instrucao = " (a indeterminação do período inclui alguns meses a frente)";
+	}
+	
 	$html = "";
 	
 	$html .= " <TR>\n ";
@@ -405,7 +437,7 @@ function mostrarGridFinanceiro($vopessoaturma, $isDetalhamento) {
 	$html .= "<TBODY>";
 	
 	$html .= "<TR>\n";
-	$html .= "<TH class='textoseparadorgrupocampos' halign='left' colspan='4'>&nbsp;&nbsp;Pagamentos\n";
+	$html .= "<TH class='textoseparadorgrupocampos' halign='left' colspan='4'>&nbsp;&nbsp;Pagamentos$instrucao\n";
 	
 	$html .= "<TABLE id='table_tabeladados' class='tabeladados' cellpadding='0' cellspacing='0'> \n";
 	$html .= " <TBODY>  \n";
@@ -413,11 +445,13 @@ function mostrarGridFinanceiro($vopessoaturma, $isDetalhamento) {
 	
 	$numColunas = 3;
 	
+	
 	$html .= "<TH class='headertabeladados' width='1%' nowrap>Parcela</TH>   \n";
+	
 	$html .= "<TH class='headertabeladados' width='1%'>Valor</TH> \n";
 	$html .= "<TH class='headertabeladados' width='1%' nowrap> Pago";
 	if (! $isDetalhamento) {
-		$html .= getXGridConsulta ( vopagamento::$nmAtrNumParcelaPaga, true, true );
+		$html .= getXGridConsulta ( vopagamento::$nmAtrNumParcelaPaga. "[]", true, true );
 	} else {
 		$disabled = "disabled";
 	}
@@ -427,7 +461,22 @@ function mostrarGridFinanceiro($vopessoaturma, $isDetalhamento) {
 	$html .= "</TR> \n";
 	
 	$valorParcela = $vopessoaturma->valor;
-	$numParcela = $vopessoaturma->numParcelas;
+	
+	if(!$isPagamentoMensal){
+		//o num de parcelas sera o cadastrado
+		$numParcela = $vopessoaturma->numParcelas;
+	}else{
+		//o num de parcelas eh indeterminado
+		//dependera da data de inicial da turma e da data atual	
+		//$vopessoaturma = new vopessoaturma ();
+		$dtAComparar = getData($vopessoaturma->dhInclusao);
+		//echoo($dtAComparar);
+		$numParcela = getQtdMesesEntreDatas($dtAComparar, getDataHoje());
+		
+		//sera sempre somado dois para garantir que apareca ao menos o mes seguinte na tela
+		$numParcela = $numParcela+2;
+	}
+	
 	$cdPessoa = $vopessoaturma->cdPessoa;
 	
 	$classValor = "camporeadonlyalinhadodireita";
@@ -440,7 +489,9 @@ function mostrarGridFinanceiro($vopessoaturma, $isDetalhamento) {
 		$vopagamento = $vopessoaturma->colecaoParcelasPagas [$i];
 		
 		$html .= "<TR class='dados'> \n";
+		
 		$html .= "<TD class='tabeladados' nowrap>" . getInputText ( "", "", $i, $classValor, 2, 2, " readonly " ) . " x</TD> \n";
+		
 		$html .= "<TD class='tabeladados' nowrap>" . getInputText ( "", "", getMoeda ( $valorParcela, true ), $classValor, constantes::$TAMANHO_MOEDA, constantes::$TAMANHO_MOEDA, "readonly " ) . "</TD> \n";
 		$html .= "<TD class='tabeladados' nowrap>" . getCheckBoxBoolean ( vopagamento::$nmAtrNumParcelaPaga, vopagamento::$nmAtrNumParcelaPaga . "[]", $i, $checked, $disabled ) . "</TD> \n";
 		$html .= "<TD class='tabeladados' nowrap>" . getDataHora ( $vopagamento->dhUltAlteracao ) . "</TD> \n";

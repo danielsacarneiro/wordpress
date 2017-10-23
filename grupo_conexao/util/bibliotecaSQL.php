@@ -186,11 +186,17 @@ function getVarComoDecimal($param){
 function getVarComoData($param) {
 	return getVarComoDataSQL ( $param );
 }
-function getVarComoDataSQL($param) {
+function getVarComoDataSQL($param, $comAspas = true) {
 	$retorno = "null";
+	
+	$aspas = "'";
+	if(!$comAspas){
+		$aspas = "";
+	}
+	
 	// echo "<br> parametro conversao data sql:".$param;
 	if ($param != null)
-		$retorno = "'" . (substr ( $param, 6, 4 )) . "-" . substr ( $param, 3, 2 ) . "-" . substr ( $param, 0, 2 ) . "'";
+		$retorno = $aspas. (substr ( $param, 6, 4 )) . "-" . substr ( $param, 3, 2 ) . "-" . substr ( $param, 0, 2 ) . $aspas;
 	
 	return $retorno;
 }

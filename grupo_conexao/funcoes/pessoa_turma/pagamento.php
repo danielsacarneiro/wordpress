@@ -25,6 +25,10 @@ $readonly = "readonly";
 $dbprocesso = $vo->dbprocesso;					
 $colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
 $vo->getDadosBancoPorChave($colecao);
+
+$voTurma = new voturma();
+$voTurma->getDadosBanco($colecao);
+
 putObjetoSessao($vo->getNmTabela(), $vo);
     
 $dhInclusao = $vo->dhInclusao;
@@ -104,6 +108,10 @@ function confirmar() {
 				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdTurma?>" name="<?=vopessoaturma::$nmAtrCdTurma?>"  value="<?php echo($vo->cdTurma);?>">
 				<INPUT type="hidden" id="<?=vopessoaturma::$nmAtrCdPessoa?>" name="<?=vopessoaturma::$nmAtrCdPessoa?>"  value="<?php echo($vo->cdPessoa);?>">						
             </TR>
+             <TR>
+				<TH class="campoformulario" nowrap width=1%>Tipo Turma:</TH>
+	            <TD class="campoformulario" colspan=3><?php echo dominioTipoTurma::getDetalhamentoHtml($voTurma->tipo, voturma::$nmAtrTipo, voturma::$nmAtrTipo)?></TD>
+	        </TR>            
             <TR>
 	            <TH class="campoformulario" nowrap width=1%>Valor Mensal:</TH>
 	            <TD class="campoformulario" colspan="3"><INPUT type="text" id="<?=voturma::$nmAtrValor?>" name="<?=voturma::$nmAtrValor?>" value="<?php echo(getMoeda($vo->valor));?>"
@@ -117,7 +125,7 @@ function confirmar() {
             </TR>
             
             <?php
-            	echo mostrarGridFinanceiro($vo, false);
+            	echo mostrarGridFinanceiro($vo, false, $voTurma);
 			?>            
                              
             

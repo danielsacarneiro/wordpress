@@ -17,6 +17,7 @@ drop table IF EXISTS turma;
 CREATE TABLE turma (
     tu_cd INT NOT NULL AUTO_INCREMENT,
     tu_ds VARCHAR(150) NOT NULL, 
+    tu_tp INT,
     tu_valor DECIMAL(10,2),
     tu_obs VARCHAR(300),
     tu_dtinicio DATE,
@@ -37,6 +38,7 @@ CREATE TABLE turma_hist (
 	
     tu_cd INT NOT NULL,
     tu_ds VARCHAR(150) NOT NULL, 
+    tu_tp INT,
     tu_valor DECIMAL(10,2),
     tu_obs VARCHAR(300),
     tu_dtinicio DATE,
@@ -61,9 +63,12 @@ CREATE TABLE pessoa_turma (
     pt_numparcelas INT NOT NULL,
     pt_valor DECIMAL(10,2) DEFAULT NULL,
     pt_obs VARCHAR(300) DEFAULT NULL,
-    
+   
+    dh_inclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-    cd_usuario_ultalt INT,    
+    cd_usuario_incl INT,
+    cd_usuario_ultalt INT,
+
     in_desativado CHAR(1) DEFAULT 'N',
     
     CONSTRAINT pk PRIMARY KEY (pe_cd, tu_cd)
@@ -80,8 +85,11 @@ CREATE TABLE pessoa_turma_hist (
     pt_valor DECIMAL(10,2) DEFAULT NULL,
     pt_obs VARCHAR(300) DEFAULT NULL,
     
+    dh_inclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-    cd_usuario_ultalt INT,    
+    cd_usuario_incl INT,
+    cd_usuario_ultalt INT,
+
     in_desativado CHAR(1),
     
 	dh_operacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,

@@ -49,6 +49,7 @@ putObjetoSessao(voturma::$ID_REQ_COLECAO_ALUNOS_ANTERIOR, $vo->colecaoAlunos);
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_ajax.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_pessoa.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_text.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_select.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>jquery.js"></SCRIPT>
 
 <SCRIPT language="JavaScript" type="text/javascript">
@@ -90,6 +91,7 @@ function listarAlunos(cdPessoa, cdTurma, operacao) {
 		valores = getValueComoArray("<?=vopessoaturma::$nmAtrValor?>[]");
 		cdsPessoa = getValueComoArray("<?=vopessoaturma::$nmAtrCdPessoa?>[]");
 		valorTurma = getValorCampoMoedaComoNumero(document.frm_principal.<?=voturma::$nmAtrValor?>);
+		tipoTurma = document.frm_principal.<?=voturma::$nmAtrTipo?>.value;
 	/*}catch(ex){
 		parcelas = "";
 		valores = "";
@@ -104,6 +106,7 @@ function listarAlunos(cdPessoa, cdTurma, operacao) {
 	      funcao: "<?=$funcao?>",
 	      chavePessoa: cdPessoa,
 	      cdTurma: cdTurma,
+	      tipoTurma: tipoTurma,
 	      valorTurma: valorTurma,
 	      operacao: operacao,
 	      <?=vopessoaturma::$nmAtrNumParcelas?>: parcelas,
@@ -137,9 +140,40 @@ function limparDadosPessoa(cdPessoa) {
 	//limparDadosAluno(cdPessoa, '<?=voturma::$NM_DIV_COLECAO_ALUNOS?>');		
 }
 
+function validaSelecionarAlunos() {
+	if (!isCampoSelectValido(document.frm_principal.<?=voturma::$nmAtrTipo?>))
+		return false;
+
+	if (!isCampoMoedaComSeparadorMilharValido(document.frm_principal.<?=voturma::$nmAtrValor?>, 2, false))
+		return false;
+
+	return true;
+}
+
+function isTipoTurmaPagMensal(){
+	return document.frm_principal.<?=voturma::$nmAtrTipo?>.value != <?=dominioTipoTurma::$CD_TP_TURMA_PRAZO_DETERM_TOTAL?>;
+}
+
+function validaDistribuirValores() {
+	if (!isCampoSelectValido(document.frm_principal.<?=voturma::$nmAtrTipo?>))
+		return false;
+
+	/*if (isTipoTurmaPagMensal()){
+		exibirMensagem("Operação não permitida para tipo pagamento mensal.");
+		return false;
+	}*/
+
+	if (!isCampoMoedaComSeparadorMilharValido(document.frm_principal.<?=voturma::$nmAtrValor?>, 2, false))
+		return false;
+
+	return true;
+}
 
 // Verifica se o formulario esta valido para alteracao, exclusao ou detalhamento
 function isFormularioValido() {
+	if (!isCampoSelectValido(document.frm_principal.<?=voturma::$nmAtrTipo?>))
+		return false;
+
 	if (!isCampoMoedaComSeparadorMilharValido(document.frm_principal.<?=voturma::$nmAtrValor?>, 2, false))
 		return false;
 
@@ -270,8 +304,8 @@ function getSomatorioValoresPessoas(){
 	}
 }
 function distribuirValoresPessoas(zerar, apenasSeVazio){
-	//alert(1);
-
+	isPagMensal = isTipoTurmaPagMensal();
+	//alert(1);	
 	if(apenasSeVazio == null){
 		apenasSeVazio = false;
 	}
@@ -281,7 +315,7 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 	}
 	
 	campoValorTurma = document.frm_principal.<?=voturma::$nmAtrValor?>;
-	if(!isCampoMoedaComSeparadorMilharValido(campoValorTurma, 2, true, 0.01)){
+	if(!validaDistribuirValores()){
 		return;
 	}
 
@@ -304,6 +338,11 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 						}else{
 							//distribuir igualmente
 							parcela = eval(arrayParcelas[i].value);
+
+							//o pagamento mensal faz com que o valor da turma seja igual ao valor da pessoa
+							if(isPagMensal){
+								parcela = 1;
+							}							
 							valor = valorTurma/parcela;
 						}
 						
@@ -343,6 +382,18 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 	                <TH class="campoformulario" nowrap width=1%>Código:</TH>
 	                <TD class="campoformulario" colspan=3><INPUT type="text" value="<?php echo(complementarCharAEsquerda($vo->cd, "0", TAMANHO_CODIGOS));?>"  class="camporeadonlyalinhadodireita" size="5" readonly></TD>
 	            </TR>                            
+				<TR>
+					<TH class="campoformulario" nowrap width=1%>Tipo:</TH>
+	                <TD class="campoformulario" colspan=3><?php echo dominioTipoTurma::getDetalhamentoHtml($vo->tipo, voturma::$nmAtrTipo, voturma::$nmAtrTipo)?></TD>
+	            </TR>                            
+	        <?php }else{?>
+			<TR>
+                <TH class="campoformulario" nowrap width=1%>Tipo:</TH>
+                <TD class="campoformulario" colspan=3>
+                <?php
+                echo getComboColecaoGenerico(dominioTipoTurma::getColecao(), voturma::$nmAtrTipo, voturma::$nmAtrTipo, $vo->tipo, constantes::$CD_CLASS_CAMPO_NAO_OBRIGATORIO, " onChange='limparDadosPessoa(-1);' required ");
+                ?></TD>
+            </TR>
 	        <?php }?>
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Descrição:</TH>
@@ -376,7 +427,7 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 	            			size="10" 
 	            			maxlength="10">
 	            Duração:
-	             <INPUT type="text" name = "<?=voturma::$ID_REQ_DURACAO?>" value="<?php if($vo->dtFim != null) echo getQtdMesesEntreDatas($vo->dtInicio, $vo->dtFim);?>"  class="camporeadonlyalinhadodireita" size="3" readonly> mes(es) aprox.
+	             <INPUT type="text" name = "<?=voturma::$ID_REQ_DURACAO?>" value="<?php if($vo->dtFim != null) echo getQtdMesesEntreDatas(getData($vo->dtInicio), getData($vo->dtFim));?>"  class="camporeadonlyalinhadodireita" size="3" readonly> mes(es) aprox.
 	             </TD>
 	            </TR>                            
 	            			
@@ -393,7 +444,7 @@ function distribuirValoresPessoas(zerar, apenasSeVazio){
 				<DIV class="campoformulario">&nbsp;&nbsp;Incluir Alunos&nbsp;&nbsp;
 				<?php 
 				include_once(caminho_funcoes. "pessoa/dominioVinculoPessoa.php");
-				echo getLinkPesquisa("../pessoa/index.php?".constantes::$ID_REQ_MULTISELECAO."=S&" . vopessoavinculo::$nmAtrCd . "=" . dominioVinculoPessoa::$CD_VINCULO_ALUNO);
+				echo getLinkPesquisa("../pessoa/index.php?".constantes::$ID_REQ_MULTISELECAO."=S&" . vopessoavinculo::$nmAtrCd . "=" . dominioVinculoPessoa::$CD_VINCULO_ALUNO, 'validaSelecionarAlunos()');
 				echo "&nbsp;&nbsp; Limpar tudo" . getBorrachaJS("limparDadosPessoa(-1);");
 				echo "&nbsp;&nbsp; Distribuir Valor Turma " . getBotao ( "", "Distribuir valor", $classe, false, " onClick='javascript:distribuirValoresPessoas(false, false);'" );
 				echo "&nbsp;&nbsp; Zerar valores " . getBotao ( "", "zerar valores", $classe, false, " onClick='javascript:distribuirValoresPessoas(true);'" );
