@@ -50,11 +50,29 @@ class dbturma extends dbprocesso {
 		
 		$groupby = $atributosConsulta;
 		
+		$qtdMesesPorPessoaMensal = getDataSQLDiferencaMeses("$nmTabelaPessoaTurma." . vopessoaturma::$nmAtrDhInclusao, "now()");
+		//abaixo gera o caso para o caso da qtdmeses ser 0 (quando nao completou sequer um mes desde a inclusao da pessoa)
+		$qtdMesesPorPessoaMensal = getSQLCASE($qtdMesesPorPessoaMensal, 0, 1, $qtdMesesPorPessoaMensal);		
+		$somaIdealTurmaMensal= "SUM(" . $nmTabelaTurma. "." . voturma::$nmAtrValor . "*". $qtdMesesPorPessoaMensal. ")";
 		// a coluna abaixo fica fora do group by
-		//$atributosConsulta .= ",SUM(CASE WHEN $nmTabelaPessoaTurma." . vopessoaturma::$nmAtrValor . " > 0 THEN " . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . " ELSE $nmTabelaTurma." . voturma::$nmAtrValor . " END) AS " . filtroManterTurma::$NM_COL_VALOR_REAL;
-		$atributosConsulta .= ",SUM(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas . ") AS " . filtroManterTurma::$NM_COL_VALOR_REAL;
-		$atributosConsulta .= ",SUM(" . $nmTabelaTurma . "." . voturma::$nmAtrValor . ") AS " . filtroManterTurma::$NM_COL_VALOR_IDEAL;
-		$atributosConsulta .= ",SUM(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*$nmTabPagamentoTemp." . vopagamento::$nmAtrNumParcelaPaga . ") AS " . filtroManterTurma::$NM_COL_VALOR_PAGO;
+		$atributosConsulta .= "," . getSQLCASE("$nmTabelaTurma.".voturma::$nmAtrTipo
+				, dominioTipoTurma::$CD_TP_TURMA_PRAZO_DETERM_TOTAL
+				, "SUM(" . $nmTabelaTurma. "." . voturma::$nmAtrValor . ")"
+				, $somaIdealTurmaMensal)
+		 . " AS " . filtroManterTurma::$NM_COL_VALOR_IDEAL;
+		
+
+		$somaRealTurmaMensal= "SUM(" . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrValor . "*". $qtdMesesPorPessoaMensal. ")";
+		$atributosConsulta .= "," . getSQLCASE("$nmTabelaTurma.".voturma::$nmAtrTipo
+				, dominioTipoTurma::$CD_TP_TURMA_PRAZO_DETERM_TOTAL
+				, "SUM(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas . ")"
+				, $somaRealTurmaMensal)
+				. " AS " . filtroManterTurma::$NM_COL_VALOR_REAL;
+								
+	
+		$atributosConsulta .= ",SUM(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*$nmTabPagamentoTemp." . vopagamento::$nmAtrNumParcelaPaga . ") AS " 
+				. filtroManterTurma::$NM_COL_VALOR_PAGO;
+		
 		$atributosConsulta .= ",COUNT(" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrCdPessoa . ") AS " . filtroManterTurma::$NM_COL_QTD_ALUNOS;
 		
 		// sum(valor * (case when verba='salario' then -1 else 1 end))

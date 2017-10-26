@@ -180,6 +180,11 @@ function pagamento() {
                         $valorTotal = $colecao[$i][filtroManterPessoaTurma::$NM_COL_VALOR_TOTAL];
                         $valorAPagar = $valorTotal - $valorPago;
                         
+                        $numParcelas = $voAtual->numParcelas . "x";
+                        if(dominioTipoTurma::isPagamentoMensal($voAtualTurma->tipo)){
+                        	$numParcelas = "";
+                        }
+                        
                 ?>
                 <TR class="dados">
                     <TD class="tabeladados">
@@ -196,7 +201,7 @@ function pagamento() {
                     <TD class="tabeladados"><?php echo $voAtual->getCodigoFormatado($voAtual->cdTurma);?></TD>                    
                     <TD class="tabeladados"><?php echo $colecao[$i][vopessoa::$nmAtrNome];?></TD>
                     <TD class="<?=$classColuna?>"><?php echo $colecao[$i][voturma::$nmAtrDescricao].$strDesativado;?></TD>
-                    <TD class="tabeladadosalinhadodireita"><?php echo $voAtual->numParcelas?>x</TD>                    
+                    <TD class="tabeladadosalinhadodireita"><?php echo $numParcelas?></TD>                    
                     <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($voAtual->valor);?></TD>
                     <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorTotal, true);?></TD>
                     <TD class="tabeladadosalinhadodireita"><?php echo getMoeda($valorPago, true);?></TD>

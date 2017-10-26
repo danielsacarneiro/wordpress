@@ -168,8 +168,8 @@ function alterar() {
                   }
                   ?>                  
                     <TH class="headertabeladados" width="1%">Código</TH>
-                    <TH class="headertabeladados" width="98%">Descrição</TH>
-                    <TH class="headertabeladados" width="98%">Tipo</TH>
+                    <TH class="headertabeladados" width="40%">Descrição</TH>
+                    <TH class="headertabeladados" width="8%">Tipo</TH>
                     <TH class="headertabeladados" width="1%">Valor.Unit</TH>
                     <TH class="headertabeladados" width="1%">Qtd.Alunos</TH>                    
                     <TH class="headertabeladados" width="1%">Receita.Ideal</TH>                    

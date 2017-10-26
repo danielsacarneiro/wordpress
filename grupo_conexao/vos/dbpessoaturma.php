@@ -36,10 +36,25 @@ class dbpessoaturma extends dbprocesso {
 		$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor;
 		$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas;
 		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrDescricao;
+		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrTipo;
 		$atributosConsulta .= "," . $nmTabelaTurma . "." . voturma::$nmAtrInDesativado;
 		$atributosConsulta .= "," . $nmTabelaPessoa . "." . vopessoa::$nmAtrNome;
 		$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*COUNT($nmTabelaPagamento." . vopagamento::$nmAtrNumParcelaPaga . ") AS " . filtroManterPessoaTurma::$NM_COL_VALOR_PAGO;
-		$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas . " AS " . filtroManterPessoaTurma::$NM_COL_VALOR_TOTAL;
+		
+		//$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas . " AS " . filtroManterPessoaTurma::$NM_COL_VALOR_TOTAL;
+		
+		$qtdMesesPorPessoaMensal = getDataSQLDiferencaMeses("$nmTabelaPessoaTurma." . vopessoaturma::$nmAtrDhInclusao, "now()");
+		//abaixo gera o caso para o caso da qtdmeses ser 0 (quando nao completou sequer um mes desde a inclusao da pessoa)
+		$qtdMesesPorPessoaMensal = getSQLCASE($qtdMesesPorPessoaMensal, 0, 1, $qtdMesesPorPessoaMensal);
+		$somaTotalPessoaTurmaMensal= "SUM(" . $nmTabelaPessoaTurma. "." . vopessoaturma::$nmAtrValor. "*". $qtdMesesPorPessoaMensal. ")";
+		// a coluna abaixo fica fora do group by
+		$atributosConsulta .= "," . getSQLCASE("$nmTabelaTurma.".voturma::$nmAtrTipo
+				, dominioTipoTurma::$CD_TP_TURMA_PRAZO_DETERM_TOTAL
+				, $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor . "*" . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas
+				, $somaTotalPessoaTurmaMensal)
+				. " AS " . filtroManterPessoaTurma::$NM_COL_VALOR_TOTAL;
+				
+		
 		if ($isHistorico) {
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrSqHist;
 		}
@@ -138,6 +153,7 @@ class dbpessoaturma extends dbprocesso {
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrNumParcelas;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrValor;
 			// para validacao numa posterior exclusao
+			$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrDhInclusao;
 			$atributosConsulta .= "," . $nmTabelaPessoaTurma . "." . vopessoaturma::$nmAtrDhUltAlteracao;
 			
 			if ($isHistorico) {

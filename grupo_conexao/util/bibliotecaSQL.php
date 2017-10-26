@@ -216,4 +216,26 @@ function getDecimalSQL($param) {
 	
 	return $retorno;
 }
+
+function getDataSQLFormatada($ano, $mes, $dia){
+	return " CONCAT($ano,'-', RIGHT(CONCAT ('0',$mes),2), '-', RIGHT(CONCAT ('0',$dia),2)) ";
+}
+
+function getDataSQLDiferencaAnos($data1, $data2){
+	return " TIMESTAMPDIFF(YEAR, $data1, $data2) " ;
+}
+
+function getDataSQLDiferencaMeses($data1, $data2){
+	return " TIMESTAMPDIFF(MONTH, $data1, $data2) " ;
+}
+
+function getDataSQLDiferencaDias($data1, $data2){
+	//echoo("data $data1");
+	return " DATEDIFF($data2, $data1) ";
+}
+
+function getSQLCASE($atributo, $valorIgual, $valorTHEN, $valorELSE){
+	return "CASE $atributo WHEN $valorIgual THEN $valorTHEN ELSE $valorELSE END ";
+}
+
 ?>
