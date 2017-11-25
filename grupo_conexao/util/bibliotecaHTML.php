@@ -78,13 +78,23 @@ function getPastaImagensPorNivel($qtdNiveisAcimaEmSeEncontraPagina) {
 function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	// se precisar fazer o mesmo para pasta menu
 	$pastaImagens = getPastaImagensPorNivel ( $qtdNiveisAcimaEmSeEncontraPagina );
+	$pastaLogin = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );
+	
+	$paginaMenu = '../menu';
+	//sobe o nivel somente quando o $qtdNiveisAcimaEmSeEncontraPagina for setado
+	//se nao for setado, permanece no nivel
+	//as paginas geralmente estao no nivel da pasta 'funcoes' de cada sistema
+	//o $qtdNiveisAcimaEmSeEncontraPagina so eh setado apenas nas paginas que nao estao em 'funcoes', como por ex a confirmar.php	
+	$paginaMenu= subirNivelPasta ( $paginaMenu, $qtdNiveisAcimaEmSeEncontraPagina );
+	
 	if(isSistemaInterno()){
 		$imgSistema = imgSistema;
+		$imgSistema= subirNivelPasta ( $imgSistema, $qtdNiveisAcimaEmSeEncontraPagina );
+				
+		$idreq_nmSistema = "&".constantes::$ID_REQ_NMSISTEMA."=".nmSistema;
 	}else{
 		$imgSistema = $pastaImagens . "bg_topo_trapezio.gif";
-	}	
-	
-	$pastaMenu = subirNivelPasta ( caminho_menu, $qtdNiveisAcimaEmSeEncontraPagina );	
+	}			
 	
 	define ( 'pasta_imagens', $pastaImagens );
 	if ($titulo != null) {
@@ -115,9 +125,9 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
                                 <TR>
                                 <TH class=headertabeladados>&nbsp;" . constantes::$nomeSistema . "$titulo<br></TH>
                                 <TH class=headertabeladadosalinhadodireita width='1%' nowrap>&nbsp" . utf8_decode ( name_user ) . ",
-                                <a class='linkbranco' href='../menu' >Menu</a>
-                                <a href='" . $pastaMenu . "login.php?funcao=I' ><img  title='Entrar' src='" . $pastaImagens . "botao_home_laranja.gif' width='20' height='20'></a>
-                                <a href='" . $pastaMenu . "login.php?funcao=O' ><img  title='Sair' src='" . $pastaImagens . "logout.gif' width='25' height='20'></a>";
+                                <a class='linkbranco' href='$paginaMenu' >Menu</a>
+                                <a href='" . $pastaLogin . "login.php?funcao=I$idreq_nmSistema' ><img  title='Entrar' src='" . $pastaImagens . "botao_home_laranja.gif' width='20' height='20'></a>
+                                <a href='" . $pastaLogin . "login.php?funcao=O$idreq_nmSistema' ><img  title='Sair' src='" . $pastaImagens . "logout.gif' width='25' height='20'></a>";
 	
 	if (isUsuarioAdmin ()) {
 		$cabecalho .= "<a href='" . site_wordpress . "' ><img  title='WORDPRESS' src='" . $pastaImagens . "w-logo-white.png' width='25' height='20'></a>";
@@ -665,19 +675,26 @@ function getCheckBoxBoolean($idRadio, $nmRadio, $chave, $checked = null, $comple
 	$retorno = "<INPUT type='checkbox' id='" . $idRadio . "' name='" . $nmRadio . "' value='" . $chave . "' " . $strchecked . " $complementoHTML>";
 	return $retorno;
 }
+
 function getInputText($idText, $nmText, $value, $class = null, $size = null, $maxlength = null, $complementoHTML = null) {
 	if ($maxlength == null) {
 		$maxlength = 20;
 	}
 	if ($size == null) {
-		$size = 20;
+		if($value != null){
+			$size = strlen($value) + 2;
+		}else{
+			$size = 20;
+		}
 	}
 	if ($class == null) {
-		$class = "camponaoobrigatorio";
+		$class = constantes::$CD_CLASS_CAMPO_NAO_OBRIGATORIO;
+	}elseif ($class == constantes::$CD_CLASS_CAMPO_OBRIGATORIO){
+		$complementoHTML .= " required ";
+	} elseif($class == constantes::$CD_CLASS_CAMPO_READONLY){
+		$complementoHTML .= " readonly ";
 	}
-	
 	$retorno = "<INPUT type='text' id='" . $idText . "' name='" . $nmText . "' value='" . $value . "' class='$class' size='$size' maxlength='$maxlength' $complementoHTML>";
-	
 	return $retorno;
 }
 function getInputHidden($idText, $nmText, $value, $complementoHTML = null) {
@@ -765,7 +782,7 @@ function getDataHoraAtual() {
 function getDataHoje() {
 	return date ( 'd/m/Y' );
 }
-function tratarExcecaoHTML($ex, $vo = null) {
+function tratarExcecaoHTML($ex, $vo = null, $temSistemaInterno = false) {
 	if ($vo != null) {
 		putObjetoSessao ( $vo->getNmTabela (), $vo );
 		// a debaixo eh para a tela de msg de erro
@@ -775,7 +792,8 @@ function tratarExcecaoHTML($ex, $vo = null) {
 	$msg = $ex->getMessage ();
 	$msg = str_replace ( "\n", "", $msg );
 	
-	header ( "Location: ../mensagemErro.php?texto=" . $msg, TRUE, 307 );
+	$pasta = "..";		
+	header ( "Location: $pasta/mensagemErro.php?texto=" . $msg, TRUE, 307 );
 }
 function getStrComPuloLinhaHTML($str) {
 	return getStrComPuloLinhaGenerico ( $str, "<br>" );

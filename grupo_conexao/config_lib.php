@@ -56,9 +56,10 @@ define('site_wordpress', pasta_raiz_wordpress . "/wp-admin/");
  * o session precisa identificar qual classe ele serializa
  * dai o include
  */
-spl_autoload_register(function ($class_name) {
-	$caminhoClasse = caminho_vos;	
-	$pos = stripos($class_name, "filtro");	
+function procurarClasse($class_name, $nmSistemaInterno = null) {
+	$caminhoClasse = caminho_vos;
+		
+	$pos = stripos($class_name, "filtro");
 	if($pos !== false && $pos == 0){
 		//eh classe filtro
 		$caminhoClasse = caminho_filtros;
@@ -67,23 +68,33 @@ spl_autoload_register(function ($class_name) {
 		$needle = "Excecao";
 		$pos = getMultiPos($class_name, array($needle), false);
 		$pos = $pos[$needle];
-		if($pos !== false && $pos == 0){			
+		if($pos !== false && $pos == 0){
 			//eh classe EXCECAO
 			$caminhoClasse = caminho_excecoes;
-		}		
+		}
 	}
-		
-	$isClasseFramework = isClasseFrameWork($class_name, "vo") || isClasseFrameWork($class_name, "filtro") || isClasseFrameWork($class_name, "excecao") || isClasseFrameWork($class_name, "db");
 	
-	//ECHO $class_name;
-	if($isClasseFramework){
+	//$isClasseFramework = isClasseFrameWork($class_name, "vo") || isClasseFrameWork($class_name, "filtro") || isClasseFrameWork($class_name, "excecao") || isClasseFrameWork($class_name, "db");
+
+	if($nmSistemaInterno != null){
+		$caminhoClasse = str_replace("grupo_conexao/", "grupo_conexao/$nmSistemaInterno/", $caminhoClasse);
+	}
+	
+	$classe_aincluir = $caminhoClasse.$class_name . '.php';	
+	if(file_exists($classe_aincluir)){
 		//echo "ACHOU";
-		include_once $caminhoClasse.$class_name . '.php';
-	}/*else{
-		echo "NAO ACHOU";
-	}*/
+		include_once $classe_aincluir;
+	}elseif ($nmSistemaInterno == null){
+		//procura classe em caso de estar num sistema interno		
+		if(temSistemaInterno()){
+			$paramNmSistema= getNmSistemaInterno();			
+			
+			procurarClasse($class_name, $paramNmSistema);
+		}
+	}
 	
-});
+}
+spl_autoload_register(procurarClasse);
 	
 $isPastaRaiz  = isPastaRaiz();
 $pastaRaiz = "";

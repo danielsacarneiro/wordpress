@@ -7,6 +7,8 @@ include_once (caminho_util . "bibliotecaSQL.php");
 include_once (caminho_util . "bibliotecaFuncoesPrincipal.php");
 // include_once (caminho_excecoes . "ExcecaoMaisDeUmRegistroRetornado.php");
 class dbprocesso {
+	static $FLAG_PRINTAR_SQL = false;
+	
 	var $cDb;
 	var $cConfig;
 	static $nmCampoCount = "nmCampoCount";
@@ -21,6 +23,7 @@ class dbprocesso {
 		$this->cDb = new db ();
 		$this->cDb->abrirConexao ( $this->cConfig->db, $this->cConfig->login, $this->cConfig->senha, $this->cConfig->odbc, $this->cConfig->driver, $this->cConfig->servidor );
 	}
+	
 	function incluirHistorico($voEntidade, $retornaSqHist = false) {
 		// par ao historico funcionar, a tabela de historico deve estar adequada a estrutura da query abaixo
 		/*
@@ -152,6 +155,11 @@ class dbprocesso {
 		
 		return $queryFrom;
 	}
+	function consultarPorChaveVO($vo) {
+		$registrobanco = $vo->dbprocesso->consultarPorChave($vo, $vo->isHistorico());
+		$vo->getDadosBanco($registrobanco);
+	}
+	
 	function consultarPorChave($vo, $isHistorico) {
 		$nmTabela = $vo->getNmTabelaEntidade ( $isHistorico );
 		$arrayColunasRetornadas = array (
@@ -331,7 +339,9 @@ class dbprocesso {
 			
 			// echo $filtroSQL;
 			// echo "$queryCount<br>";
-			// echo "$query<br>";
+			if(static::$FLAG_PRINTAR_SQL){
+				echo "$query<br>";
+			}
 			
 			// removeObjetoSessao($voentidade->getNmTabela());
 			

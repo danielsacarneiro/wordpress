@@ -1,10 +1,10 @@
 <?php
 include_once (caminho_lib . "voentidade.php");
-class vomateria extends voentidade {
+class voperfil extends voentidade {
 	// var $nmTable = "contrato_import";
 	// para teste
-	static $nmAtrCd = "mat_cd";
-	static $nmAtrDescricao = "mat_ds";
+	static $nmAtrCd = "perf_cd";
+	static $nmAtrDescricao = "perf_ds";
 	
 	var $cd = "";
 	var $descricao = "";
@@ -26,13 +26,13 @@ class vomateria extends voentidade {
 		$this->removeAtributos ( $arrayAtribRemover );*/
 	}
 	public static function getTituloJSP() {
-		return "MATÉRIA";
+		return "PERFIL";
 	}
 	public static function getNmTabela() {
-		return "materia";
+		return "perfil";
 	}
 	public function getNmClassProcesso() {
-		return "dbmateria";
+		return "dbperfil";
 	}
 	function getValoresWhereSQLChave($isHistorico) {
 		$nmTabela = $this->getNmTabelaEntidade ( $isHistorico );
@@ -63,11 +63,6 @@ class vomateria extends voentidade {
 	function getValorChavePrimaria() {
 		return $this->cd;
 	}
-	function getValorChaveHTML() {
-		$retorno = $this->getValorChavePrimaria ();
-		$retorno .= constantes::$CD_CAMPO_SEPARADOR . $this->descricao;
-		return $retorno;
-	}	
 	function toString() {
 		$retorno .= $this->cd . ",";
 		$retorno .= $this->descricao . ",";

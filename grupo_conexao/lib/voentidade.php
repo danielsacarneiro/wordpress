@@ -65,7 +65,8 @@ class voentidade extends multiplosConstrutores {
 	// ...............................................................
 	// Funcoes ( Propriedades e metodos da classe )
 	function getSQLValuesInsertEntidade() {
-		$userManutencao = $this->cdUsuarioUltAlteracao;
+		$userManutencao = id_user;
+		$this->cdUsuarioUltAlteracao = $userManutencao;
 		if ($this->cdUsuarioInclusao == null)
 			$this->cdUsuarioInclusao = $userManutencao;
 		
@@ -108,7 +109,7 @@ class voentidade extends multiplosConstrutores {
 		$retorno = "";
 		$retorno .= self::$nmAtrDhUltAlteracao . " = now() ";
 		$retorno .= ",";
-		$retorno .= self::$nmAtrCdUsuarioUltAlteracao . " = " . $this->cdUsuarioUltAlteracao;
+		$retorno .= self::$nmAtrCdUsuarioUltAlteracao . " = " . id_user;
 		
 		return $retorno;
 	}
@@ -119,7 +120,7 @@ class voentidade extends multiplosConstrutores {
 		$retorno = "";
 		$conector = ",";
 		if ($temUsuarioAlt) {
-			$retorno .= $conector . self::$nmAtrCdUsuarioUltAlteracao . " = " . $this->cdUsuarioUltAlteracao;
+			$retorno .= $conector . self::$nmAtrCdUsuarioUltAlteracao . " = " . id_user;
 			$conector = ",";
 		}
 		if ($temDtAlt) {

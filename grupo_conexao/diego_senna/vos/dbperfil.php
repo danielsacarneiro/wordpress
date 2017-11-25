@@ -4,7 +4,7 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
 
 // .................................................................................................................
 
-  Class dbmateria extends dbprocesso{
+  Class dbperfil extends dbprocesso{
     
   	function consultarPorChave($vo, $isHistorico) {
   		$nmTabela = $vo->getNmTabelaEntidade ( $isHistorico );
@@ -16,27 +16,27 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
   		return $retorno;
   	}
   	
-    function incluirSQL($vomateria){
+    function incluirSQL($voperfil){
         $arrayAtribRemover = array(
-            vomateria::$nmAtrDhInclusao,
-            vomateria::$nmAtrDhUltAlteracao
+            voperfil::$nmAtrDhInclusao,
+            voperfil::$nmAtrDhUltAlteracao
             );
         
-        if($vomateria->cd == null || $vomateria->cd == ""){
-        	$vomateria->cd = $this->getProximoSequencial(vomateria::$nmAtrCd, $vomateria);        
+        if($voperfil->cd == null || $voperfil->cd == ""){
+        	$voperfil->cd = $this->getProximoSequencial(voperfil::$nmAtrCd, $voperfil);        
         }
         
-        //$vomateria->cd = $this->getProximoSequencial(vomateria::$nmAtrCd, $vomateria);        
+        //$voperfil->cd = $this->getProximoSequencial(voperfil::$nmAtrCd, $voperfil);        
         
-        return $this->incluirQuery($vomateria, $arrayAtribRemover);
+        return $this->incluirQuery($voperfil, $arrayAtribRemover);
     }    
 
-    function getSQLValuesInsert($vomateria){
+    function getSQLValuesInsert($voperfil){
 		$retorno = "";
-        $retorno.= $this-> getVarComoNumero($vomateria->cd) . ",";
-        $retorno.= $this-> getVarComoString(strtoupper($vomateria->descricao));
+        $retorno.= $this-> getVarComoNumero($voperfil->cd) . ",";
+        $retorno.= $this-> getVarComoString(strtoupper($voperfil->descricao));
         
-        $retorno.= $vomateria->getSQLValuesInsertEntidade();
+        $retorno.= $voperfil->getSQLValuesInsertEntidade();
 		        
 		return $retorno;                
     }
@@ -46,7 +46,7 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
         $sqlConector = "";
                 
         if($vo->descricao != null){
-        	$retorno.= $sqlConector . vomateria::$nmAtrDescricao . " = " . $this->getVarComoString(strtoupper($vo->descricao));
+        	$retorno.= $sqlConector . voperfil::$nmAtrDescricao . " = " . $this->getVarComoString(strtoupper($vo->descricao));
             $sqlConector = ",";
         }
                

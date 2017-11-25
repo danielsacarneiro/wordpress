@@ -20,15 +20,20 @@ setCabecalho(constantes::$tituloSistema);
 	f = new Tree('Menu de Funcionalidades finalizadas e entregue a SEFAZ-PE (Homologação)', true);
 	
 	f1 = new Tree('Serviço 01 (Tabelas)');	
-    f1.adicionarItem(new Link('Documentos', '<?=caminho_funcoesHTML?>documento', ''));
-    f1.adicionarItem(new Link('Pessoas', '<?=caminho_funcoesHTML?>pessoa', ''));
     f1.adicionarItem(new Link('Matérias', '<?=caminho_funcoesHTML?>materia', ''));
+    f1.adicionarItem(new Link('Fontes de leitura', '<?=caminho_funcoesHTML?>materia_fonte', ''));
+    f1.adicionarItem(new Link('Perfis', '<?=caminho_funcoesHTML?>perfil', ''));
 	f.adicionarItem(f1);
-	
-	f2 = new Tree('Serviço 02 (Relacionamentos)');
-    f2.adicionarItem(new Link('Pessoa x Turma', '<?=caminho_funcoesHTML?>pessoa_turma', ''));
-    f2.adicionarItem(new Link('Turmas', '<?=caminho_funcoesHTML?>turma', ''));
+
+	f2 = new Tree('Serviço 02 (Pessoas)');	
+    f2.adicionarItem(new Link('Pessoas', '<?=caminho_funcoesHTML?>pessoa', ''));
 	f.adicionarItem(f2);
+	
+	
+	f3 = new Tree('Serviço 03 (Relacionamentos)');
+    f3.adicionarItem(new Link('Pessoa x Turma', '<?=caminho_funcoesHTML?>pessoa_turma', ''));
+    f3.adicionarItem(new Link('Turmas', '<?=caminho_funcoesHTML?>turma', ''));
+	f.adicionarItem(f3);
 	
 	<?php if(isUsuarioAdmin()){?>
 	/*f5 = new Tree('Serviço 05 (ADMINISTRADOR)');

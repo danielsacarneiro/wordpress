@@ -73,6 +73,8 @@
     static $CD_CAMPO_SUBSTITUICAO = "[[*]]";
     static $CD_CAMPO_NULO = "null";
     static $ID_REQ_SESSAO_VO = "vo";
+    
+    static $ID_REQ_NMSISTEMA = "NMSISTEMA";
        
 }
 ?>
