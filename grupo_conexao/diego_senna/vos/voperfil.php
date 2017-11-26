@@ -63,6 +63,11 @@ class voperfil extends voentidade {
 	function getValorChavePrimaria() {
 		return $this->cd;
 	}
+	function getValorChaveHTML() {
+		$retorno = $this->getValorChavePrimaria ();
+		$retorno .= constantes::$CD_CAMPO_SEPARADOR . $this->descricao;
+		return $retorno;
+	}
 	function toString() {
 		$retorno .= $this->cd . ",";
 		$retorno .= $this->descricao . ",";

@@ -4,55 +4,70 @@ include_once(caminho_util."bibliotecaHTML.php");
 
 try{
 //inicia os parametros
-inicioComValidacaoUsuario(true);
+inicio();
 
-$vo = new vomateriafonte();
+$vo = new voperfilmateria();
 //var_dump($vo->varAtributos);
+$chave = @$_GET["chave"];
+$array = explode("*",$chave);
 
-$funcao = @$_GET["funcao"];
-
-$readonly = "";
-$isInclusao = $funcao == constantes::$CD_FUNCAO_INCLUIR;
-
-$nmFuncao = "";
-if($isInclusao){    
-	$nmFuncao = "INCLUIR ";	
-}else{
-    $readonly = "readonly";
-	$vo->getVOExplodeChave();
-		
-	$dbprocesso = $vo->dbprocesso;					
-	$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
-	$vo->getDadosBanco($colecao);
-	
-	$vomateria = new vomateria();
-	$vomateria->getDadosBanco($colecao);
-	putObjetoSessao($vo->getNmTabela(), $vo);
-
-    $nmFuncao = "ALTERAR ";
+$vo->cd = $array[0];
+$vo->cdHistorico = $array[1];
+$isHistorico = ("S" == $vo->cdHistorico);    
+if($isHistorico){
+    $sqHist = $array[2];
+    $vo->sqHist = $sqHist;
 }
 
-$titulo = $vo->getTituloJSP();
-$titulo = $nmFuncao . $titulo;
-setCabecalho($titulo);
+$readonly = "";
+$nmFuncao = "";
+$readonly = "readonly";
+$vo->getVOExplodeChave();
 
-$nome  = $vo->descricao;
-   
+$dbprocesso = $vo->dbprocesso;
+$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);
+$vo->getDadosBanco($colecao);
+
+$vomateria = new vomateria();
+$vomateria->getDadosBanco($colecao);
+
+$voperfil = new voperfil();
+$voperfil->getDadosBanco($colecao);
+
+putObjetoSessao($vo->getNmTabela(), $vo);
+    
+$dhInclusao = $vo->dhInclusao;
+$dhUltAlteracao = $vo->dhUltAlteracao;
+$cdUsuarioInclusao = $vo->cdUsuarioInclusao;
+$cdUsuarioUltAlteracao = $vo->cdUsuarioUltAlteracao;
+
+
+$nmFuncao = "DETALHAR ";
+$titulo = $vo->getTituloJSP();
+$complementoTit = "";
+$isExclusao = false;
+if($isHistorico)
+    $complementoTit = " Histórico";
+
+$funcao = @$_GET["funcao"];
+if($funcao == constantes::$CD_FUNCAO_EXCLUIR){
+	$nmFuncao = "EXCLUIR ";
+    $isExclusao = true;
+}
+
+$titulo = $nmFuncao. $titulo. $complementoTit;
+setCabecalho($titulo);  
 ?>
 <!DOCTYPE html>
 <HEAD>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_text.js"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>mensagens_globais.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_cnpfcnpj.js"></SCRIPT>
 
 <SCRIPT language="JavaScript" type="text/javascript">
 // Verifica se o formulario esta valido para alteracao, exclusao ou detalhamento
-function isFormularioValido() {	
-	campoCdMateria = document.frm_principal.<?=vomateriafonte::$nmAtrCdMateria?>;
-	if(!isCampoNumericoValido(campoCdMateria, true, 1, null, null, true)){
-		exibirMensagem("Selecione a matéria.");
-		return false;
-	}
+function isFormularioValido() {
+	if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
+		return false;		
 	return true;
 }
 
@@ -63,18 +78,11 @@ function cancelar() {
 }
 
 function confirmar() {
-	if(!isFormularioValido())
-		return false;
-	
 	return confirm("Confirmar Alteracoes?");    
 }
 
-function transferirDadosMateria(cdMateria, dsMateria){
-	document.frm_principal.<?=vomateriafonte::$nmAtrCdMateria?>.value = completarNumeroComZerosEsquerda(cdMateria, <?=TAMANHO_CODIGOS_SAFI?>);
-	document.frm_principal.<?=vomateria::$nmAtrDescricao?>.value = dsMateria;
-}
-
 </SCRIPT>
+
 </HEAD>
 <?=setTituloPagina($vo->getTituloJSP())?>
 <BODY class="paginadados" onload="">
@@ -95,34 +103,29 @@ function transferirDadosMateria(cdMateria, dsMateria){
             <TABLE id="table_filtro" class="filtro" cellpadding="0" cellspacing="0">
             <TBODY>
 	        <?php 
-	        if(!$isInclusao){
-	        	$class = constantes::$CD_CLASS_CAMPO_READONLY;
-	        }else{
-	        	$class = constantes::$CD_CLASS_CAMPO_READONLY;
-	        	$size = TAMANHO_CODIGOS_SAFI;
-	        	$lupa = getLinkPesquisa(caminho_funcoesHTML."materia");
-	        }
+        	$class = constantes::$CD_CLASS_CAMPO_READONLY;
+        	$size = TAMANHO_CODIGOS_SAFI;
 	        ?>
+			<TR>
+                <TH class="campoformulario" width="1%" nowrap>Perfil:</TH>
+                <TD class="campoformulario" colspan=3>
+                	Cd. <?=getInputText(voperfilmateria::$nmAtrCdPerfil, voperfilmateria::$nmAtrCdPerfil, complementarCharAEsquerda($vo->cdPerfil, "0", TAMANHO_CODIGOS_SAFI), $class, $size) . " $lupaPerfil"?>
+					- Descrição: <?=getInputText(voperfil::$nmAtrDescricao, voperfil::$nmAtrDescricao, $voperfil->descricao, constantes::$CD_CLASS_CAMPO_READONLY)?> 
+                </TD>
+            </TR>        
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Matéria:</TH>
                 <TD class="campoformulario" colspan=3>
-                	Cd. <?=getInputText(vomateriafonte::$nmAtrCdMateria, vomateriafonte::$nmAtrCdMateria, complementarCharAEsquerda($vo->cdMateria, "0", TAMANHO_CODIGOS_SAFI), $class, $size) . " $lupa"?>
+                	Cd. <?=getInputText(voperfilmateria::$nmAtrCdMateria, voperfilmateria::$nmAtrCdMateria, complementarCharAEsquerda($vo->cdMateria, "0", TAMANHO_CODIGOS_SAFI), $class, $size) . " $lupaMateria"?>
 					- Descrição: <?=getInputText(vomateria::$nmAtrDescricao, vomateria::$nmAtrDescricao, $vomateria->descricao, constantes::$CD_CLASS_CAMPO_READONLY)?> 
                 </TD>
             </TR>        
 			<TR>
-                <TH class="campoformulario" nowrap width=1%>Fonte:</TH>
+                <TH class="campoformulario" nowrap width=1%>Carga:</TH>
                 <TD class="campoformulario" colspan=3>
-	        <?php 
-	        if(!$isInclusao){
-	        ?>
-               	Cd. <?=getInputText(vomateriafonte::$nmAtrCdFonte, vomateriafonte::$nmAtrCdFonte, complementarCharAEsquerda($vo->cdFonte, "0", TAMANHO_CODIGOS_SAFI), constantes::$CD_CLASS_CAMPO_READONLY)?> -
-	        <?php 
-	        }
-	        ?>
-                Descrição: <INPUT type="text" id="<?=vomateriafonte::$nmAtrDescricao?>" name="<?=vomateriafonte::$nmAtrDescricao?>"  value="<?php echo($vo->descricao);?>"  class="camponaoobrigatorio" size="50" required></TD>
+                <?=getInputText(voperfilmateria::$nmAtrCarga, voperfilmateria::$nmAtrCarga, complementarCharAEsquerda($vo->carga, "0", TAMANHO_CODIGOS_SAFI), constantes::$CD_CLASS_CAMPO_READONLY)?>                 
+                horas</TD>
             </TR>
-
         <?php if(!$isInclusao){
             echo "<TR>" . incluirUsuarioDataHoraDetalhamento($vo) .  "</TR>";
         }?>
@@ -139,8 +142,8 @@ function transferirDadosMateria(cdMateria, dsMateria){
 						<TD>
                     		<TABLE class="barraacoesaux" cellpadding="0" cellspacing="0">
 	                    	<TR>
-							<?=getBotoesRodape();?>
-							</TR>
+	                    	<?=getBotoesRodape();?>
+						    </TR>
 		                    </TABLE>
 	                    </TD>
                     </TR>  
@@ -157,6 +160,6 @@ function transferirDadosMateria(cdMateria, dsMateria){
 <?php 
 } catch ( Exception $ex ) {
 	putObjetoSessao ( "vo", $vo );
-	tratarExcecaoHTML ( $ex, null, temSistemaInterno());
+	tratarExcecaoHTML ( $ex );
 }
 ?>

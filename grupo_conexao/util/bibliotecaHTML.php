@@ -47,6 +47,14 @@ function setTituloPagina($titulo) {
 function setCabecalho($titulo) {
 	return setCabecalhoPorNivel ( $titulo, null );
 }
+function getNmSistemaHTML(){
+	$nmSistemaAExibir = constantes::$nomeSistema;
+	if(isSistemaInterno()){
+		$nmSistemaAExibir = GLOBALNmSistema;
+	}
+	
+	return $nmSistemaAExibir;	
+}
 function setTituloPaginaPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	$pastaCSS = caminho_css;
 	$pastaCSS = subirNivelPasta ( $pastaCSS, $qtdNiveisAcimaEmSeEncontraPagina );
@@ -54,10 +62,12 @@ function setTituloPaginaPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 	$pastaJS = caminho_js;
 	$pastaJS = subirNivelPasta ( $pastaJS, $qtdNiveisAcimaEmSeEncontraPagina );
 	
+	$nmSistemaAExibir = getNmSistemaHTML();
+	
 	if ($titulo == null) {
-		$titulo = constantes::$nomeSistema;
+		$titulo = $nmSistemaAExibir;
 	} else {
-		$titulo = constantes::$nomeSistema . " : $titulo";
+		$titulo = $nmSistemaAExibir. " : $titulo";
 	}
 	
 	$codificacaoHTML = "\n<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>";
@@ -123,7 +133,7 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
                                 </TH>
                                 </TR>                                
                                 <TR>
-                                <TH class=headertabeladados>&nbsp;" . constantes::$nomeSistema . "$titulo<br></TH>
+                                <TH class=headertabeladados>&nbsp;" . getNmSistemaHTML() . "$titulo<br></TH>
                                 <TH class=headertabeladadosalinhadodireita width='1%' nowrap>&nbsp" . utf8_decode ( name_user ) . ",
                                 <a class='linkbranco' href='$paginaMenu' >Menu</a>
                                 <a href='" . $pastaLogin . "login.php?funcao=I$idreq_nmSistema' ><img  title='Entrar' src='" . $pastaImagens . "botao_home_laranja.gif' width='20' height='20'></a>

@@ -1,15 +1,14 @@
 <?php
 include_once("../../config_sistema.php");
 include_once(caminho_util."bibliotecaHTML.php");
-//include_once(caminho_filtros . "filtroManterMateria.php");
 
 //inicia os parametros
 inicio();
 
-$titulo = "CONSULTAR " . voperfil::getTituloJSP();
+$titulo = "CONSULTAR " . voperfilmateria::getTituloJSP();
 setCabecalho($titulo);
 	
-$filtro  = new filtroManterMateria(true);
+$filtro  = new filtroManterPerfilMateria();
 $filtro = filtroManter::verificaFiltroSessao($filtro);
 
 $nome = $filtro->descricao;
@@ -17,9 +16,9 @@ $cdHistorico = $filtro->cdHistorico;
 $cdOrdenacao = $filtro->cdOrdenacao;
 $isHistorico = ("S" == $cdHistorico); 
 
-$vo = new voperfil();
+$vo = new voperfilmateria();
 $dbprocesso = $vo->dbprocesso;
-$colecao = $dbprocesso->consultarComPaginacao($vo, $filtro);
+$colecao = $dbprocesso->consultarTelaConsulta($filtro);
 
 if($filtro->temValorDefaultSetado){
 	;
@@ -48,10 +47,10 @@ function selecionar() {
 	if (window.opener != null) {
 		array = retornarValorRadioButtonSelecionadoComoArray("document.frm_principal.rdb_consulta", "*");
 		
-		cd= array[0];
-		ds= array[1];
+		cdmateriafonte = array[0];
+		dsmateriafonte = array[1];
 
-		window.opener.transferirDadosPerfil(cd, ds);
+		window.opener.transferirDadosOrgaomateriafonte(cdmateriafonte, dsmateriafonte);
 		window.close();
 	}
 }
@@ -100,11 +99,10 @@ function alterar() {
     	echo "exibirMensagem('Registro de historico nao permite alteracao.');return";
     }?>
     
-	chave = document.frm_principal.rdb_consulta.value;	
+	chave = document.frm_principal.rdb_consulta.value;
 	location.href="manter.php?funcao=<?=constantes::$CD_FUNCAO_ALTERAR?>&chave=" + chave;
 
 }
-
 </SCRIPT>
 </HEAD>
 <?=setTituloPagina($vo->getTituloJSP())?>
@@ -129,9 +127,21 @@ function alterar() {
     <TABLE id="table_filtro" class="filtro" cellpadding="0" cellspacing="0">
         <TBODY>
 			<TR>
-                <TH class="campoformulario" width="1%" nowrap>Descrição:</TH>
-                <TD class="campoformulario"  colspan=3><INPUT type="text" id="<?=voperfil::$nmAtrDescricao?>" name="<?=voperfil::$nmAtrDescricao?>"  value="<?php echo($nome);?>"  class="camponaoobrigatorio" size="50" ></TD>
-            </TR>
+                <TH class="campoformulario" width="1%" nowrap>Perfil:</TH>
+                <TD class="campoformulario" >
+                	Cd. <INPUT type="text" id="<?=voperfil::$nmAtrCd?>" name="<?=voperfil::$nmAtrCd?>"  value="<?php echo(complementarCharAEsquerda($filtro->voperfil->cd, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
+					- Descrição: 
+                	<INPUT type="text" id="<?=voperfil::$nmAtrDescricao?>" name="<?=voperfil::$nmAtrDescricao?>"  value="<?php echo($filtro->voperfil->descricao);?>"  class="camponaoobrigatorio" size="50" >
+                </TD>
+            </TR>        
+			<TR>
+                <TH class="campoformulario" width="1%" nowrap>Matéria:</TH>
+                <TD class="campoformulario" >
+                	Cd. <INPUT type="text" id="<?=vomateria::$nmAtrCd?>" name="<?=vomateria::$nmAtrCd?>"  value="<?php echo(complementarCharAEsquerda($filtro->vomateria->cd, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
+					- Descrição: 
+                	<INPUT type="text" id="<?=vomateria::$nmAtrDescricao?>" name="<?=vomateria::$nmAtrDescricao?>"  value="<?php echo($filtro->vomateria->descricao);?>"  class="camponaoobrigatorio" size="50" >
+                </TD>
+            </TR>        
         <?PHP echo getComponenteConsultaFiltro($vo->temTabHistorico, $filtro);?>
        </TBODY>
   </TABLE>
@@ -145,8 +155,9 @@ function alterar() {
              <TBODY>
                 <TR>
                   <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
-                    <TH class="headertabeladados" width="1%">Código</TH>
-                    <TH class="headertabeladados" width="98%">Descrição</TH>
+                    <TH class="headertabeladados" width="1%" nowrap>Perfil</TH>
+                    <TH class="headertabeladados" width="30%">Matéria</TH>
+                    <TH class="headertabeladados" width="1%">Horas</TH>
                 </TR>
                 <?php								
                 if (is_array($colecao))
@@ -154,21 +165,35 @@ function alterar() {
                 else 
                         $tamanho = 0;			
                
-                 $colspan=3;
+                 $colspan=4;
                  if($isHistorico){
                  	$colspan++;
                  }                        
                             
                 for ($i=0;$i<$tamanho;$i++) {
-                        $voAtual = new voperfil();
-                        $voAtual->getDadosBanco($colecao[$i]);                                                            
-                ?>
+                	$registroAtual = $colecao[$i];
+                        $voAtual = new voperfilmateria();
+                        $voAtual->getDadosBanco($colecao[$i]);
+                        
+                        $voMateriaAtual = new vomateria();
+                        $voMateriaAtual->getDadosBanco($colecao[$i]);
+                                                
+                        $dsMateriaAtual = complementarCharAEsquerda($voAtual->cdMateria, "0", TAMANHO_CODIGOS_SAFI)
+                        . "-"
+						. $registroAtual[vomateria::$nmAtrDescricao];
+                        
+						$dsPerfil = complementarCharAEsquerda($voAtual->cdPerfil, "0", TAMANHO_CODIGOS_SAFI)
+						. "-"
+						. $registroAtual[voperfil::$nmAtrDescricao];
+		
+				?>
                 <TR class="dados">
                     <TD class="tabeladados">
                     <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
-                    </TD>
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($colecao[$i][voperfil::$nmAtrCd], "0", TAMANHO_CODIGOS);?></TD>
-                    <TD class="tabeladados"><?php echo $colecao[$i][voperfil::$nmAtrDescricao];?></TD>                    
+                    </TD>                    
+                    <TD class="tabeladados"><?php echo $dsPerfil;?></TD>
+                    <TD class="tabeladados"><?php echo $dsMateriaAtual;?></TD>
+                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->carga, "0", TAMANHO_CODIGOS_SAFI);?></TD>                    
                 </TR>					
                 <?php
 				}				

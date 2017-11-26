@@ -85,8 +85,10 @@ function procurarClasse($class_name, $nmSistemaInterno = null) {
 		//echo "ACHOU";
 		include_once $classe_aincluir;
 	}elseif ($nmSistemaInterno == null){
+
+		$isSistemaInternoValido = function_exists('temSistemaInterno') && temSistemaInterno();
 		//procura classe em caso de estar num sistema interno		
-		if(temSistemaInterno()){
+		if($isSistemaInternoValido){
 			$paramNmSistema= getNmSistemaInterno();			
 			
 			procurarClasse($class_name, $paramNmSistema);

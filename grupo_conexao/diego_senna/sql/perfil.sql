@@ -14,10 +14,15 @@ CREATE TABLE perfil (
     CONSTRAINT pk PRIMARY KEY (perf_cd)
 );
 
-DROP TABLE IF EXISTS perfil_materia;
-CREATE TABLE perfil_materia (
+DROP TABLE IF EXISTS perfil_aluno;
+CREATE TABLE perfil_aluno (
     perf_cd INT NOT NULL,
-    mat_cd INT NOT NULL,
+    pe_cd INT NOT NULL, -- aluno eh uma pessoa
+    
+    -- perfaluno_tp_meta INT NOT NULL, -- dominio: semanal, quinzenal ou mensal
+    perfaluno_diasmeta INT NOT NULL, -- numero X de dias por meta
+    perfaluno_horaspormaterianodia INT NOT NULL, -- numero X de horas por materia no dia
+    perfaluno_dtinicio DATE,    
 	
     dh_inclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
@@ -25,8 +30,22 @@ CREATE TABLE perfil_materia (
     cd_usuario_ultalt INT,
     in_desativado CHAR(1) NOT NULL DEFAULT 'N',
 
-    CONSTRAINT pk PRIMARY KEY (perf_cd, mat_cd)
+    CONSTRAINT pk PRIMARY KEY (perf_cd, pe_cd)
 );
-ALTER TABLE perfil_materia ADD CONSTRAINT fk_perfil_materia_materia FOREIGN KEY ( mat_cd ) REFERENCES materia (mat_cd) 
-ON DELETE RESTRICT
-ON UPDATE RESTRICT;
+
+DROP TABLE IF EXISTS perfil_materia;
+CREATE TABLE perfil_materia (
+    perf_cd INT NOT NULL,
+    mat_cd INT NOT NULL,
+    
+    perfmat_carga INT NOT NULL, -- numero X de horas total da materia
+	
+    dh_inclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    cd_usuario_incl INT,
+    cd_usuario_ultalt INT,
+    in_desativado CHAR(1) NOT NULL DEFAULT 'N',
+
+    CONSTRAINT pk PRIMARY KEY (perf_cd, mat_cd),
+	CONSTRAINT fk_perfil_materia_materia FOREIGN KEY ( mat_cd ) REFERENCES materia (mat_cd) ON DELETE RESTRICT ON UPDATE RESTRICT    
+);

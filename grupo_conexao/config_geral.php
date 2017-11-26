@@ -1,13 +1,14 @@
 <?php
-function setSistemaInterno($nmSistema){
+function setSistemaInterno($pastaSistema, $nmSistema=null){
 	define('isSistemaInterno', true);
-	define('nmSistema', $nmSistema);
+	define('GLOBALNmSistema', $nmSistema);
+	define('pastaSistema', $pastaSistema);
 	define('imgSistema', "../../imagens/logo.jpg");	
 }
 
 function getNmSistemaInterno(){
-	if(defined('nmSistema'))
-		$retorno = nmSistema;
+	if(defined('pastaSistema'))
+		$retorno = pastaSistema;
 	
 	return $retorno;
 }
