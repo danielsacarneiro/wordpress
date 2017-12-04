@@ -31,6 +31,11 @@ setCabecalho(constantes::$tituloSistema);
 	f3 = new Tree('Serviço 03 (Perfil)');
     f3.adicionarItem(new Link('Perfis', '<?=caminho_funcoesHTML?>perfil', ''));
     f3.adicionarItem(new Link('Perfil x Matérias', '<?=caminho_funcoesHTML.voperfilmateria::getNmTabela()?>', ''));
+    f3.adicionarItem(new Link('Perfil x Alunos', '<?=caminho_funcoesHTML.voperfilaluno::getNmTabela()?>', ''));    
+	f.adicionarItem(f3);
+
+	f3 = new Tree('Serviço 04 (Meta)');
+    f3.adicionarItem(new Link('Metas x Perfil', '<?=caminho_funcoesHTML.vometafonte::getNmTabela()?>', ''));
 	f.adicionarItem(f3);
 	
 	<?php if(isUsuarioAdmin()){?>

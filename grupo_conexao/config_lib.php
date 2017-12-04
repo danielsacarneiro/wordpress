@@ -106,6 +106,7 @@ $caminhoIMG = "imagens/";
 $pastaRaiz = "../../";
 
 if(isSistemaInterno()){
+	define('caminho_funcoes_sistema', caminho . "/". getNmSistemaInterno()."/funcoes/");
 	$pastaRaiz = "../$pastaRaiz";
 }
 $caminhoJS = $pastaRaiz . $caminhoJS;

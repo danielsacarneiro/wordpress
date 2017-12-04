@@ -48,7 +48,7 @@ class filtroManter extends multiplosConstrutores {
 		$this->tpVigencia = constantes::$CD_OPCAO_TODOS;
 		$this->NM_METODO_FILTRO_CONSULTA = "getFiltroConsultaSQL";
 		
-		if ($pegarFiltrosDaTela) {
+		if ($pegarFiltrosDaTela) {			
 			$this->pegarFiltroDaTela ();
 			// chama o metodo do filho que pega os dados do filtro do formulario
 			if (method_exists ( $this, "getFiltroFormulario" )) {

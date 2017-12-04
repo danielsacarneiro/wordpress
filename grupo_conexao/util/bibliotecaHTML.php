@@ -101,7 +101,7 @@ function setCabecalhoPorNivel($titulo, $qtdNiveisAcimaEmSeEncontraPagina) {
 		$imgSistema = imgSistema;
 		$imgSistema= subirNivelPasta ( $imgSistema, $qtdNiveisAcimaEmSeEncontraPagina );
 				
-		$idreq_nmSistema = "&".constantes::$ID_REQ_NMSISTEMA."=".nmSistema;
+		$idreq_nmSistema = "&".constantes::$ID_REQ_NMSISTEMA."=".getNmSistemaInterno();
 	}else{
 		$imgSistema = $pastaImagens . "bg_topo_trapezio.gif";
 	}			
@@ -916,6 +916,25 @@ function getDetalhamentoHTMLCodigoAno($ano, $cd, $tamanhoCodigo = null) {
 	$retorno .= "Ano: <INPUT type='text' value='$ano'  class='camporeadonly' size='5' readonly>";
 	$retorno .= "Número: <INPUT type='text' value='" . complementarCharAEsquerda ( $cd, "0", $tamanhoCodigo ) . "'  class='camporeadonlyalinhadodireita' size='6' readonly>";
 	return $retorno;
+}
+
+function getColecaoComoVariavelJS($colecao, $nmVariavelJS){
+	if(!isColecaoVazia($colecao)){
+		$jsvarColecao = "$nmVariavelJS = new Array();\n";
+		$chaves = array_keys($colecao);
+		for ($i=0; $i<count($colecao);$i++){
+			$chave = $chaves[$i];
+			$jsvarColecao .=  $nmVariavelJS."[$chave]='". $colecao[$chave] . "';\n";
+		}
+	}
+	return 	$jsvarColecao;
+}
+
+function getFuncao(){
+	$funcao = @$_GET ["funcao"];
+	if($funcao == null)
+		$funcao = @$_POST ["funcao"];
+	return $funcao;
 }
 
 ?>

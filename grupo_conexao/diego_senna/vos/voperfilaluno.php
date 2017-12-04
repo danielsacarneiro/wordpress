@@ -1,14 +1,14 @@
 <?php
 include_once (caminho_lib . "voentidade.php");
-class vomateriafonte extends voentidade {
+class voperfilaluno extends voentidade {
 
 	static $nmAtrCdMateria = "mat_cd";
-	static $nmAtrCdFonte = "fonte_cd";
-	static $nmAtrDescricao = "fonte_ds";
+	static $nmAtrCdPerfil = "perf_cd";
+	static $nmAtrCarga = "perfmat_carga";
 	
-	var $cdFonte = "";
+	var $cdPerfil = "";
 	var $cdMateria = "";
-	var $descricao = "";
+	var $carga = "";
 	
 	// ...............................................................
 	// Funções ( Propriedades e métodos da classe )
@@ -27,19 +27,20 @@ class vomateriafonte extends voentidade {
 		$this->removeAtributos ( $arrayAtribRemover );*/
 	}
 	public static function getTituloJSP() {
-		return "FONTE DE LEITURA";
+		return "PERFIL X ALUNO";
 	}
 	public static function getNmTabela() {
-		return "materia_fonte";
+		return "perfil_aluno";
 	}
 	public function getNmClassProcesso() {
-		return "dbmateriafonte";
+		return "dbperfilaluno";
 	}
 	
 	function getValoresWhereSQLChave($isHistorico) {
 		$nmTabela = $this->getNmTabelaEntidade ( $isHistorico );
 		$query = $this->getValoresWhereSQLChaveLogicaSemSQ ( $isHistorico );
-		$query .= " AND " . $nmTabela . "." . self::$nmAtrCdFonte . "=" . $this->cdFonte;
+		/*$query .= " AND " . $nmTabela . "." . self::$nmAtrCdFonte . "=" . $this->cdFonte;
+		$query .= " AND " . $nmTabela . "." . self::$nmAtrCdFonte . "=" . $this->cdFonte;*/
 		
 		if ($isHistorico)
 			$query .= " AND " . $nmTabela . "." . self::$nmAtrSqHist . "=" . $this->sqHist;
@@ -49,66 +50,73 @@ class vomateriafonte extends voentidade {
 	function getValoresWhereSQLChaveLogicaSemSQ($isHistorico) {
 		$nmTabela = $this->getNmTabelaEntidade ( $isHistorico );
 		$query = $nmTabela . "." . self::$nmAtrCdMateria. "=" . $this->cdMateria;
+		$query = $nmTabela . "." . self::$nmAtrCdPerfil . "=" . $this->cdPerfil;
 		
 		return $query;
 	}
 	
 	function getAtributosFilho() {
 		$retorno = array (
+				self::$nmAtrCdPerfil,
 				self::$nmAtrCdMateria,
-				self::$nmAtrCdFonte,
-				self::$nmAtrDescricao,
+				self::$nmAtrCarga,
 		);
 		
 		return $retorno;
 	}
 	function getAtributosChavePrimaria() {
 		$retorno = array (
+				self::$nmAtrCdPerfil,
 				self::$nmAtrCdMateria,
-				self::$nmAtrCdFonte
 		);
 		
 		return $retorno;
 	}	
 	function getDadosRegistroBanco($registrobanco) {
 		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
+		$this->cdPerfil = $registrobanco [self::$nmAtrCdPerfil];
 		$this->cdMateria = $registrobanco [self::$nmAtrCdMateria];
-		$this->cdFonte = $registrobanco [self::$nmAtrCdFonte];
-		$this->descricao = $registrobanco [self::$nmAtrDescricao];
+		$this->carga = $registrobanco [self::$nmAtrCarga];
 	}
 	function getDadosFormulario() {
+		$this->cdPerfil = @$_POST [self::$nmAtrCdPerfil];
 		$this->cdMateria = @$_POST [self::$nmAtrCdMateria];
-		$this->cdFonte = @$_POST [self::$nmAtrCdFonte];
-		$this->descricao = strtoupper(@$_POST [self::$nmAtrDescricao]);
+		$this->carga = @$_POST [self::$nmAtrCarga];
 	}
 	function getValorChavePrimaria() {
-		return $this->cdMateria . CAMPO_SEPARADOR . $this->cdFonte . CAMPO_SEPARADOR . $this->sqHist;
+		return $this->cdPerfil . CAMPO_SEPARADOR . $this->cdMateria . CAMPO_SEPARADOR . $this->sqHist;
 	}
 	
 	function getChavePrimariaVOExplode($array) {
-		$this->cdMateria = $array [0];
-		$this->cdFonte = $array [1];
+		$this->cdPerfil = $array [0];
+		$this->cdMateria = $array [1];
 	}
-	function getValorChaveHTML() {
-		$retorno = $this->getValorChavePrimaria ();
-		$retorno .= constantes::$CD_CAMPO_SEPARADOR . $this->descricao;
-		return $retorno;
-	}	
 	
 	function toString() {
+		$retorno .= $this->cdPerfil . ",";
 		$retorno .= $this->cdMateria . ",";
-		$retorno .= $this->cdFonte . ",";
-		$retorno .= $this->descricao . ",";
+		$retorno .= $this->carga . ",";
 		return $retorno;
 	}
 	
 	function getMensagemComplementarTelaSucesso() {
-		$vomateria = new vomateria();
-		$vomateria->cd = $this->cdMateria;		
-		$vomateria->dbprocesso->consultarPorChaveVO($vomateria);		
-		//var_dump($vomateria);		
-		$dsMateria = $vomateria->descricao;
-		$retorno = $this->getMensagemComplementarTelaSucessoPadrao ( $dsMateria . ":" . $this->getTituloJSP (), $this->cdFonte, $this->descricao, $this->sqHist );
+		if($this->carga != null){
+			$filtro = new filtroManterPerfilMateria(false);
+			$vomateria = new vomateria();
+			$vomateria->cd = $this->cdMateria;
+			$filtro->vomateria = $vomateria;
+			$voperfil = new voperfil();
+			$voperfil->cd = $this->cdPerfil;
+			$filtro->voperfil = $voperfil;
+			
+			$colecao = $this->dbprocesso->consultarTelaConsulta($filtro);
+			$registro = $colecao[0];
+			$voperfil->getDadosBanco($registro);
+			$vomateria->getDadosBanco($registro);
+			
+			$retorno = "Perfil($voperfil->descricao) x Mat�ria($vomateria->descricao): " . complementarCharAEsquerda($this->carga, "0", TAMANHO_CODIGOS_SAFI) . " HORAS";
+		}
+		//$retorno = $this->getMensagemComplementarTelaSucessoPadrao ( $dsMateria . ":" . $this->getTituloJSP (), $this->cdFonte, $this->descricao, $this->sqHist );
 		return $retorno;
 	}
 	

@@ -3,12 +3,15 @@ include_once("../../config_sistema.php");
 include_once(caminho_util."bibliotecaHTML.php");
 
 //inicia os parametros
+try{
 inicio();
 
-$titulo = "CONSULTAR " . vomateriafonte::getTituloJSP();
+$titulo = "CONSULTAR " . vometafonte::getTituloJSP();
 setCabecalho($titulo);
-	
-$filtro  = new filtroManterMateriaFonte(true);
+
+$vo = new vometafonte();
+$filtro  = new filtroManterMetaFonte();
+//$filtro->voPrincipal = $vo;
 $filtro = filtroManter::verificaFiltroSessao($filtro);
 
 $nome = $filtro->descricao;
@@ -16,9 +19,9 @@ $cdHistorico = $filtro->cdHistorico;
 $cdOrdenacao = $filtro->cdOrdenacao;
 $isHistorico = ("S" == $cdHistorico); 
 
-$vo = new vomateriafonte();
+
 $dbprocesso = $vo->dbprocesso;
-$colecao = $dbprocesso->consultarTelaConsulta($vo, $filtro);
+$colecao = $dbprocesso->consultarTelaConsulta($filtro);
 
 if($filtro->temValorDefaultSetado){
 	;
@@ -47,11 +50,10 @@ function selecionar() {
 	if (window.opener != null) {
 		array = retornarValorRadioButtonSelecionadoComoArray("document.frm_principal.rdb_consulta", "*");
 		
-		cdmateria = array[0];
-		cdFonte = array[1]
-		dsmateriafonte = array[3];
+		cdmateriafonte = array[0];
+		dsmateriafonte = array[1];
 
-		window.opener.transferirDadosMateriaFonte(cdmateria,cdFonte, dsmateriafonte);
+		window.opener.transferirDadosOrgaomateriafonte(cdmateriafonte, dsmateriafonte);
 		window.close();
 	}
 }
@@ -128,17 +130,21 @@ function alterar() {
     <TABLE id="table_filtro" class="filtro" cellpadding="0" cellspacing="0">
         <TBODY>
 			<TR>
-                <TH class="campoformulario" width="1%" nowrap>Matéria:</TH>
+                <TH class="campoformulario" width="1%" nowrap>Perfil:</TH>
                 <TD class="campoformulario" >
-                	Cd. <INPUT type="text" id="<?=vomateria::$nmAtrCd?>" name="<?=vomateria::$nmAtrCd?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdMateria , "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
+                	Cd. <INPUT type="text" id="<?=vometafonte::$nmAtrCdPerfil?>" name="<?=vometafonte::$nmAtrCdPerfil?>"  value="<?php echo(complementarCharAEsquerda($filtro->vometafonte->cdPerfil, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
 					- Descrição: 
-                	<INPUT type="text" id="<?=vomateria::$nmAtrDescricao?>" name="<?=vomateria::$nmAtrDescricao?>"  value="<?php echo($filtro->dsMateria);?>"  class="camponaoobrigatorio" size="50" >
+                	<INPUT type="text" id="<?=voperfil::$nmAtrDescricao?>" name="<?=voperfil::$nmAtrDescricao?>"  value="<?php echo($filtro->voperfil->descricao);?>"  class="camponaoobrigatorio" size="50" >
                 </TD>
             </TR>        
 			<TR>
-                <TH class="campoformulario" width="1%" nowrap>Fonte:</TH>
-                <TD class="campoformulario"  colspan=3><INPUT type="text" id="<?=vomateriafonte::$nmAtrDescricao?>" name="<?=vomateriafonte::$nmAtrDescricao?>"  value="<?php echo($filtro->dsFonte);?>"  class="camponaoobrigatorio" size="50" ></TD>
-            </TR>
+                <TH class="campoformulario" width="1%" nowrap>Matéria:</TH>
+                <TD class="campoformulario" >
+                	Cd. <INPUT type="text" id="<?=vometafonte::$nmAtrCdMateria?>" name="<?=vometafonte::$nmAtrCdMateria?>"  value="<?php echo(complementarCharAEsquerda($filtro->vometafonte->cdMateria, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
+					- Descrição: 
+                	<INPUT type="text" id="<?=vomateria::$nmAtrDescricao?>" name="<?=vomateria::$nmAtrDescricao?>"  value="<?php echo($filtro->vomateria->descricao);?>"  class="camponaoobrigatorio" size="50" >
+                </TD>
+            </TR>        
         <?PHP echo getComponenteConsultaFiltro($vo->temTabHistorico, $filtro);?>
        </TBODY>
   </TABLE>
@@ -152,9 +158,12 @@ function alterar() {
              <TBODY>
                 <TR>
                   <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
-                    <TH class="headertabeladados" width="1%">Código</TH>
-                    <TH class="headertabeladados" width="75%">Descrição</TH>
-                    <TH class="headertabeladados" width="20%">Matéria</TH>
+                    <TH class="headertabeladados" width="1%">Meta</TH>                  
+                    <TH class="headertabeladados" width="10%" nowrap>Perfil</TH>
+                    <TH class="headertabeladados" width="10%">Matéria</TH>
+                    <TH class="headertabeladados" width="10%">Fonte</TH>
+                    <TH class="headertabeladados" width="10%">Objetivo</TH>
+                    <TH class="headertabeladados" width="1%">Horas</TH>
                 </TR>
                 <?php								
                 if (is_array($colecao))
@@ -162,29 +171,46 @@ function alterar() {
                 else 
                         $tamanho = 0;			
                
-                 $colspan=4;
+                 $colspan=7;
                  if($isHistorico){
                  	$colspan++;
                  }                        
                             
                 for ($i=0;$i<$tamanho;$i++) {
-                        $voAtual = new vomateriafonte();
+                	$registroAtual = $colecao[$i];
+                        $voAtual = new vometafonte();
                         $voAtual->getDadosBanco($colecao[$i]);
                         
                         $voMateriaAtual = new vomateria();
                         $voMateriaAtual->getDadosBanco($colecao[$i]);
+                                                
+                        $dsMateriaAtual = complementarCharAEsquerda($voAtual->cdMateria, "0", TAMANHO_CODIGOS_SAFI)
+                        . "-"
+						. $registroAtual[vomateria::$nmAtrDescricao];
                         
-                        $dsMateriaAtual = complementarCharAEsquerda($voMateriaAtual->cd, "0", TAMANHO_CODIGOS_SAFI)
-                        . " - "
-						. $voMateriaAtual->descricao;
-                ?>
+						$dsPerfil = complementarCharAEsquerda($voAtual->cdPerfil, "0", TAMANHO_CODIGOS_SAFI)
+						. "-"
+						. $registroAtual[voperfil::$nmAtrDescricao];
+						
+						
+						$fonte = dominioTpFonte::getDescricaoStatic($voAtual->tpFonte);
+						
+						if($voAtual->numParamInicio != null){
+							$objetivo = $voAtual->numParamInicio . " a " . $voAtual->numParamFim . " (".dominioTpParametroFonte::getDescricaoStatic($voAtual->tpParam).")";
+						}
+						
+		
+				?>
                 <TR class="dados">
                     <TD class="tabeladados">
                     <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
-                    </TD>
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->cdFonte, "0", TAMANHO_CODIGOS_SAFI);?></TD>
-                    <TD class="tabeladados"><?php echo $voAtual->descricao;?></TD>
+                    </TD>                    
+                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->cdMeta, "0", TAMANHO_CODIGOS_SAFI);?></TD>                    
+                    <TD class="tabeladados"><?php echo $dsPerfil;?></TD>
                     <TD class="tabeladados"><?php echo $dsMateriaAtual;?></TD>                    
+                    <TD class="tabeladados"><?php echo $fonte;?></TD>
+                    <TD class="tabeladados"><?php echo $objetivo;?></TD>
+                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->numHoras, "0", TAMANHO_CODIGOS_SAFI);?></TD>
                 </TR>					
                 <?php
 				}				
@@ -226,3 +252,9 @@ function alterar() {
 
 </BODY>
 </HTML>
+<?php 
+} catch ( Exception $ex ) {
+	putObjetoSessao ( "vo", $vo );
+	tratarExcecaoHTML ( $ex, null, temSistemaInterno());
+}
+?>

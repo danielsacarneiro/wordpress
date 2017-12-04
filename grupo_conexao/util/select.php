@@ -52,6 +52,14 @@ class select extends multiplosConstrutores {
 	}
 	function getHtmlCombo($idSelect, $nmSelect, $opcaoSelecionada, $comOpcaoSelecione, $class, $isTrazerValuenoOption, $TagEJavaScript, $permitirAlteracaoNoCombo = true) {
 		$html = "";
+		if ($class == null) {
+			$class = constantes::$CD_CLASS_CAMPO_NAO_OBRIGATORIO;
+		}elseif ($class == constantes::$CD_CLASS_CAMPO_OBRIGATORIO){
+			$TagEJavaScript.= " required ";
+		} elseif($class == constantes::$CD_CLASS_CAMPO_READONLY){
+			$TagEJavaScript.= " disabled ";
+		}
+		
 		$html = "<select id='$idSelect' name='$nmSelect' class='$class' $TagEJavaScript>\n";
 		
 		if ($permitirAlteracaoNoCombo) {
