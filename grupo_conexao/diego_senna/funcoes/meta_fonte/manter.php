@@ -252,7 +252,6 @@ function iniciar(){
                 	<?=getInputText(vometafonte::$nmAtrNumHoras, vometafonte::$nmAtrNumHoras, $vo->numHoras, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, TAMANHO_CODIGOS_SAFI, null, "onKeyUp='validarCampoNumericoPositivo(this);'")?> (horas)
                 </TD>
             </TR>
-            
 			<TR>
                 <TH class="campoformulario" nowrap width=1%>Observação:</TH>
                 <TD class="campoformulario" colspan=3>

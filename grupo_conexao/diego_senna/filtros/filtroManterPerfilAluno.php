@@ -2,18 +2,20 @@
 include_once(caminho_util."bibliotecaSQL.php");
 include_once(caminho_lib ."filtroManter.php");
 
-class filtroManterPerfilMateria extends filtroManter{
+class filtroManterPerfilAluno extends filtroManter{
     
-    public static $nmFiltro = "filtroManterPerfilMateria";
-    var $vomateria = "";
-    var $voperfil  = "";
+    public static $nmFiltro = "filtroManterPerfilAluno";
+    var $cdPerfil = "";
+    var $cdAluno = "";
+    var $dsPerfil = "";
+    var $nomeAluno = "";    
     
     // ...............................................................
     function getFiltroFormulario(){
-    	$this->vomateria = new vomateria();
-    	$this->vomateria->getDadosFormulario();
-    	$this->voperfil = new voperfil();
-    	$this->voperfil->getDadosFormulario();
+    	$this->cdPerfil = @$_POST[voperfilaluno::$nmAtrCdPerfil];
+    	$this->cdAluno = @$_POST[voperfilaluno::$nmAtrCdAluno];
+    	$this->nomeAluno = @$_POST[vopessoa::$nmAtrNome];
+    	$this->dsPerfil = @$_POST[voperfil::$nmAtrDescricao];    	
 	}
     	
 	function getFiltroConsultaSQL(){
@@ -21,9 +23,9 @@ class filtroManterPerfilMateria extends filtroManter{
 		$conector  = "";
 
 		$isHistorico = $this->isHistorico();
-        $nmTabela = voperfilmateria::getNmTabelaStatic($isHistorico);
+        $nmTabela = voperfilaluno::getNmTabelaStatic($isHistorico);
         $nmTabelaPerfil = voperfil::getNmTabelaStatic($isHistorico);
-        $nmTabelaMateria = vomateria::getNmTabelaStatic($isHistorico);
+        $nmTabelaPessoa = vopessoa::getNmTabelaStatic($isHistorico);
         
 		//seta os filtros obrigatorios        
 		if($this->isSetaValorDefault()){
@@ -32,44 +34,44 @@ class filtroManterPerfilMateria extends filtroManter{
             ;                        
 		}
         
-		if($this->vomateria->cd != null){
+		if($this->cdPerfil != null){
 			$filtro = $filtro . $conector
-						. $nmTabela. "." .voperfilmateria::$nmAtrCdMateria
+						. $nmTabela. "." .voperfilaluno::$nmAtrCdPerfil
 						. " = "
-						. $this->vomateria->cd
+						. $this->cdPerfil
 						;
 			
 			$conector  = "\n AND ";
         
 		}		
 
-		if($this->voperfil->cd != null){
+		if($this->cdAluno != null){
 			$filtro = $filtro . $conector
-			. $nmTabela. "." .voperfilmateria::$nmAtrCdPerfil
+			. $nmTabela. "." .voperfilaluno::$nmAtrCdAluno
 			. " = "
-					. $this->voperfil->cd
+					. $this->cdAluno
 					;
 					
 					$conector  = "\n AND ";
 					
 		}
 		
-		if($this->vomateria->descricao!= null){
+		if($this->nomeAluno != null){
 			$filtro = $filtro . $conector
-			. $nmTabelaMateria. "." .vomateria::$nmAtrDescricao
+			. $nmTabelaPessoa . "." .vopessoa::$nmAtrNome
 			. " LIKE '%"
-					. $this->vomateria->descricao
+					. $this->nomeAluno
 					. "%'";
 					
 					$conector  = "\n AND ";
 					
 		}
 
-		if($this->voperfil->descricao!= null){
+		if($this->dsPerfil != null){
 			$filtro = $filtro . $conector
 			. $nmTabelaPerfil. "." .voperfil::$nmAtrDescricao
 			. " LIKE '%"
-					. $this->voperfil->descricao
+					. $this->dsPerfil
 					. "%'";
 					
 					$conector  = "\n AND ";
@@ -83,7 +85,7 @@ class filtroManterPerfilMateria extends filtroManter{
 		//echo "Filtro:$filtro<br>";
 
 		return $filtro;
-	}
+	}	
 	
 	/*function getAtributoOrdenacaoDefault(){
 	 $nmTabela = vometafonte::getNmTabelaStatic($this->isHistorico);
@@ -96,8 +98,9 @@ class filtroManterPerfilMateria extends filtroManter{
 	
 	function getAtributosOrdenacao(){
 		$varAtributos = array(
-				voperfilmateria::$nmAtrCdPerfil=> "Perfil",
-				voperfilmateria::$nmAtrCdMateria=> "Matéria",
+				voperfilaluno::$nmAtrCdPerfil=> "Perfil",
+				voperfilaluno::$nmAtrCdAluno=> "Aluno",
+				voperfilaluno::$nmAtrTpMeta=> "Meta",				
 		);
 		return $varAtributos;
 	}

@@ -19,8 +19,8 @@ CREATE TABLE perfil_aluno (
     perf_cd INT NOT NULL,
     pe_cd INT NOT NULL, -- aluno eh uma pessoa
     
-    -- perfaluno_tp_meta INT NOT NULL, -- dominio: semanal, quinzenal ou mensal
-    perfaluno_diasmeta INT NOT NULL, -- numero X de dias por meta
+    perfaluno_tpmeta INT NOT NULL, -- dominio: semanal, quinzenal ou mensal
+    perfaluno_diasmeta INT NOT NULL, -- numero X de dias por meta (ex.: semanal)
     perfaluno_horaspormaterianodia INT NOT NULL, -- numero X de horas por materia no dia
     perfaluno_dtinicio DATE,    
 	
@@ -30,7 +30,9 @@ CREATE TABLE perfil_aluno (
     cd_usuario_ultalt INT,
     in_desativado CHAR(1) NOT NULL DEFAULT 'N',
 
-    CONSTRAINT pk PRIMARY KEY (perf_cd, pe_cd)
+    CONSTRAINT pk PRIMARY KEY (perf_cd, pe_cd),
+    CONSTRAINT fk_perfil_aluno_pessoa FOREIGN KEY ( pe_cd ) REFERENCES pessoa (pe_cd) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_perfil_aluno_perfil FOREIGN KEY ( perf_cd ) REFERENCES perfil (perf_cd) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 DROP TABLE IF EXISTS perfil_materia;

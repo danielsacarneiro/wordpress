@@ -183,6 +183,12 @@ class vopessoa extends voentidade {
 	function getValorChavePrimaria() {
 		return $this->cd . constantes::$CD_CAMPO_SEPARADOR . $this->sqHist;
 	}
+	function getValorChaveHTML() {
+		$retorno = $this->getValorChavePrimaria ();
+		$retorno .= constantes::$CD_CAMPO_SEPARADOR . $this->nome;
+		return $retorno;
+	}
+	
 	function getChavePrimariaVOExplode($array){
 		$this->cd = $array [0];
 		$this->sqHist = $array [1];

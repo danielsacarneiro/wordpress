@@ -1,14 +1,22 @@
 <?php
 include_once (caminho_lib . "voentidade.php");
+include_once (caminho_funcoes_sistema. "/perfil_aluno/dominioTpMetaAluno.php");
 class voperfilaluno extends voentidade {
 
-	static $nmAtrCdMateria = "mat_cd";
 	static $nmAtrCdPerfil = "perf_cd";
-	static $nmAtrCarga = "perfmat_carga";
+	static $nmAtrCdAluno = "pe_cd";	
+	
+	static $nmAtrTpMeta = "perfaluno_tpmeta";
+	static $nmAtrNumDiasMeta = "perfaluno_diasmeta";
+	static $nmAtrNumHorasMateriaDia = "perfaluno_horaspormaterianodia";
+	static $nmAtrDtInicio = "perfaluno_dtinicio";	
 	
 	var $cdPerfil = "";
-	var $cdMateria = "";
-	var $carga = "";
+	var $cdAluno = "";
+	var $tpMeta = "";
+	var $numDiasMeta = "";
+	var $numHorasMateriaDia = "";
+	var $dtInicio = "";
 	
 	// ...............................................................
 	// Funções ( Propriedades e métodos da classe )
@@ -49,8 +57,8 @@ class voperfilaluno extends voentidade {
 	}
 	function getValoresWhereSQLChaveLogicaSemSQ($isHistorico) {
 		$nmTabela = $this->getNmTabelaEntidade ( $isHistorico );
-		$query = $nmTabela . "." . self::$nmAtrCdMateria. "=" . $this->cdMateria;
 		$query = $nmTabela . "." . self::$nmAtrCdPerfil . "=" . $this->cdPerfil;
+		$query = $nmTabela . "." . self::$nmAtrCdAluno . "=" . $this->cdAluno;
 		
 		return $query;
 	}
@@ -58,8 +66,11 @@ class voperfilaluno extends voentidade {
 	function getAtributosFilho() {
 		$retorno = array (
 				self::$nmAtrCdPerfil,
-				self::$nmAtrCdMateria,
-				self::$nmAtrCarga,
+				self::$nmAtrCdAluno,
+				self::$nmAtrTpMeta,
+				self::$nmAtrNumDiasMeta,
+				self::$nmAtrNumHorasMateriaDia,
+				self::$nmAtrDtInicio,
 		);
 		
 		return $retorno;
@@ -67,7 +78,7 @@ class voperfilaluno extends voentidade {
 	function getAtributosChavePrimaria() {
 		$retorno = array (
 				self::$nmAtrCdPerfil,
-				self::$nmAtrCdMateria,
+				self::$nmAtrCdAluno,
 		);
 		
 		return $retorno;
@@ -75,46 +86,52 @@ class voperfilaluno extends voentidade {
 	function getDadosRegistroBanco($registrobanco) {
 		// as colunas default de voentidade sao incluidas pelo metodo getDadosBanco do voentidade
 		$this->cdPerfil = $registrobanco [self::$nmAtrCdPerfil];
-		$this->cdMateria = $registrobanco [self::$nmAtrCdMateria];
-		$this->carga = $registrobanco [self::$nmAtrCarga];
+		$this->cdAluno = $registrobanco [self::$nmAtrCdAluno];
+		$this->tpMeta = $registrobanco [self::$nmAtrTpMeta];
+		$this->numDiasMeta = $registrobanco [self::$nmAtrNumDiasMeta];
+		$this->numHorasMateriaDia = $registrobanco [self::$nmAtrNumHorasMateriaDia];
+		$this->dtInicio = $registrobanco [self::$nmAtrDtInicio];
 	}
 	function getDadosFormulario() {
-		$this->cdPerfil = @$_POST [self::$nmAtrCdPerfil];
-		$this->cdMateria = @$_POST [self::$nmAtrCdMateria];
-		$this->carga = @$_POST [self::$nmAtrCarga];
+		$this->cdPerfil = @$_POST  [self::$nmAtrCdPerfil];
+		$this->cdAluno = @$_POST  [self::$nmAtrCdAluno];
+		$this->tpMeta = @$_POST[self::$nmAtrTpMeta];
+		$this->numDiasMeta = @$_POST  [self::$nmAtrNumDiasMeta];
+		$this->numHorasMateriaDia = @$_POST  [self::$nmAtrNumHorasMateriaDia];
+		$this->dtInicio = @$_POST  [self::$nmAtrDtInicio];
 	}
 	function getValorChavePrimaria() {
-		return $this->cdPerfil . CAMPO_SEPARADOR . $this->cdMateria . CAMPO_SEPARADOR . $this->sqHist;
+		return $this->cdPerfil . CAMPO_SEPARADOR . $this->cdAluno . CAMPO_SEPARADOR . $this->sqHist;
 	}
 	
 	function getChavePrimariaVOExplode($array) {
 		$this->cdPerfil = $array [0];
-		$this->cdMateria = $array [1];
+		$this->cdAluno = $array [1];
 	}
 	
 	function toString() {
 		$retorno .= $this->cdPerfil . ",";
-		$retorno .= $this->cdMateria . ",";
-		$retorno .= $this->carga . ",";
+		$retorno .= $this->cdAluno . ",";
+		$retorno .= $this->sqHist . ",";
 		return $retorno;
 	}
 	
 	function getMensagemComplementarTelaSucesso() {
-		if($this->carga != null){
-			$filtro = new filtroManterPerfilMateria(false);
-			$vomateria = new vomateria();
-			$vomateria->cd = $this->cdMateria;
-			$filtro->vomateria = $vomateria;
-			$voperfil = new voperfil();
-			$voperfil->cd = $this->cdPerfil;
-			$filtro->voperfil = $voperfil;
-			
+		if($this->numDiasMeta != null){
+			$filtro = new filtroManterPerfilAluno(false);
+			$filtro->cdPerfil = $this->cdPerfil;
+			$filtro->cdAluno = $this->cdAluno;			
+		
 			$colecao = $this->dbprocesso->consultarTelaConsulta($filtro);
 			$registro = $colecao[0];
-			$voperfil->getDadosBanco($registro);
-			$vomateria->getDadosBanco($registro);
 			
-			$retorno = "Perfil($voperfil->descricao) x Mat�ria($vomateria->descricao): " . complementarCharAEsquerda($this->carga, "0", TAMANHO_CODIGOS_SAFI) . " HORAS";
+			$voperfil = new voperfil();
+			$voaluno = new vopessoa();
+			
+			$voperfil->getDadosBanco($registro);
+			$voaluno->getDadosBanco($registro);
+			
+			$retorno = "Perfil($voperfil->descricao) x Aluno($voaluno->nome).";
 		}
 		//$retorno = $this->getMensagemComplementarTelaSucessoPadrao ( $dsMateria . ":" . $this->getTituloJSP (), $this->cdFonte, $this->descricao, $this->sqHist );
 		return $retorno;

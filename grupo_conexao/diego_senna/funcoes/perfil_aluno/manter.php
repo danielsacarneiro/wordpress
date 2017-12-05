@@ -6,7 +6,7 @@ try{
 //inicia os parametros
 inicioComValidacaoUsuario(true);
 
-$vo = new voperfilmateria();
+$vo = new voperfilaluno();
 //var_dump($vo->varAtributos);
 
 $funcao = @$_GET["funcao"];
@@ -25,8 +25,8 @@ if($isInclusao){
 	$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
 	$vo->getDadosBanco($colecao);
 	
-	$vomateria = new vomateria();
-	$vomateria->getDadosBanco($colecao);
+	$voaluno = new vopessoa();
+	$voaluno->getDadosBanco($colecao);
 
 	$voperfil = new voperfil();
 	$voperfil->getDadosBanco($colecao);
@@ -47,20 +47,22 @@ $nome  = $vo->descricao;
 <HEAD>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_text.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_datahora.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_select.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>mensagens_globais.js"></SCRIPT>
 
 <SCRIPT language="JavaScript" type="text/javascript">
 // Verifica se o formulario esta valido para alteracao, exclusao ou detalhamento
 function isFormularioValido() {	
-	campoCdPerfil = document.frm_principal.<?=voperfilmateria::$nmAtrCdPerfil?>;
+	campoCdPerfil = document.frm_principal.<?=voperfilaluno::$nmAtrCdPerfil?>;
 	if(!isCampoNumericoValido(campoCdPerfil, true, 1, null, null, true)){
 		exibirMensagem("Selecione o perfil.");
 		return false;
 	}
 
-	campoCdMateria = document.frm_principal.<?=voperfilmateria::$nmAtrCdMateria?>;
-	if(!isCampoNumericoValido(campoCdMateria, true, 1, null, null, true)){
-		exibirMensagem("Selecione a matéria.");
+	campoCdAluno = document.frm_principal.<?=voperfilaluno::$nmAtrCdAluno?>;
+	if(!isCampoNumericoValido(campoCdAluno, true, 1, null, null, true)){
+		exibirMensagem("Selecione o Aluno.");
 		return false;
 	}	
 	return true;
@@ -79,14 +81,51 @@ function confirmar() {
 	return confirm("Confirmar Alteracoes?");    
 }
 
-function transferirDadosMateria(cdMateria, dsMateria){
-	document.frm_principal.<?=voperfilmateria::$nmAtrCdMateria?>.value = completarNumeroComZerosEsquerda(cdMateria, <?=TAMANHO_CODIGOS_SAFI?>);
-	document.frm_principal.<?=vomateria::$nmAtrDescricao?>.value = dsMateria;
+function transferirDadosPessoa(array){	
+	cd = array[0];
+	ds = array[2];
+	document.frm_principal.<?=voperfilaluno::$nmAtrCdAluno?>.value = completarNumeroComZerosEsquerda(cd, <?=TAMANHO_CODIGOS_SAFI?>);
+	document.frm_principal.<?=vopessoa::$nmAtrNome?>.value = ds;
 }
 
 function transferirDadosPerfil(cdPerfil, dsPerfil){
-	document.frm_principal.<?=voperfilmateria::$nmAtrCdPerfil?>.value = completarNumeroComZerosEsquerda(cdPerfil, <?=TAMANHO_CODIGOS_SAFI?>);
+	document.frm_principal.<?=voperfilaluno::$nmAtrCdPerfil?>.value = completarNumeroComZerosEsquerda(cdPerfil, <?=TAMANHO_CODIGOS_SAFI?>);
 	document.frm_principal.<?=voperfil::$nmAtrDescricao?>.value = dsPerfil;
+}
+
+function validaFormTpMeta(){	
+	/*colecaoTpFonteAutonoma =<?=$varColecaoGlobaTpFonteAutonoma?>;
+	colecaoTpParametroFonte=<?=$varColecaoGlobalTpParametroFonte?>;
+	colecaoTpParametroFontePorTpFonte=<?=$varColecaoGlobalTpParametroFontePorTpFonte?>;
+
+	cd = document.frm_principal.<?=vometafonte::$nmAtrTpFonte?>.value;
+	cdTpParametro = colecaoTpParametroFontePorTpFonte[cd];
+	if(cdTpParametro == null){
+		habilitarElementoMais('<?=vometafonte::$nmAtrNumParamInicio?>', false, true);
+		habilitarElementoMais('<?=vometafonte::$nmAtrNumParamFim?>', false, true);
+		limparCampo(document.frm_principal.<?=vometafonte::$ID_REQ_DsTpParam?>);
+		
+	}else{
+		dsTpParametroFonte = colecaoTpParametroFonte[cdTpParametro];
+		document.frm_principal.<?=vometafonte::$ID_REQ_DsTpParam?>.value = dsTpParametroFonte;
+		habilitarElementoMais('<?=vometafonte::$nmAtrNumParamInicio?>', true, true);
+		habilitarElementoMais('<?=vometafonte::$nmAtrNumParamFim?>', true, true);		
+	}
+
+	cdTpFonteAutonoma = colecaoTpFonteAutonoma[cd];
+	if(cdTpFonteAutonoma == null){
+		habilitarElementoMais('<?=vometafonte::$nmAtrCdFonte?>', true, true);		
+	}else{
+		limparCampo(document.frm_principal.<?=vometafonte::$nmAtrCdFonte?>);
+		habilitarElementoMais('<?=vometafonte::$nmAtrCdFonte?>', false, true);
+	}*/
+	
+}
+
+function iniciar(){
+
+	validaFormTpFonte();
+	
 }
 </SCRIPT>
 </HEAD>
@@ -112,34 +151,66 @@ function transferirDadosPerfil(cdPerfil, dsPerfil){
 	        if(!$isInclusao){
 	        	$class = constantes::$CD_CLASS_CAMPO_READONLY;
 	        }else{
-	        	$class = constantes::$CD_CLASS_CAMPO_READONLY;
+	        	$class = constantes::$CD_CLASS_CAMPO_OBRIGATORIO;
 	        	$size = TAMANHO_CODIGOS_SAFI;
 	        	$lupaPerfil = getLinkPesquisa(caminho_funcoesHTML."perfil");
-	        	$lupaMateria = getLinkPesquisa(caminho_funcoesHTML."materia");
+	        	$lupaAluno = getLinkPesquisa(caminho_funcoesHTML.vopessoa::getNmTabela());
 	        }
 	        ?>
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Perfil:</TH>
                 <TD class="campoformulario" colspan=3>
-                	Cd. <?=getInputText(voperfilmateria::$nmAtrCdPerfil, voperfilmateria::$nmAtrCdPerfil, complementarCharAEsquerda($vo->cdPerfil, "0", TAMANHO_CODIGOS_SAFI), $class, $size) . " $lupaPerfil"?>
+                	Cd. <?=getInputText(voperfilaluno::$nmAtrCdPerfil, voperfilaluno::$nmAtrCdPerfil, complementarCharAEsquerda($vo->cdPerfil, "0", TAMANHO_CODIGOS_SAFI), $class, $size) . " $lupaPerfil"?>
 					- Descrição: <?=getInputText(voperfil::$nmAtrDescricao, voperfil::$nmAtrDescricao, $voperfil->descricao, constantes::$CD_CLASS_CAMPO_READONLY)?> 
                 </TD>
             </TR>        
 			<TR>
-                <TH class="campoformulario" width="1%" nowrap>Matéria:</TH>
+                <TH class="campoformulario" width="1%" nowrap>Aluno:</TH>
                 <TD class="campoformulario" colspan=3>
-                	Cd. <?=getInputText(voperfilmateria::$nmAtrCdMateria, voperfilmateria::$nmAtrCdMateria, complementarCharAEsquerda($vo->cdMateria, "0", TAMANHO_CODIGOS_SAFI), $class, $size) . " $lupaMateria"?>
-					- Descrição: <?=getInputText(vomateria::$nmAtrDescricao, vomateria::$nmAtrDescricao, $vomateria->descricao, constantes::$CD_CLASS_CAMPO_READONLY)?> 
+                	Cd. <?=getInputText(voperfilaluno::$nmAtrCdAluno, voperfilaluno::$nmAtrCdAluno, complementarCharAEsquerda($vo->cdAluno, "0", TAMANHO_CODIGOS_SAFI), $class, $size) . " $lupaAluno"?>
+					- Descrição: <?=getInputText(vopessoa::$nmAtrNome, vopessoa::$nmAtrNome, $voaluno->nome, constantes::$CD_CLASS_CAMPO_READONLY)?> 
                 </TD>
-            </TR>        
-			<TR>
-                <TH class="campoformulario" nowrap width=1%>Carga:</TH>
-                <TD class="campoformulario" colspan=3>
-                <INPUT type="text" id="<?=voperfilmateria::$nmAtrCarga?>" name="<?=voperfilmateria::$nmAtrCarga?>"  value="<?php echo(complementarCharAEsquerda($vo->carga, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" 
-                onKeyUp='validarCampoNumericoPositivo(this)' size="5" required> horas</TD>
             </TR>
-            
-
+            <TR>
+				<TH class="textoseparadorgrupocampos" halign="left" colspan="4">&nbsp;
+				</TH>
+			</TR> 
+			<?php 
+			$selectTpMeta= new select(dominioTpMetaAluno::getColecao());
+			?>
+			<TR>
+                <TH class="campoformulario" width="1%" nowrap>Meta:</TH>
+                <TD class="campoformulario" colspan=3>
+                	<?=$selectTpMeta->getHtmlCombo(voperfilaluno::$nmAtrTpMeta, voperfilaluno::$nmAtrTpMeta, $vo->tpMeta, true, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, true, "onChange='validaFormTpMeta();'");?>					 
+                </TD>
+            </TR>			
+			<TR>
+                <TH class="campoformulario" width="1%" nowrap>Qtd.Dias/Meta:</TH>
+                <TD class="campoformulario" colspan=3>
+                	<?=getInputText(voperfilaluno::$nmAtrNumDiasMeta, voperfilaluno::$nmAtrNumDiasMeta, $vo->numDiasMeta, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, TAMANHO_CODIGOS_SAFI, null, "onKeyUp='validarCampoNumericoPositivo(this);'")?>
+                	(dias a estudar na meta)
+                </TD>
+            </TR>			           
+			<TR>
+                <TH class="campoformulario" width="1%" nowrap>Qtd.Horas/Matéria:</TH>
+                <TD class="campoformulario" colspan=3>
+                	<?=getInputText(voperfilaluno::$nmAtrNumHorasMateriaDia, voperfilaluno::$nmAtrNumHorasMateriaDia, $vo->numHorasMateriaDia, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, TAMANHO_CODIGOS_SAFI, null, "onKeyUp='validarCampoNumericoPositivo(this);'")?>
+                	(horas por cada matéria no dia de estudo)
+                </TD>
+            </TR>			           
+			<TR>
+	            <TH class="campoformulario" nowrap width="1%">Dt.Início:</TH>
+	            <TD class="campoformulario" colspan=3>
+	            	<INPUT type="text" 
+	            	       id="<?=voperfilaluno::$nmAtrDtInicio?>" 
+	            	       name="<?=voperfilaluno::$nmAtrDtInicio?>" 
+	            			value="<?php echo(getData($vo->dtInicio));?>"
+	            			onkeyup="formatarCampoData(this, event, false);"
+	            			class="camponaoobrigatorio" 
+	            			size="10" 
+	            			maxlength="10" required>
+	             </TD>
+	       </TR>
         <?php if(!$isInclusao){
             echo "<TR>" . incluirUsuarioDataHoraDetalhamento($vo) .  "</TR>";
         }?>

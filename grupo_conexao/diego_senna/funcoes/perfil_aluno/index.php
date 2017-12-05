@@ -8,7 +8,7 @@ inicio();
 $titulo = "CONSULTAR " . voperfilaluno::getTituloJSP();
 setCabecalho($titulo);
 	
-$filtro  = new filtroManterPerfilMateria();
+$filtro  = new filtroManterPerfilAluno();
 $filtro = filtroManter::verificaFiltroSessao($filtro);
 
 $nome = $filtro->descricao;
@@ -129,17 +129,17 @@ function alterar() {
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Perfil:</TH>
                 <TD class="campoformulario" >
-                	Cd. <INPUT type="text" id="<?=voperfil::$nmAtrCd?>" name="<?=voperfil::$nmAtrCd?>"  value="<?php echo(complementarCharAEsquerda($filtro->voperfil->cd, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
+                	Cd. <INPUT type="text" id="<?=voperfilaluno::$nmAtrCdPerfil?>" name="<?=voperfilaluno::$nmAtrCdPerfil?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdPerfil, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
 					- Descrição: 
-                	<INPUT type="text" id="<?=voperfil::$nmAtrDescricao?>" name="<?=voperfil::$nmAtrDescricao?>"  value="<?php echo($filtro->voperfil->descricao);?>"  class="camponaoobrigatorio" size="50" >
+                	<INPUT type="text" id="<?=voperfil::$nmAtrDescricao?>" name="<?=voperfil::$nmAtrDescricao?>"  value="<?php echo($filtro->dsPerfil);?>"  class="camponaoobrigatorio" size="50" >
                 </TD>
             </TR>        
 			<TR>
-                <TH class="campoformulario" width="1%" nowrap>Matéria:</TH>
+                <TH class="campoformulario" width="1%" nowrap>Aluno:</TH>
                 <TD class="campoformulario" >
-                	Cd. <INPUT type="text" id="<?=vomateria::$nmAtrCd?>" name="<?=vomateria::$nmAtrCd?>"  value="<?php echo(complementarCharAEsquerda($filtro->vomateria->cd, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
-					- Descrição: 
-                	<INPUT type="text" id="<?=vomateria::$nmAtrDescricao?>" name="<?=vomateria::$nmAtrDescricao?>"  value="<?php echo($filtro->vomateria->descricao);?>"  class="camponaoobrigatorio" size="50" >
+                	Cd. <INPUT type="text" id="<?=voperfilaluno::$nmAtrCdAluno?>" name="<?=voperfilaluno::$nmAtrCdAluno?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdAluno, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
+					- Nome: 
+                	<INPUT type="text" id="<?=vopessoa::$nmAtrNome?>" name="<?=vopessoa::$nmAtrNome?>"  value="<?php echo($filtro->nomeAluno);?>"  class="camponaoobrigatorio" size="50" >
                 </TD>
             </TR>        
         <?PHP echo getComponenteConsultaFiltro($vo->temTabHistorico, $filtro);?>
@@ -156,8 +156,10 @@ function alterar() {
                 <TR>
                   <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
                     <TH class="headertabeladados" width="1%" nowrap>Perfil</TH>
-                    <TH class="headertabeladados" width="30%">Matéria</TH>
-                    <TH class="headertabeladados" width="1%">Horas</TH>
+                    <TH class="headertabeladados" width="40%">Aluno</TH>
+                    <TH class="headertabeladados" width="1%">Tp.Meta</TH>
+                    <TH class="headertabeladados" width="1%">Qtd.Dias/Meta</TH>
+                    <TH class="headertabeladados" width="1%">Qtd.Horas/Matéria</TH>
                 </TR>
                 <?php								
                 if (is_array($colecao))
@@ -165,22 +167,19 @@ function alterar() {
                 else 
                         $tamanho = 0;			
                
-                 $colspan=4;
+                 $colspan=7;
                  if($isHistorico){
                  	$colspan++;
                  }                        
                             
                 for ($i=0;$i<$tamanho;$i++) {
                 	$registroAtual = $colecao[$i];
-                        $voAtual = new voperfilmateria();
+                        $voAtual = new voperfilaluno();
                         $voAtual->getDadosBanco($colecao[$i]);
-                        
-                        $voMateriaAtual = new vomateria();
-                        $voMateriaAtual->getDadosBanco($colecao[$i]);
-                                                
-                        $dsMateriaAtual = complementarCharAEsquerda($voAtual->cdMateria, "0", TAMANHO_CODIGOS_SAFI)
+                                                                        
+                        $dsAluno = complementarCharAEsquerda($voAtual->cdAluno, "0", TAMANHO_CODIGOS_SAFI)
                         . "-"
-						. $registroAtual[vomateria::$nmAtrDescricao];
+						. $registroAtual[vopessoa::$nmAtrNome];
                         
 						$dsPerfil = complementarCharAEsquerda($voAtual->cdPerfil, "0", TAMANHO_CODIGOS_SAFI)
 						. "-"
@@ -192,8 +191,10 @@ function alterar() {
                     <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
                     </TD>                    
                     <TD class="tabeladados"><?php echo $dsPerfil;?></TD>
-                    <TD class="tabeladados"><?php echo $dsMateriaAtual;?></TD>
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->carga, "0", TAMANHO_CODIGOS_SAFI);?></TD>                    
+                    <TD class="tabeladados"><?php echo $dsAluno;?></TD>
+                    <TD class="tabeladados"><?php echo dominioTpMetaAluno::getDescricaoStatic($voAtual->tpMeta);?></TD>
+                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->numDiasMeta, "0", 2);?></TD>                    
+                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->numHorasMateriaDia, "0", 2);?></TD>
                 </TR>					
                 <?php
 				}				

@@ -210,7 +210,7 @@ function alterar() {
                     <TD class="tabeladados"><?php echo $dsMateriaAtual;?></TD>                    
                     <TD class="tabeladados"><?php echo $fonte;?></TD>
                     <TD class="tabeladados"><?php echo $objetivo;?></TD>
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->numHoras, "0", TAMANHO_CODIGOS_SAFI);?></TD>
+                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->numHoras, "0", 2);?></TD>
                 </TR>					
                 <?php
 				}				

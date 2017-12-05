@@ -62,7 +62,6 @@ function selecionar(isMultiplaSelecao) {
 	if (window.opener != null) {
 		if(!<?=booleanToExtenso(isMultiSelecao())?>){
 			array = retornarValorRadioButtonSelecionadoComoArray("document.frm_principal.rdb_consulta", "<?=CAMPO_SEPARADOR?>");
-			array = [array[0]];
 		}else{
 			array = retornarValoresCheckBoxesSelecionadosComoArray("document.frm_principal.rdb_consulta");
 		}

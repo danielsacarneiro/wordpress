@@ -8,20 +8,20 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
     
   	function consultarPorChave($vo, $isHistorico) {
   		$nmTabela = $vo->getNmTabelaEntidade ( $isHistorico ); 		
-  		$nmTabelaMateria = vomateria::getNmTabelaStatic(false);
+  		$nmTabelaAluno= vopessoa::getNmTabelaStatic(false);
   		$nmTabelaPerfil = voperfil::getNmTabelaStatic(false);
   		$arrayColunasRetornadas = array($nmTabela . ".*",
-  				"$nmTabelaMateria.".vomateria::$nmAtrDescricao,
+  				"$nmTabelaAluno.".vopessoa::$nmAtrNome,
   				"$nmTabelaPerfil.".voperfil::$nmAtrDescricao,
   		);  
   		
-  		$queryJoin .= "\n INNER JOIN " . $nmTabelaMateria;
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaAluno;
   		$queryJoin .= "\n ON ";
-  		$queryJoin .= $nmTabelaMateria. "." . vomateria::$nmAtrCd . "=" . $nmTabela . "." . voperfilmateria::$nmAtrCdMateria;
+  		$queryJoin .= $nmTabelaAluno. "." . vopessoa::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdAluno;
   		  		  		
   		$queryJoin .= "\n INNER JOIN " . $nmTabelaPerfil;
   		$queryJoin .= "\n ON ";
-  		$queryJoin .= $nmTabelaPerfil . "." . voperfil::$nmAtrCd . "=" . $nmTabela . "." . voperfilmateria::$nmAtrCdPerfil;
+  		$queryJoin .= $nmTabelaPerfil . "." . voperfil::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdPerfil;
   		
   		$retorno= $this->consultarPorChaveMontandoQuery ( $vo, $arrayColunasRetornadas, $queryJoin, $isHistorico, true);  		
   		return $retorno;
@@ -29,20 +29,20 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
   	
   	function consultarTelaConsulta($filtro) {
   		$isHistorico = $filtro->isHistorico;
-  		$nmTabela = voperfilmateria::getNmTabelaStatic($isHistorico);
+  		$nmTabela = voperfilaluno::getNmTabelaStatic($isHistorico);
   		$nmTabelaPerfil = voperfil::getNmTabelaStatic($isHistorico);
-  		$nmTabelaMateria = vomateria::getNmTabelaStatic($isHistorico);
+  		$nmTabelaPessoa = vopessoa::getNmTabelaStatic($isHistorico);
   		$arrayColunasRetornadas = array("*");
   		
-  		$queryJoin .= "\n INNER JOIN " . $nmTabelaMateria;
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaPessoa;
   		$queryJoin .= "\n ON ";
-  		$queryJoin .= $nmTabelaMateria. "." . vomateria::$nmAtrCd . "=" . $nmTabela . "." . voperfilmateria::$nmAtrCdMateria;
+  		$queryJoin .= $nmTabelaPessoa. "." . vopessoa::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdAluno;
   		
   		$queryJoin .= "\n INNER JOIN " . $nmTabelaPerfil;
   		$queryJoin .= "\n ON ";
-  		$queryJoin .= $nmTabelaPerfil. "." . voperfil::$nmAtrCd . "=" . $nmTabela . "." . voperfilmateria::$nmAtrCdPerfil;
+  		$queryJoin .= $nmTabelaPerfil. "." . voperfil::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdPerfil;
   		
-  		return parent::consultarMontandoQueryTelaConsulta ( new voperfilmateria(), $filtro, $arrayColunasRetornadas, $queryJoin );
+  		return parent::consultarMontandoQueryTelaConsulta ( new voperfilaluno(), $filtro, $arrayColunasRetornadas, $queryJoin );
   	}
   	
     function incluirSQL($vo){
@@ -56,13 +56,16 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
         } */       
         
         return $this->incluirQuery($vo, $arrayAtribRemover);
-    }    
+    }
 
     function getSQLValuesInsert($vo){
 		$retorno = "";
         $retorno.= $this-> getVarComoNumero($vo->cdPerfil) . ",";
-        $retorno.= $this-> getVarComoNumero($vo->cdMateria) . ",";
-        $retorno.= $this-> getVarComoNumero($vo->carga);
+        $retorno.= $this-> getVarComoNumero($vo->cdAluno) . ",";
+        $retorno.= $this-> getVarComoNumero($vo->tpMeta) . ",";
+        $retorno.= $this-> getVarComoNumero($vo->numDiasMeta) . ",";
+        $retorno.= $this-> getVarComoNumero($vo->numHorasMateriaDia) . ",";
+        $retorno.= $this-> getVarComoData($vo->dtInicio);
         
         $retorno.= $vo->getSQLValuesInsertEntidade();
 		        

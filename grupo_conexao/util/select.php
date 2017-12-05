@@ -58,9 +58,10 @@ class select extends multiplosConstrutores {
 			$TagEJavaScript.= " required ";
 		} elseif($class == constantes::$CD_CLASS_CAMPO_READONLY){
 			$TagEJavaScript.= " disabled ";
+			//$html = "<select id='$idSelect' name='$nmSelect' class='$class' $TagEJavaScript>\n";
 		}
 		
-		$html = "<select id='$idSelect' name='$nmSelect' class='$class' $TagEJavaScript>\n";
+		$html .= "<select id='$idSelect' name='$nmSelect' class='$class' $TagEJavaScript>\n";
 		
 		if ($permitirAlteracaoNoCombo) {
 			// inclui opcao vazio
