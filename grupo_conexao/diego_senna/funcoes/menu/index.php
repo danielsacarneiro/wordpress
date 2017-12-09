@@ -36,6 +36,7 @@ setCabecalho(constantes::$tituloSistema);
 
 	f3 = new Tree('Serviço 04 (Meta)');
     f3.adicionarItem(new Link('Metas x Perfil', '<?=caminho_funcoesHTML.vometafonte::getNmTabela()?>', ''));
+    f3.adicionarItem(new Link('Montagem', '<?=caminho_funcoesHTML.montagem?>', ''));
 	f.adicionarItem(f3);
 	
 	<?php if(isUsuarioAdmin()){?>

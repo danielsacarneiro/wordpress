@@ -5,10 +5,12 @@ include_once(caminho_util."bibliotecaHTML.php");
 //inicia os parametros
 inicio();
 
-$titulo = "CONSULTAR " . voperfilaluno::getTituloJSP();
-setCabecalho($titulo);
+$nmConsulta = "MONTAGEM";
+
+$titulo = "CONSULTAR " . $nmConsulta;
+setCabecalho($titulo); 
 	
-$filtro  = new filtroManterPerfilAluno();
+$filtro  = new filtroConsultarMontagem();
 $filtro = filtroManter::verificaFiltroSessao($filtro);
 
 $nome = $filtro->descricao;
@@ -18,7 +20,7 @@ $isHistorico = ("S" == $cdHistorico);
 
 $vo = new voperfilaluno();
 $dbprocesso = $vo->dbprocesso;
-$colecao = $dbprocesso->consultarTelaConsulta($filtro);
+$colecao = $dbprocesso->consultarTelaConsultaMontagem($filtro);
 
 if($filtro->temValorDefaultSetado){
 	;
@@ -105,7 +107,7 @@ function alterar() {
 }
 </SCRIPT>
 </HEAD>
-<?=setTituloPagina($vo->getTituloJSP())?>
+<?=setTituloPagina($nmConsulta)?>
 <BODY class="paginadados" onload="">
 	  
 <FORM name="frm_principal" method="post" action="index.php?consultar=S">
@@ -154,21 +156,24 @@ function alterar() {
          <TABLE id="table_tabeladados" class="tabeladados" cellpadding="0" cellspacing="0">						
              <TBODY>
                 <TR>
-                  <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
-                    <TH class="headertabeladados" width="1%" nowrap>Perfil</TH>
-                    <TH class="headertabeladados" width="40%">Aluno</TH>
-                    <TH class="headertabeladados" width="1%">Meta</TH>
-                    <TH class="headertabeladados" width="1%">Qtd.Dias/Meta</TH>
-                    <TH class="headertabeladados" width="1%">Qtd.Horas/Matéria</TH>
-                    <TH class="headertabeladados" width="1%">Dt.Início</TH>
+                  <TH class="headertabeladados" rowspan=2 width="1%">&nbsp;&nbsp;X</TH>
+                    <TH class="headertabeladados" rowspan=2 width="1%" nowrap>Perfil</TH>
+                    <TH class="headertabeladados" rowspan=2 width="40%">Aluno</TH>
+                    <TH class="headertabeladados" rowspan=2 width="20%">Matéria</TH>
+                    <TH class="headertabeladadosalinhadocentro" colspan=2 width="1%">Horas</TH>
                 </TR>
+                <TR>
+                    <TH class="headertabeladados" width="1%">Definidas</TH>
+                    <TH class="headertabeladados" width="1%">A.Definir</TH>
+                </TR>
+                
                 <?php								
                 if (is_array($colecao))
                         $tamanho = sizeof($colecao);
                 else 
                         $tamanho = 0;			
                
-                 $colspan=8;
+                 $colspan=7;
                  if($isHistorico){
                  	$colspan++;
                  }                        
@@ -178,6 +183,12 @@ function alterar() {
                         $voAtual = new voperfilaluno();
                         $voAtual->getDadosBanco($colecao[$i]);
                                                                         
+                        $voMateriaAtual = new vomateria();
+                        $voMateriaAtual->getDadosBanco($colecao[$i]);
+                        
+                        $voPerfilMateriaAtual = new voperfilmateria();
+                        $voPerfilMateriaAtual->getDadosBanco($colecao[$i]);
+                        
                         $dsAluno = complementarCharAEsquerda($voAtual->cdAluno, "0", TAMANHO_CODIGOS_SAFI)
                         . "-"
 						. $registroAtual[vopessoa::$nmAtrNome];
@@ -193,10 +204,9 @@ function alterar() {
                     </TD>                    
                     <TD class="tabeladados"><?php echo $dsPerfil;?></TD>
                     <TD class="tabeladados"><?php echo $dsAluno;?></TD>
-                    <TD class="tabeladados"><?php echo dominioTpMetaAluno::getDescricaoStatic($voAtual->tpMeta);?></TD>
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->numDiasMeta, "0", 2);?></TD>                    
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->numHorasMateriaDia, "0", 2);?></TD>
-                    <TD class="tabeladados"><?php echo getData($voAtual->dtInicio);?></TD>
+                    <TD class="tabeladados"><?php echo $voMateriaAtual->descricao;?></TD>
+                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($registroAtual[filtroConsultarMontagem::$nmColNumHorasDefinidas], "0", 2);?></TD>
+                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voPerfilMateriaAtual->carga, "0", 2);?></TD>
                 </TR>					
                 <?php
 				}				
@@ -223,7 +233,7 @@ function alterar() {
                        <TD>
                         <TABLE class="barraacoesaux" cellpadding="0" cellspacing="0">
 	                   	<TR>
-	                   		<?=getBotoesRodape();?>
+	                   		<?//=getBotoesRodape();?>
                          </TR>
                          </TABLE>
 	                   </TD>

@@ -45,7 +45,57 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
   		return parent::consultarMontandoQueryTelaConsulta ( new voperfilaluno(), $filtro, $arrayColunasRetornadas, $queryJoin );
   	}
   	
-    function incluirSQL($vo){
+  	function consultarTelaConsultaMontagem($filtro) {
+  		$isHistorico = $filtro->isHistorico;
+  		$nmTabela = voperfilaluno::getNmTabelaStatic($isHistorico);
+  		$nmTabelaPerfil = voperfil::getNmTabelaStatic($isHistorico);
+  		$nmTabelaPerfilMateria = voperfilmateria::getNmTabelaStatic($isHistorico);
+  		$nmTabelaMateria = vomateria::getNmTabelaStatic($isHistorico);
+  		$nmTabelaPessoa = vopessoa::getNmTabelaStatic($isHistorico);
+  		$nmTabelaMeta = vometafonte::getNmTabelaStatic($isHistorico);
+  		
+  		$atributosGroupBy = array("$nmTabelaMeta." . vometafonte::$nmAtrCdPerfil
+  				,"$nmTabelaMeta.".vometafonte::$nmAtrCdMateria
+  				,"$nmTabela.".voperfilaluno::$nmAtrCdAluno);
+  		
+  		$arrayColunasRetornadas = array(
+  				"SUM(". "$nmTabelaMeta.".vometafonte::$nmAtrNumHoras . ") AS " . $filtro::$nmColNumHorasDefinidas,
+  				"$nmTabelaPerfilMateria.".voperfilmateria::$nmAtrCarga,
+  				"$nmTabelaPerfil.".voperfil::$nmAtrDescricao,
+  				"$nmTabelaMateria.".vomateria::$nmAtrDescricao,
+  				"$nmTabelaPessoa.".vopessoa::$nmAtrNome,  				
+  		);
+  		
+  		$arrayColunasRetornadas = array_merge($atributosGroupBy,$arrayColunasRetornadas);
+  		
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaPerfilMateria;
+  		$queryJoin .= "\n ON ";
+  		$queryJoin .= $nmTabelaPerfilMateria. "." . voperfilmateria::$nmAtrCdPerfil . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdPerfil;
+  		
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaMeta;
+  		$queryJoin .= "\n ON ";
+  		$queryJoin .= $nmTabelaMeta. "." . vometafonte::$nmAtrCdPerfil . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdPerfil;
+  		$queryJoin .= "\n AND ";
+  		$queryJoin .= $nmTabelaMeta. "." . vometafonte::$nmAtrCdMateria . "=" . $nmTabelaPerfilMateria. "." . voperfilmateria::$nmAtrCdMateria;
+  		
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaMateria;
+  		$queryJoin .= "\n ON ";
+  		$queryJoin .= $nmTabelaPerfilMateria. "." . voperfilmateria::$nmAtrCdMateria . "=" . $nmTabelaMateria. "." . vomateria::$nmAtrCd;
+  		
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaPessoa;
+  		$queryJoin .= "\n ON ";
+  		$queryJoin .= $nmTabelaPessoa. "." . vopessoa::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdAluno;
+  		
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaPerfil;
+  		$queryJoin .= "\n ON ";
+  		$queryJoin .= $nmTabelaPerfil. "." . voperfil::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdPerfil;  		
+  		
+  		$filtro->groupby = $atributosGroupBy;
+  		
+  		return parent::consultarMontandoQueryTelaConsulta ( new voperfilaluno(), $filtro, $arrayColunasRetornadas, $queryJoin );
+  	}
+  	
+  	function incluirSQL($vo){
         $arrayAtribRemover = array(
             vomateriafonte::$nmAtrDhInclusao,
             vomateriafonte::$nmAtrDhUltAlteracao
