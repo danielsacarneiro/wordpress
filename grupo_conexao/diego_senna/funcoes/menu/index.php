@@ -5,7 +5,7 @@ include_once(caminho_util."constantes.class.php");
 
 //inicia os parametros
 inicio();
-setCabecalho(constantes::$tituloSistema);
+setCabecalho("MENU");
 
 ?>
 
@@ -34,10 +34,10 @@ setCabecalho(constantes::$tituloSistema);
     f3.adicionarItem(new Link('Perfil x Alunos', '<?=caminho_funcoesHTML.voperfilaluno::getNmTabela()?>', ''));    
 	f.adicionarItem(f3);
 
-	f3 = new Tree('Serviço 04 (Meta)');
-    f3.adicionarItem(new Link('Metas x Perfil', '<?=caminho_funcoesHTML.vometafonte::getNmTabela()?>', ''));
-    f3.adicionarItem(new Link('Montagem', '<?=caminho_funcoesHTML.montagem?>', ''));
-	f.adicionarItem(f3);
+	f4 = new Tree('Serviço 04 (Meta)');
+    f4.adicionarItem(new Link('Metas x Perfil', '<?=caminho_funcoesHTML.vometafonte::getNmTabela()?>', ''));
+    f4.adicionarItem(new Link('Montagem', '<?=caminho_funcoesHTML."montagem"?>', ''));
+	f.adicionarItem(f4);
 	
 	<?php if(isUsuarioAdmin()){?>
 	/*f5 = new Tree('Serviço 05 (ADMINISTRADOR)');

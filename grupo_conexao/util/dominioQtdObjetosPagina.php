@@ -1,6 +1,5 @@
 <?php
 include_once ("dominio.class.php");
-include_once (caminho_util . "bibliotecafuncoesPrincipal.php");
 class dominioQtdObjetosPagina extends dominio {
 	
 	// ...............................................................
