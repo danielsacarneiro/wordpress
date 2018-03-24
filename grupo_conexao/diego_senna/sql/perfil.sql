@@ -21,8 +21,10 @@ CREATE TABLE perfil_aluno (
     
     perfaluno_tpmeta INT NOT NULL, -- dominio: semanal, quinzenal ou mensal
     perfaluno_diasmeta INT NOT NULL, -- numero X de dias por meta (ex.: semanal)
-    perfaluno_horaspormaterianodia INT NOT NULL, -- numero X de horas por materia no dia
-    perfaluno_dtinicio DATE,    
+    perfaluno_horaspormateriadia INT NOT NULL, -- numero X de horas por materia no dia
+    perfaluno_horasdia INT NOT NULL, -- numero X de horas por dia
+    -- perfaluno_qtdmateriasnodia INT NOT NULL, -- numero X de materias por dia
+    perfaluno_dtinicio DATE,
 	
     dh_inclusao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     dh_ultima_alt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
@@ -49,5 +51,6 @@ CREATE TABLE perfil_materia (
     in_desativado CHAR(1) NOT NULL DEFAULT 'N',
 
     CONSTRAINT pk PRIMARY KEY (perf_cd, mat_cd),
-	CONSTRAINT fk_perfil_materia_materia FOREIGN KEY ( mat_cd ) REFERENCES materia (mat_cd) ON DELETE RESTRICT ON UPDATE RESTRICT    
+	CONSTRAINT fk_perfil_materia_perfil FOREIGN KEY ( perf_cd ) REFERENCES perfil (perf_cd) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT fk_perfil_materia_materia FOREIGN KEY ( mat_cd ) REFERENCES materia (mat_cd) ON DELETE RESTRICT ON UPDATE RESTRICT    
 );

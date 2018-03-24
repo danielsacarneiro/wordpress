@@ -50,7 +50,7 @@ class voperfilmateria extends voentidade {
 	function getValoresWhereSQLChaveLogicaSemSQ($isHistorico) {
 		$nmTabela = $this->getNmTabelaEntidade ( $isHistorico );
 		$query = $nmTabela . "." . self::$nmAtrCdMateria. "=" . $this->cdMateria;
-		$query = $nmTabela . "." . self::$nmAtrCdPerfil . "=" . $this->cdPerfil;
+		$query .= " AND " . $nmTabela . "." . self::$nmAtrCdPerfil . "=" . $this->cdPerfil; 
 		
 		return $query;
 	}

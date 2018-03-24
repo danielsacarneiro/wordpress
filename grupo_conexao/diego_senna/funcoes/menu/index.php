@@ -35,8 +35,9 @@ setCabecalho("MENU");
 	f.adicionarItem(f3);
 
 	f4 = new Tree('Serviço 04 (Meta)');
-    f4.adicionarItem(new Link('Metas x Perfil', '<?=caminho_funcoesHTML.vometafonte::getNmTabela()?>', ''));
+    f4.adicionarItem(new Link('Metas', '<?=caminho_funcoesHTML.vometafonte::getNmTabela()?>', ''));
     f4.adicionarItem(new Link('Montagem', '<?=caminho_funcoesHTML."montagem"?>', ''));
+    f4.adicionarItem(new Link('Calendário', '<?=caminho_funcoesHTML."calendario"?>', ''));
 	f.adicionarItem(f4);
 	
 	<?php if(isUsuarioAdmin()){?>

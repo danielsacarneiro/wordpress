@@ -20,6 +20,7 @@ if($isInclusao){
 }else{
     $readonly = "readonly";
 	$vo->getVOExplodeChave();
+	//echo $vo->toString();
 		
 	$dbprocesso = $vo->dbprocesso;					
 	$colecao = $dbprocesso->consultarPorChave($vo, $isHistorico);	
@@ -49,6 +50,7 @@ $nome  = $vo->descricao;
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_text.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_datahora.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_select.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js_sistema?>biblioteca_funcoes_perfilaluno.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>mensagens_globais.js"></SCRIPT>
 
 <SCRIPT language="JavaScript" type="text/javascript">
@@ -122,15 +124,25 @@ function validaFormTpMeta(){
 	
 }
 
+function setNumeroCaixas(){
+	pArrayIDCampos = ["<?=voperfilaluno::$nmAtrNumHorasDia?>"
+		, "<?=voperfilaluno::$nmAtrNumHorasMateriaDia?>"
+		, "<?=voperfilaluno::$nmAtrNumDiasMeta?>"
+		, "<?=voperfilaluno::$ID_REQ_NmCaixas?>"];
+	
+	setNumeroCaixasMeta(pArrayIDCampos);	
+}
+
 function iniciar(){
 
-	validaFormTpFonte();
+	//validaFormTpFonte();
+	setNumeroCaixas();
 	
 }
 </SCRIPT>
 </HEAD>
 <?=setTituloPagina($vo->getTituloJSP())?>
-<BODY class="paginadados" onload="">
+<BODY class="paginadados" onload="iniciar()">
 	  
 <FORM name="frm_principal" method="post" action="../confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();">
 
@@ -180,21 +192,33 @@ function iniciar(){
 			?>
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Meta:</TH>
-                <TD class="campoformulario" colspan=3>
+                <TD class="campoformulario" width="1%">
                 	<?=$selectTpMeta->getHtmlCombo(voperfilaluno::$nmAtrTpMeta, voperfilaluno::$nmAtrTpMeta, $vo->tpMeta, true, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, true, "onChange='validaFormTpMeta();'");?>					 
                 </TD>
+                <TH class="campoformulario" width="1%" nowrap>Caixinhas:</TH>
+                <TD class="campoformulario">
+                	<?=getInputText(voperfilaluno::$ID_REQ_NmCaixas, voperfilaluno::$ID_REQ_NmCaixas, "", constantes::$CD_CLASS_CAMPO_READONLY, TAMANHO_CODIGOS, null, " readonly ")?>
+                	(horários disponíveis de estudo)
+                </TD>                
             </TR>			
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Qtd.Dias/Meta:</TH>
                 <TD class="campoformulario" colspan=3>
-                	<?=getInputText(voperfilaluno::$nmAtrNumDiasMeta, voperfilaluno::$nmAtrNumDiasMeta, $vo->numDiasMeta, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, TAMANHO_CODIGOS_SAFI, null, "onKeyUp='validarCampoNumericoPositivo(this);'")?>
+                	<?=getInputText(voperfilaluno::$nmAtrNumDiasMeta, voperfilaluno::$nmAtrNumDiasMeta, $vo->numDiasMeta, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, TAMANHO_CODIGOS_SAFI, null, " onBlur='setNumeroCaixas();' onKeyUp='validarCampoNumericoPositivo(this);'")?>
                 	(dias a estudar na meta)
+                </TD>
+            </TR>			           
+			<TR>
+                <TH class="campoformulario" width="1%" nowrap>Qtd.Horas/Dia:</TH>
+                <TD class="campoformulario" colspan=3>
+                	<?=getInputText(voperfilaluno::$nmAtrNumHorasDia, voperfilaluno::$nmAtrNumHorasDia, $vo->numHorasDia, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, TAMANHO_CODIGOS_SAFI, null, " onBlur='setNumeroCaixas();' onKeyUp='validarCampoNumericoPositivo(this);'")?>
+                	(horas disponíveis por dia de estudo)
                 </TD>
             </TR>			           
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Qtd.Horas/Matéria:</TH>
                 <TD class="campoformulario" colspan=3>
-                	<?=getInputText(voperfilaluno::$nmAtrNumHorasMateriaDia, voperfilaluno::$nmAtrNumHorasMateriaDia, $vo->numHorasMateriaDia, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, TAMANHO_CODIGOS_SAFI, null, "onKeyUp='validarCampoNumericoPositivo(this);'")?>
+                	<?=getInputText(voperfilaluno::$nmAtrNumHorasMateriaDia, voperfilaluno::$nmAtrNumHorasMateriaDia, $vo->numHorasMateriaDia, constantes::$CD_CLASS_CAMPO_OBRIGATORIO, TAMANHO_CODIGOS_SAFI, null, " onBlur='setNumeroCaixas();' onKeyUp='validarCampoNumericoPositivo(this);'")?>
                 	(horas por cada matéria no dia de estudo)
                 </TD>
             </TR>			           

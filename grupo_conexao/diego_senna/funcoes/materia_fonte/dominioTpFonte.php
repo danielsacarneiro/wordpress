@@ -53,9 +53,15 @@ include_once("dominioTpParametroFonte.php");
 	}
 	
 	//sao fontes que por si so ja se definem (ja se sabe que a lei seca do CPC eh o proprio CPC)
+	/**
+	 * relacao tpFonte x tpParametrofonte
+	 * @return number[]
+	 */
 	static function getColecaoFonteAutonoma() {
 		return array (
 				self::$CD_LEI_SECA=> dominioTpParametroFonte::$CD_ARTIGO,
+				self::$CD_APOSTILA => dominioTpParametroFonte::$CD_PAGINA,
+				self::$CD_QUESTOES => dominioTpParametroFonte::$CD_NENHUM,
 				//self::$CD_QUESTOES=> self::$DS_QUESTOES,
 				self::$CD_VIDEO_AULAS=> dominioTpParametroFonte::$CD_AULA, //???
 		);

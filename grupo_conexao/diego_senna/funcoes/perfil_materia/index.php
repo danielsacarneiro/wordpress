@@ -155,8 +155,8 @@ function alterar() {
              <TBODY>
                 <TR>
                   <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
-                    <TH class="headertabeladados" width="1%" nowrap>Perfil</TH>
-                    <TH class="headertabeladados" width="50%">Matéria</TH>
+                    <TH class="headertabeladados" >Perfil</TH>
+                    <TH class="headertabeladados" >Matéria</TH>
                     <TH class="headertabeladados" width="1%">Horas</TH>
                 </TR>
                 <?php								

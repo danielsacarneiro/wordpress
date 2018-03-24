@@ -59,11 +59,11 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
   				,"$nmTabela.".voperfilaluno::$nmAtrCdAluno);
   		
   		$arrayColunasRetornadas = array(
-  				"SUM(". "$nmTabelaMeta.".vometafonte::$nmAtrNumHoras . ") AS " . $filtro::$nmColNumHorasDefinidas,
+  				//"SUM(". "$nmTabelaMeta.".vometafonte::$nmAtrNumHoras . ") AS " . $filtro::$nmColNumHorasDefinidas,
   				"$nmTabelaPerfilMateria.".voperfilmateria::$nmAtrCarga,
   				"$nmTabelaPerfil.".voperfil::$nmAtrDescricao,
   				"$nmTabelaMateria.".vomateria::$nmAtrDescricao,
-  				"$nmTabelaPessoa.".vopessoa::$nmAtrNome,  				
+  				"$nmTabelaPessoa.".vopessoa::$nmAtrNome,
   		);
   		
   		$arrayColunasRetornadas = array_merge($atributosGroupBy,$arrayColunasRetornadas);
@@ -88,9 +88,65 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
   		
   		$queryJoin .= "\n INNER JOIN " . $nmTabelaPerfil;
   		$queryJoin .= "\n ON ";
-  		$queryJoin .= $nmTabelaPerfil. "." . voperfil::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdPerfil;  		
+  		$queryJoin .= $nmTabelaPerfil. "." . voperfil::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdPerfil;
   		
   		$filtro->groupby = $atributosGroupBy;
+  		
+  		return parent::consultarMontandoQueryTelaConsulta ( new voperfilaluno(), $filtro, $arrayColunasRetornadas, $queryJoin );
+  	}
+  	
+  	function consultarTelaConsultaCalendario($filtro) {
+  		$isHistorico = $filtro->isHistorico;
+  		$nmTabela = voperfilaluno::getNmTabelaStatic($isHistorico);
+  		$nmTabelaPerfil = voperfil::getNmTabelaStatic($isHistorico);
+  		$nmTabelaPerfilMateria = voperfilmateria::getNmTabelaStatic($isHistorico);
+  		$nmTabelaMateria = vomateria::getNmTabelaStatic($isHistorico);
+  		$nmTabelaPessoa = vopessoa::getNmTabelaStatic($isHistorico);
+  		
+  		/*$atributosGroupBy = array("$nmTabelaMeta." . vometafonte::$nmAtrCdPerfil
+  				,"$nmTabelaMeta.".vometafonte::$nmAtrCdMateria
+  				,"$nmTabela.".voperfilaluno::$nmAtrCdAluno);*/
+  		
+  		$arrayColunasRetornadas = array(
+  				filtroConsultarMontagem::$nmColNumCargaTotal,
+  				"$nmTabela.".voperfilaluno::$nmAtrNumDiasMeta,
+  				"$nmTabela.".voperfilaluno::$nmAtrNumHorasMateriaDia,
+  				"$nmTabela.".voperfilaluno::$nmAtrNumHorasDia,
+  				"$nmTabelaPerfilMateria.".voperfilmateria::$nmAtrCarga,
+  				"$nmTabelaPerfil.".voperfil::$nmAtrDescricao,
+  				"$nmTabelaPerfil.".voperfil::$nmAtrCd,
+  				"$nmTabelaMateria.".vomateria::$nmAtrDescricao,
+  				"$nmTabelaPessoa.".vopessoa::$nmAtrNome,  				
+  				"$nmTabelaPessoa.".vopessoa::$nmAtrCd,
+  		);
+  		
+  		//$arrayColunasRetornadas = array_merge($atributosGroupBy,$arrayColunasRetornadas);
+  		
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaPerfilMateria;
+  		$queryJoin .= "\n ON ";
+  		$queryJoin .= $nmTabelaPerfilMateria. "." . voperfilmateria::$nmAtrCdPerfil . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdPerfil;
+  		  		
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaMateria;
+  		$queryJoin .= "\n ON ";
+  		$queryJoin .= $nmTabelaPerfilMateria. "." . voperfilmateria::$nmAtrCdMateria . "=" . $nmTabelaMateria. "." . vomateria::$nmAtrCd;
+  		
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaPessoa;
+  		$queryJoin .= "\n ON ";
+  		$queryJoin .= $nmTabelaPessoa. "." . vopessoa::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdAluno;
+  		
+  		$queryJoin .= "\n INNER JOIN " . $nmTabelaPerfil;
+  		$queryJoin .= "\n ON ";
+  		$queryJoin .= $nmTabelaPerfil. "." . voperfil::$nmAtrCd . "=" . $nmTabela . "." . voperfilaluno::$nmAtrCdPerfil;
+  		
+  		$atributosGroup = voperfilmateria::$nmAtrCdPerfil;
+  		$NM_TAB_PERFIL_PESOTOTAL = "NM_TAB_PERFIL_PESOTOTAL";  		
+  		$queryJoin .= "\n INNER JOIN (";
+  		$queryJoin .= " SELECT SUM(" . voperfilmateria::$nmAtrCarga. ") AS " . filtroConsultarMontagem::$nmColNumCargaTotal . "," . $atributosGroup . " FROM " . $nmTabelaPerfilMateria . " GROUP BY " . $atributosGroup;
+  		$queryJoin .= ") $NM_TAB_PERFIL_PESOTOTAL";
+  		$queryJoin .= "\n ON " . $nmTabelaPerfilMateria. "." . voperfilmateria::$nmAtrCdPerfil . " = $NM_TAB_PERFIL_PESOTOTAL." . voperfilmateria::$nmAtrCdPerfil;  		
+  		
+  		
+  		//$filtro->groupby = $atributosGroupBy;
   		
   		return parent::consultarMontandoQueryTelaConsulta ( new voperfilaluno(), $filtro, $arrayColunasRetornadas, $queryJoin );
   	}
@@ -115,6 +171,7 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
         $retorno.= $this-> getVarComoNumero($vo->tpMeta) . ",";
         $retorno.= $this-> getVarComoNumero($vo->numDiasMeta) . ",";
         $retorno.= $this-> getVarComoNumero($vo->numHorasMateriaDia) . ",";
+        $retorno.= $this-> getVarComoNumero($vo->numHorasDia) . ",";
         $retorno.= $this-> getVarComoData($vo->dtInicio);
         
         $retorno.= $vo->getSQLValuesInsertEntidade();
@@ -126,11 +183,21 @@ include_once (caminho_util."bibliotecaFuncoesPrincipal.php");
         $retorno = "";
         $sqlConector = "";
                 
-        if($vo->carga!= null){
-        	$retorno.= $sqlConector . voperfilmateria::$nmAtrCarga . " = " . $this->getVarComoNumero($vo->carga);
+        if($vo->numDiasMeta!= null){
+        	$retorno.= $sqlConector . voperfilaluno::$nmAtrNumDiasMeta . " = " . $this->getVarComoNumero($vo->numDiasMeta);
             $sqlConector = ",";
         }
                
+        if($vo->numHorasMateriaDia!= null){
+        	$retorno.= $sqlConector . voperfilaluno::$nmAtrNumHorasMateriaDia . " = " . $this->getVarComoNumero($vo->numHorasMateriaDia);
+        	$sqlConector = ",";
+        }
+        
+        if($vo->numHorasDia!= null){
+        	$retorno.= $sqlConector . voperfilaluno::$nmAtrNumHorasDia . " = " . $this->getVarComoNumero($vo->numHorasDia);
+        	$sqlConector = ",";
+        }
+        
         $retorno = $retorno . $sqlConector . $vo->getSQLValuesUpdate();
 		        
 		return $retorno;                

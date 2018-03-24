@@ -2,11 +2,11 @@
 include_once(caminho_util."bibliotecaSQL.php");
 include_once(caminho_lib ."filtroManter.php");
 
-class filtroConsultarMontagem extends filtroManter{
+class filtroConsultarCalendario extends filtroManter{
     
-    public static $nmFiltro = "filtroConsultarMontagem";
-    public static $nmColNumCaixinhas = "nmColNumCaixinhas";
-    public static $nmColNumCargaTotal = "nmColNumCargaTotal";
+    public static $nmFiltro = "filtroConsultarCalendario";
+    public static $nmColNumHorasDefinidas = "nmColNumHorasDefinidas";
+    //public static $nmColNumHorasADefinir = "nmColNumHorasADefinir";
     
     var $cdPerfil = "";
     var $cdAluno = "";
@@ -83,7 +83,7 @@ class filtroConsultarMontagem extends filtroManter{
 		
 		//$this->formataCampoOrdenacao(new voDemanda());
 		//finaliza o filtro
-		$filtro = parent::getFiltroSQL($filtro, true);
+		$filtro = parent::getFiltroSQL($filtro, $comAtributoOrdenacao);
 		
 		//echo "Filtro:$filtro<br>";
 
@@ -103,8 +103,7 @@ class filtroConsultarMontagem extends filtroManter{
 		$varAtributos = array(
 				voperfilaluno::$nmAtrCdPerfil=> "Perfil",
 				voperfilaluno::$nmAtrCdAluno=> "Aluno",
-				voperfilaluno::$nmAtrTpMeta=> "Meta",
-				voperfilmateria::$nmAtrCarga => "Carga",
+				voperfilaluno::$nmAtrTpMeta=> "Meta",				
 		);
 		return $varAtributos;
 	}

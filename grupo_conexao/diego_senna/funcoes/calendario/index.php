@@ -1,16 +1,17 @@
 <?php
 include_once("../../config_sistema.php");
 include_once(caminho_util."bibliotecaHTML.php");
+include_once("biblioteca_htmlCalendario.php");
 
 //inicia os parametros
 inicio();
 
-$titulo = "CONSULTAR " . voperfilaluno::getTituloJSP();
-setCabecalho($titulo);
+$nmConsulta = "CALENDÁRIO";
 
-$vo = new voperfilaluno();
-$filtro  = new filtroManterPerfilAluno();
-$filtro->voPrincipal = $vo;
+$titulo = "CONSULTAR " . $nmConsulta;
+setCabecalho($titulo); 
+	
+$filtro  = new filtroConsultarMontagem(false, true);
 $filtro = filtroManter::verificaFiltroSessao($filtro);
 
 $nome = $filtro->descricao;
@@ -18,8 +19,9 @@ $cdHistorico = $filtro->cdHistorico;
 $cdOrdenacao = $filtro->cdOrdenacao;
 $isHistorico = ("S" == $cdHistorico); 
 
+$vo = new voperfilaluno();
 $dbprocesso = $vo->dbprocesso;
-$colecao = $dbprocesso->consultarTelaConsulta($filtro);
+$colecao = $dbprocesso->consultarTelaConsultaCalendario($filtro);
 
 if($filtro->temValorDefaultSetado){
 	;
@@ -35,6 +37,7 @@ $numTotalRegistros = $filtro->numTotalRegistros;
 <HTML>
 <HEAD>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_text.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_radiobutton.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>tooltip.js"></SCRIPT>
 
@@ -58,8 +61,21 @@ function selecionar() {
 
 // Verifica se o formulario esta valido para alteracao, exclusao ou detalhamento
 function isFormularioValido() {
-	if (!isRadioButtonConsultaSelecionado("document.frm_principal.rdb_consulta"))
-		return false;		
+
+	if(document.frm_principal.<?=voperfilaluno::$nmAtrCdPerfil?>.value == ""
+		&& document.frm_principal.<?=voperfil::$nmAtrDescricao?>.value == ""){
+		
+		if(!isCampoNumericoPositivoValido(document.frm_principal.<?=voperfilaluno::$nmAtrCdPerfil?>, true)){
+			return false;
+		}
+		
+		if(!isCampoAlfaNumericoValido(document.frm_principal.<?=voperfil::$nmAtrDescricao?>, true)){
+			return false;
+		}
+
+	}
+	
+
 	return true;
 }
 
@@ -104,12 +120,31 @@ function alterar() {
 	location.href="manter.php?funcao=<?=constantes::$CD_FUNCAO_ALTERAR?>&chave=" + chave;
 
 }
+
+function transferirDadosPessoa(array){	
+	cd = array[0];
+	ds = array[2];
+	document.frm_principal.<?=voperfilaluno::$nmAtrCdAluno?>.value = completarNumeroComZerosEsquerda(cd, <?=TAMANHO_CODIGOS_SAFI?>);
+	document.frm_principal.<?=vopessoa::$nmAtrNome?>.value = ds;
+}
+
+function transferirDadosPerfil(cdPerfil, dsPerfil){
+	document.frm_principal.<?=voperfilaluno::$nmAtrCdPerfil?>.value = completarNumeroComZerosEsquerda(cdPerfil, <?=TAMANHO_CODIGOS_SAFI?>);
+	document.frm_principal.<?=voperfil::$nmAtrDescricao?>.value = dsPerfil;
+}
+
+function confirmar() {
+	if(!isFormularioValido())
+		return false;
+	
+	return true;    
+}
 </SCRIPT>
 </HEAD>
-<?=setTituloPagina($vo->getTituloJSP())?>
+<?=setTituloPagina($nmConsulta)?>
 <BODY class="paginadados" onload="">
 	  
-<FORM name="frm_principal" method="post" action="index.php?consultar=S">
+<FORM name="frm_principal" method="post" action="index.php?consultar=S" onSubmit="return confirmar();">
     
 <INPUT type="hidden" name="utilizarSessao" value="N">
 <INPUT type="hidden" name="numTotalRegistros" id="numTotalRegistros" value="<?=$numTotalRegistros?>">
@@ -127,11 +162,14 @@ function alterar() {
     <DIV id="div_filtro" class="div_filtro">
     <TABLE id="table_filtro" class="filtro" cellpadding="0" cellspacing="0">
         <TBODY>
+        <?php 
+        	$lupaPerfil = getLinkPesquisa(caminho_funcoesHTML."perfil");
+        ?>
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Perfil:</TH>
                 <TD class="campoformulario" >
                 	Cd. <INPUT type="text" id="<?=voperfilaluno::$nmAtrCdPerfil?>" name="<?=voperfilaluno::$nmAtrCdPerfil?>"  value="<?php echo(complementarCharAEsquerda($filtro->cdPerfil, "0", TAMANHO_CODIGOS_SAFI));?>"  class="camponaoobrigatorio" size="4" >
-					- Descrição: 
+					<?=$lupaPerfil?>- Descrição: 
                 	<INPUT type="text" id="<?=voperfil::$nmAtrDescricao?>" name="<?=voperfil::$nmAtrDescricao?>"  value="<?php echo($filtro->dsPerfil);?>"  class="camponaoobrigatorio" size="50" >
                 </TD>
             </TR>        
@@ -155,52 +193,64 @@ function alterar() {
          <TABLE id="table_tabeladados" class="tabeladados" cellpadding="0" cellspacing="0">						
              <TBODY>
                 <TR>
-                  <TH class="headertabeladados" width="1%">&nbsp;&nbsp;X</TH>
-                    <TH class="headertabeladados" >Perfil</TH>
-                    <TH class="headertabeladados" >Aluno</TH>
-                    <TH class="headertabeladados" width="1%">Meta</TH>
-                    <TH class="headertabeladados" width="1%">Qtd.Dias/Meta</TH>
-                    <TH class="headertabeladados" width="1%">Qtd.Horas/Matéria</TH>
-                    <TH class="headertabeladados" width="1%">Dt.Início</TH>
-                </TR>
+                    <TH class="headertabeladados" width="1%">x</TH>
+                    <TH class="headertabeladados"width="90%" >Matéria</TH>
+                    <TH class="headertabeladadosalinhadocentro" width="1%">Num.Caixinhas</TH>
+                    <TH class="headertabeladadosalinhadocentro" width="1%">Num.Caixinhas.Ideal</TH>
+                </TR>                
                 <?php								
-                if (is_array($colecao))
+                if (!isColecaoVazia($colecao))
                         $tamanho = sizeof($colecao);
                 else 
                         $tamanho = 0;			
                
-                 $colspan=8;
+                 $colspan=4;
                  if($isHistorico){
                  	$colspan++;
-                 }                        
-                            
-                for ($i=0;$i<$tamanho;$i++) {
-                	$registroAtual = $colecao[$i];
-                        $voAtual = new voperfilaluno();
-                        $voAtual->getDadosBanco($colecao[$i]);
-                                                                        
-                        $dsAluno = complementarCharAEsquerda($voAtual->cdAluno, "0", TAMANHO_CODIGOS_SAFI)
-                        . "-"
-						. $registroAtual[vopessoa::$nmAtrNome];
-                        
-						$dsPerfil = complementarCharAEsquerda($voAtual->cdPerfil, "0", TAMANHO_CODIGOS_SAFI)
-						. "-"
-						. $registroAtual[voperfil::$nmAtrDescricao];
-		
-				?>
+                 } 
+                 
+                 $totalCaixinhas = 0;
+                 if(!isColecaoVazia($colecao)){
+                 	
+                 	$totalCaixinhasIdeal = 0;
+                 	
+                	for ($i=0;$i<$tamanho;$i++) {
+	                 	$registro = $colecao[$i];
+	                 	$voAtual = new vomateria();
+	                 	$voAtual->getDadosBanco($registro);
+	                 	
+	                 	$numHorasDia = $registro[voperfilaluno::$nmAtrNumHorasDia];
+	                 	$numHorasMateriaDia = $registro[voperfilaluno::$nmAtrNumHorasMateriaDia];
+	                 	$numDias = $registro[voperfilaluno::$nmAtrNumDiasMeta];
+	                 	
+	                 	$carga = $registro[voperfilmateria::$nmAtrCarga];
+	                 	$numCargaTotalBase = $registro[filtroConsultarMontagem::$nmColNumCargaTotal];
+	                 	
+	                 	$numCaixinhasTotal = $numHorasDia/$numHorasMateriaDia*$numDias;
+	                 	$numCaixinhas = $numCaixinhasTotal*$carga/$numCargaTotalBase;
+	                 	$numCaixinhasIdeal = round($numCaixinhas);	                 	
+	                 	
+	                 	$totalCaixinhasIdeal= $totalCaixinhasIdeal+ $numCaixinhasIdeal;                 
+                 ?>
                 <TR class="dados">
-                    <TD class="tabeladados">
-                    <?=getHTMLRadioButtonConsulta("rdb_consulta", "rdb_consulta", $voAtual);?>					
-                    </TD>                    
-                    <TD class="tabeladados"><?php echo $dsPerfil;?></TD>
-                    <TD class="tabeladados"><?php echo $dsAluno;?></TD>
-                    <TD class="tabeladados"><?php echo dominioTpMetaAluno::getDescricaoStatic($voAtual->tpMeta);?></TD>
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->numDiasMeta, "0", 2);?></TD>                    
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($voAtual->numHorasMateriaDia, "0", 2);?></TD>
-                    <TD class="tabeladados"><?php echo getData($voAtual->dtInicio);?></TD>
+                    <TD class="tabeladados"><input type="checkbox"></TD>
+                    <TD class="tabeladados"><?php echo $colecao[$i][vomateria::$nmAtrDescricao];?></TD>                    
+					<TD class="tabeladados"><?php echo "$numCaixinhas";?></TD>
+					<TD class="tabeladados"><?php echo "$numCaixinhasIdeal";?></TD>
                 </TR>					
-                <?php
-				}				
+                <?php               		               		
+					}					
+				?>
+                <TR>
+                    <TD class="totalizadortabeladadosalinhadodireita" colspan=<?=$colspan-2?>>Total:</TD>
+                    <TD class="totalizadortabeladadosalinhadodireita" nowrap><?="$numCaixinhasTotal"?></TD>
+                    <TD class="totalizadortabeladadosalinhadodireita" nowrap><?="$totalCaixinhasIdeal"?></TD>
+                </TR>
+				<?php 
+				
+                }
+
+                if($filtro->TemPaginacao){
                 ?>
                 <TR>
                     <TD class="tabeladadosalinhadocentro" colspan=<?=$colspan?>><?=$paginacao->criarLinkPaginacaoGET()?></TD>
@@ -208,6 +258,12 @@ function alterar() {
                 <TR>
                     <TD class="totalizadortabeladadosalinhadodireita" colspan=<?=$colspan?>>Total de registro(s) na página: <?=$i?></TD>
                 </TR>
+				<?php			
+                }
+                
+                $numTotalRegistros = $tamanho;
+                ?>
+                
                 <TR>
                     <TD class="totalizadortabeladadosalinhadodireita" colspan=<?=$colspan?>>Total de registro(s): <?=$numTotalRegistros?></TD>
                 </TR>				
@@ -224,7 +280,7 @@ function alterar() {
                        <TD>
                         <TABLE class="barraacoesaux" cellpadding="0" cellspacing="0">
 	                   	<TR>
-	                   		<?=getBotoesRodape();?>
+	                   		<?//=getBotoesRodape();?>
                          </TR>
                          </TABLE>
 	                   </TD>

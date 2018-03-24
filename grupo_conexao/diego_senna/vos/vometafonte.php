@@ -51,7 +51,7 @@ class vometafonte extends voentidade {
 		$this->removeAtributos ( $arrayAtribRemover );*/
 	}
 	public static function getTituloJSP() {
-		return "META X PERFIL";
+		return "META (CONTEÚDO) X PERFIL";
 	}
 	public static function getNmTabela() {
 		return "meta_fonte";

@@ -107,6 +107,7 @@ $pastaRaiz = "../../";
 
 if(isSistemaInterno()){
 	define('caminho_funcoes_sistema', caminho . "/". getNmSistemaInterno()."/funcoes/");
+	define('caminho_js_sistema', $pastaRaiz.$caminhoJS);
 	$pastaRaiz = "../$pastaRaiz";
 }
 $caminhoJS = $pastaRaiz . $caminhoJS;

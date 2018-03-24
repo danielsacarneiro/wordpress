@@ -2,9 +2,9 @@
 include_once(caminho_util."bibliotecaSQL.php");
 include_once(caminho_lib ."filtroManter.php");
 
-class filtroManterMateria extends filtroManter{
+class filtroManterPerfil extends filtroManter{
     
-    public static $nmFiltro = "filtroManterMateria";
+    public static $nmFiltro = "filtroManterPerfil";
     
     // ...............................................................
 	// construtor
@@ -48,6 +48,15 @@ class filtroManterMateria extends filtroManter{
 
 		return $filtro;
 	}	
+	
+	function getAtributosOrdenacao(){
+		$varAtributos = array(
+				voperfil::$nmAtrCd=> "Código",
+				voperfil::$nmAtrDescricao => "Descrição",
+		);
+		return $varAtributos;
+	}
+	
 }
 
 ?>

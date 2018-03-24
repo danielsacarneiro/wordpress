@@ -8,16 +8,9 @@ inicio();
 
 $vo = new voperfilmateria();
 //var_dump($vo->varAtributos);
-$chave = @$_GET["chave"];
-$array = explode("*",$chave);
-
-$vo->cd = $array[0];
-$vo->cdHistorico = $array[1];
-$isHistorico = ("S" == $vo->cdHistorico);    
-if($isHistorico){
-    $sqHist = $array[2];
-    $vo->sqHist = $sqHist;
-}
+$vo->getVOExplodeChave();
+//var_dump($vo->varAtributos);
+$isHistorico = ($vo->sqHist != null && $vo->sqHist != "");
 
 $readonly = "";
 $nmFuncao = "";

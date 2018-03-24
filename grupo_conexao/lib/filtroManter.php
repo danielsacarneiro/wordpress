@@ -30,9 +30,10 @@ class filtroManter extends multiplosConstrutores {
 	var $isValidarConsulta;
 	var $inDesativado;
 	var $groupby;
+	
 	private $QUERY_SELECT;
 	private $QUERY_FROM;
-	private $NM_METODO_FILTRO_CONSULTA;
+	
 	var $voPrincipal;
 	function __construct0() {
 		// echo "teste0";
@@ -46,9 +47,8 @@ class filtroManter extends multiplosConstrutores {
 	function __construct2($temPaginacao, $pegarFiltrosDaTela) {
 		$this->cdConsultarArquivo = constantes::$CD_NAO;
 		$this->tpVigencia = constantes::$CD_OPCAO_TODOS;
-		$this->NM_METODO_FILTRO_CONSULTA = "getFiltroConsultaSQL";
 		
-		if ($pegarFiltrosDaTela) {			
+		if ($pegarFiltrosDaTela) {
 			$this->pegarFiltroDaTela ();
 			// chama o metodo do filho que pega os dados do filtro do formulario
 			if (method_exists ( $this, "getFiltroFormulario" )) {
@@ -90,7 +90,7 @@ class filtroManter extends multiplosConstrutores {
 	function setQueryFromJoin($query) {
 		$this->QUERY_FROM = $query;
 	}
-	function getQueryFromJoin() {
+	function getQueryFromJoin(){
 		return $this->QUERY_FROM;
 	}
 	function setQuerySelect($query) {
@@ -134,19 +134,14 @@ class filtroManter extends multiplosConstrutores {
 		
 		return $filtro;
 	}
-	
-	function setMetodoFiltroConsulta($nmMetodo){
-		if($nmMetodo != null){
-			$this->NM_METODO_FILTRO_CONSULTA = $nmMetodo;
-		}
-	}
-	
 	function getSQLWhere($comAtributoOrdenacao) {
-		//return $this->getFiltroConsultaSQL ( $comAtributoOrdenacao );
-		$nmMetodo = $this->NM_METODO_FILTRO_CONSULTA;
-		return $this->$nmMetodo( $comAtributoOrdenacao );		
+		return $this->getFiltroConsultaSQL ( $comAtributoOrdenacao );
 	}
 	function getFiltroConsulta($filtro) {
+		//serve para formatar o atributo de ordenacao caso ele nao esteja referenciando a tabela correta(de historico ou nao)
+		if($filtro->voPrincipal != null)
+			//$this->formataCampoOrdenacao($filtro->voPrincipal);
+		
 		return $this->getFiltroSQL ( $filtro, true );
 	}
 	function getFiltroSQL($strFiltro, $comAtributoOrdenacao) {
@@ -160,20 +155,29 @@ class filtroManter extends multiplosConstrutores {
 		
 		// complementa com algum filtro do pai
 		// se o inDesativado for null, eh porque nao tem desativacao
-		// echo "desativado: ". $this->inDesativado;
-		// so tem desativado quando a consulta NAO eh por historico
-		//o voPrincipal indica qual entidade eh a principal para fazer a verificacao com o desativado
-		if (! $this->isHistorico () && $this->voPrincipal != null) {
-			
-			if ($this->voPrincipal->temTabHistorico () && $this->inDesativado == null) {
-				// seta para nao, para nao trazer os desativados como default
+		//echo "desativado: ". $this->inDesativado;
+		//so tem desativado quando a consulta NAO eh por historico
+		if (!$this->isHistorico() && $this->voPrincipal != null) {
+			if($this->voPrincipal->temTabHistorico() && $this->inDesativado == null){
+				//seta para nao, para nao trazer os desativados como default
 				$this->inDesativado = constantes::$CD_NAO;
 			}
 			
-			if ($this->inDesativado != null && $this->inDesativado != constantes::$CD_OPCAO_TODOS) {
-				$strFiltro = $strFiltro . $conector . $this->voPrincipal->getNmTabela () . "." . voentidade::$nmAtrInDesativado . " = '" . $this->inDesativado . "'";
+			if($this->inDesativado != null && $this->inDesativado != constantes::$CD_OPCAO_TODOS){
+				$strFiltro = $strFiltro . $conector . $this->voPrincipal->getNmTabela() . "." . voentidade::$nmAtrInDesativado . " = '" . $this->inDesativado . "'";
 				$conector = "\n AND ";
 			}
+			
+			/*if($this->inDesativado != null && $this->inDesativado != constantes::$CD_OPCAO_TODOS){
+			 $atributoComparar = $this->voPrincipal->getNmTabela() . "." . voentidade::$nmAtrInDesativado;
+			 
+			 //MARRETA: so esta com a condicao de IS NULL NA UNICA OPCAO de que ha um JOIN com outra tabela que nao utilize o in_desativado
+			 //como por exemplo a consulta da tela de vocontratoinfo, em que se busca na tabela principal vocontrato, e ai nesse caso
+			 //o in_desativado, que tem o vocontratoinfo como voprincipal, pode ser nulo
+			 //
+			 $strFiltro = $strFiltro . $conector . "($atributoComparar IS NULL OR ($atributoComparar IS NOT NULL AND $atributoComparar = '" . $this->inDesativado . "')) ";
+			 $conector = "\n AND ";
+			 }*/
 		}
 		
 		// agora sim inclui os valores de filtro
@@ -182,12 +186,24 @@ class filtroManter extends multiplosConstrutores {
 		}
 		
 		// var_dump($this->groupby);
-		$strFiltro = $strFiltro . static::getSQLGroupby($this->groupby);		
+		if ($this->groupby != null && $this->groupby != "") {
+			$str = $this->groupby;
+			if (is_array ( $this->groupby )) {
+				$str = getSQLStringFormatadaColecaoIN ( $this->groupby, false );
+			}
+			
+			$strFiltro = $strFiltro . "\n GROUP BY " . $str;
+		}
 		
 		// pega do filho, se existir
 		$strOrdemDefault = "";
+		$strOrdemAnteriorDefault = "";
 		if ($this->getAtributoOrdenacaoDefault ()) {
 			$strOrdemDefault = $this->getAtributoOrdenacaoDefault ();
+		}
+		
+		if ($this->getAtributoOrdenacaoAnteriorDefault ()) {
+			$strOrdemAnteriorDefault = $this->getAtributoOrdenacaoAnteriorDefault ();
 		}
 		
 		if ($this->cdAtrOrdenacao != null) {
@@ -207,62 +223,83 @@ class filtroManter extends multiplosConstrutores {
 		
 		$ordenacaoFinal = "";
 		$conectorOrdem = "";
-		// concatena as ordenacoes que existirem
-		if ($atributoOrdenacao != "") {
+		//concatena as ordenacoes que existirem
+		if($atributoOrdenacao != ""){
 			$ordenacaoFinal = $atributoOrdenacao;
 			$conectorOrdem = ",";
 		}
+		if($strOrdemAnteriorDefault != ""){
+			$ordenacaoFinal = $strOrdemAnteriorDefault . $conectorOrdem.  $ordenacaoFinal;
+			$conectorOrdem = ",";
+		}
 		
-		if ($strOrdemDefault != "") {
-			$ordenacaoFinal = $atributoOrdenacao . $conectorOrdem . $strOrdemDefault;
+		if($strOrdemDefault != ""){
+			$ordenacaoFinal = $ordenacaoFinal . $conectorOrdem. $strOrdemDefault;
 		}
 		
 		if ($comAtributoOrdenacao && $ordenacaoFinal != "") {
 			$strFiltro = $strFiltro . "\n ORDER BY $ordenacaoFinal ";
 		}
 		
-		// echo $strFiltro;
+		//echo $strFiltro;
 		
 		return $strFiltro;
-	}
-	static function getSQLGroupby($groupby){
-		if ($groupby!= null && $groupby!= "") {
-			$str = $groupby;
-			if (is_array ( $groupby)) {
-				$str = getSQLStringFormatadaColecaoIN ( $groupby, false );
-			}
-			
-			$strFiltro = "\n GROUP BY " . $str;
-		}
-		
-		return $strFiltro;		
 	}
 	function getVOEntidadePrincipal() {
 		$class = $this->nmEntidadePrincipal;
 		$retorno = "";
 		if ($class != null)
 			$retorno = new $class ();
-		return $retorno;
+			return $retorno;
 	}
 	
+	// NAO USAR MAIS
+	/*
+	 * function getAtributosOrdenacao(){
+	 * $comboOrdenacao = null;
+	 * if($this->nmEntidadePrincipal != null){
+	 * $voentidade = $this->getVOEntidadePrincipal();
+	 * $comboOrdenacao = new select($voentidade::getAtributosOrdenacao());
+	 * }
+	 * return $comboOrdenacao;
+	 * }
+	 */
 	function getComboOrdenacao() {
 		$comboOrdenacao = null;
-		//metodo a ser implementado nos filtros que tiverem ordenacao
-		if (method_exists ( $this, "getAtributosOrdenacao" )) {
+		try {
+			// $comboOrdenacao = new select(static::getAtributosOrdenacao());
 			$comboOrdenacao = new select ( $this->getAtributosOrdenacao () );
+			
+			// }catch (Throwable $ex){
+		} catch ( Error $ex ) {
+			echo "FiltroManter:Error";
+			$comboOrdenacao = null;
+		} catch ( Throwable $ex ) {
+			echo "FiltroManter:Throwable";
+			$comboOrdenacao = null;
 		}
+		
 		return $comboOrdenacao;
 	}
+	
+	/**
+	 * serve para formatar o atributo de ordenacao caso ele nao esteja
+	 * referenciando a tabela correta(de historico ou nao)
+	 * se a tabela ja for a correta, ele nao faz nada, ou seja, permite a indicacao forcada da tabela que se deseja
+	 * sem alterar a funcionalidade
+	 */
 	function formataCampoOrdenacao($voEntidade) {
+		
 		$nmTabela = $voEntidade->getNmTabelaStatic ( $this->isHistorico );
 		
 		if ($nmTabela != null && $this->cdAtrOrdenacao != null) {
-			
+			//echo "<br>ordenacao original: " . $this->cdAtrOrdenacao;
 			$jaEhFormatado = strpos ( $this->cdAtrOrdenacao, "." );
 			
 			// so formata se o atrordenacao escolhido pertencer a nmtabela em questao
 			if ($jaEhFormatado === false && existeItemNoArray ( $this->cdAtrOrdenacao, $voEntidade->getTodosAtributos () )) {
 				$this->cdAtrOrdenacaoConsulta = $nmTabela . "." . $this->cdAtrOrdenacao;
+				//echo "<br>ordenacao formatado: " . $this->cdAtrOrdenacaoConsulta;
 			}
 		}
 	}
@@ -273,20 +310,32 @@ class filtroManter extends multiplosConstrutores {
 		
 		return $retorno;
 	}
+	/**
+	 * Usado quando se deseja que ocorra uma ordenacao configurada combinada ou apos a selecao do atributo ordenacao
+	 * @return string
+	 */
 	function getAtributoOrdenacaoDefault() {
+		return "";
+	}
+	/**
+	 * Usado quando se deseja que SEMPRE ocorra uma ordenacao configurada, independente do atributo ordenacao
+	 * selecionado pelo usuario
+	 * @return string
+	 */
+	function getAtributoOrdenacaoAnteriorDefault() {
 		return "";
 	}
 	function setaFiltroConsultaSemLimiteRegistro() {
 		$this->qtdRegistrosPorPag = null;
 	}
 	function isHistorico() {
-		return $this->isHistorico || $this->cdHistorico == "S";
+		return $this->isHistorico;
 	}
 	static function isAtributoArrayVazio($colecao) {
-		return is_array ( $colecao ) && count ( $colecao ) == 1 && $colecao [0] == "";
+		return is_array($colecao) && count($colecao)==1 && $colecao[0]=="";
 	}
+	
 }
-
 /*
  * class filtroManterGUI extends filtroManter{
  * // ...............................................................
@@ -296,4 +345,17 @@ class filtroManter extends multiplosConstrutores {
  * }
  * }
  */
+/**
+ * usado para consultas genericas, sem tela
+ * @author daniel.ribeiro
+ *
+ */
+class filtroConsultar extends filtroManter {
+	function __construct($temPaginacao=false) {
+		parent::__construct2($temPaginacao, false);
+		$this->isValidarConsulta = false;
+		//$this->inDesativado = "N";
+	}
+}
+
 ?>

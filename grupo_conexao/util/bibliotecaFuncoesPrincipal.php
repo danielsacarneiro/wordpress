@@ -429,4 +429,9 @@ function getStringComoNumero($param) {
 	}
 	return $retorno;
 }
+
+function arredondarCasasDecimal($valor, $casas=0) {
+	$float_arredondar=round($valor * 100,$casas) / 100;
+	return $float_arredondar;
+}
 ?>

@@ -71,7 +71,16 @@ class filtroManterMateriaFonte extends filtroManter{
 		//echo "Filtro:$filtro<br>";
 
 		return $filtro;
-	}	
+	}
+	
+	function getAtributosOrdenacao(){
+		$varAtributos = array(
+				vomateria::$nmAtrCd=> "Código",
+				vomateria::$nmAtrDescricao => "Descrição",
+		);
+		return $varAtributos;
+	}
+	
 }
 
 ?>

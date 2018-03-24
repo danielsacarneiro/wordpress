@@ -52,7 +52,7 @@ setCabecalho($titulo);
 <HEAD>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_principal.js"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js?>biblioteca_funcoes_cnpfcnpj.js"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" src="<?=caminho_js_sistema?>biblioteca_funcoes_perfilaluno.js"></SCRIPT>
+
 <SCRIPT language="JavaScript" type="text/javascript">
 // Verifica se o formulario esta valido para alteracao, exclusao ou detalhamento
 function isFormularioValido() {
@@ -67,28 +67,15 @@ function cancelar() {
 	location.href="index.php?consultar=S&lupa="+ lupa;	
 }
 
-function setNumeroCaixas(){
-	pArrayIDCampos = ["<?=voperfilaluno::$nmAtrNumHorasDia?>"
-		, "<?=voperfilaluno::$nmAtrNumHorasMateriaDia?>"
-		, "<?=voperfilaluno::$nmAtrNumDiasMeta?>"
-		, "<?=voperfilaluno::$ID_REQ_NmCaixas?>"];
-	
-	setNumeroCaixasMeta(pArrayIDCampos);	
-}
-
 function confirmar() {
 	return confirm("Confirmar Alteracoes?");    
-}
-
-function iniciar(){
-	setNumeroCaixas();
 }
 
 </SCRIPT>
 
 </HEAD>
 <?=setTituloPagina($vo->getTituloJSP())?>
-<BODY class="paginadados" onload="iniciar()">
+<BODY class="paginadados" onload="">
 	  
 <FORM name="frm_principal" method="post" action="../confirmar.php?class=<?=get_class($vo)?>" onSubmit="return confirmar();">
 
@@ -138,14 +125,9 @@ function iniciar(){
 			?>
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Meta:</TH>
-                <TD class="campoformulario" width="1%">
+                <TD class="campoformulario" colspan=3>
                 	<?=$selectTpMeta->getHtmlCombo(voperfilaluno::$nmAtrTpMeta, voperfilaluno::$nmAtrTpMeta, $vo->tpMeta, true, constantes::$CD_CLASS_CAMPO_READONLY, true, "");?>					 
                 </TD>
-                <TH class="campoformulario" width="1%" nowrap>Caixinhas:</TH>
-                <TD class="campoformulario">
-                	<?=getInputText(voperfilaluno::$ID_REQ_NmCaixas, voperfilaluno::$ID_REQ_NmCaixas, "", constantes::$CD_CLASS_CAMPO_READONLY, TAMANHO_CODIGOS, null, " readonly ")?>
-                	(horários disponíveis de estudo)
-                </TD>                
             </TR>			
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Qtd.Dias/Meta:</TH>
@@ -153,14 +135,7 @@ function iniciar(){
                 	<?=getInputText(voperfilaluno::$nmAtrNumDiasMeta, voperfilaluno::$nmAtrNumDiasMeta, $vo->numDiasMeta, constantes::$CD_CLASS_CAMPO_READONLY, TAMANHO_CODIGOS_SAFI, null, "onKeyUp='validarCampoNumericoPositivo(this);'")?>
                 	(dias a estudar na meta)
                 </TD>
-            </TR>	
-           	<TR>
-                <TH class="campoformulario" width="1%" nowrap>Qtd.Horas/Dia:</TH>
-                <TD class="campoformulario" colspan=3>
-                	<?=getInputText(voperfilaluno::$nmAtrNumHorasDia, voperfilaluno::$nmAtrNumHorasDia, $vo->numHorasDia, constantes::$CD_CLASS_CAMPO_READONLY, TAMANHO_CODIGOS_SAFI, null, " ")?>
-                	(horas disponíveis por dia de estudo)
-                </TD>
-            </TR>            		           
+            </TR>			           
 			<TR>
                 <TH class="campoformulario" width="1%" nowrap>Qtd.Horas/Matéria:</TH>
                 <TD class="campoformulario" colspan=3>

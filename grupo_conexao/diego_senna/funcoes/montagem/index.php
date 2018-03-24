@@ -157,9 +157,9 @@ function alterar() {
              <TBODY>
                 <TR>
                   <TH class="headertabeladados" rowspan=2 width="1%">&nbsp;&nbsp;X</TH>
-                    <TH class="headertabeladados" rowspan=2 width="1%" nowrap>Perfil</TH>
-                    <TH class="headertabeladados" rowspan=2 width="40%">Aluno</TH>
-                    <TH class="headertabeladados" rowspan=2 width="20%">Matéria</TH>
+                    <TH class="headertabeladados" rowspan=2 >Perfil</TH>
+                    <TH class="headertabeladados" rowspan=2 >Aluno</TH>
+                    <TH class="headertabeladados" rowspan=2 >Matéria</TH>
                     <TH class="headertabeladadosalinhadocentro" colspan=2 width="1%">Horas</TH>
                 </TR>
                 <TR>
@@ -205,7 +205,6 @@ function alterar() {
                     <TD class="tabeladados"><?php echo $dsPerfil;?></TD>
                     <TD class="tabeladados"><?php echo $dsAluno;?></TD>
                     <TD class="tabeladados"><?php echo $voMateriaAtual->descricao;?></TD>
-                    <TD class="tabeladados"><?php echo complementarCharAEsquerda($registroAtual[filtroConsultarMontagem::$nmColNumHorasDefinidas], "0", 2);?></TD>
                     <TD class="tabeladados"><?php echo complementarCharAEsquerda($voPerfilMateriaAtual->carga, "0", 2);?></TD>
                 </TR>					
                 <?php

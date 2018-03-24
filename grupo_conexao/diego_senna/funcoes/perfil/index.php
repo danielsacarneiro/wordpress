@@ -9,7 +9,7 @@ inicio();
 $titulo = "CONSULTAR " . voperfil::getTituloJSP();
 setCabecalho($titulo);
 	
-$filtro  = new filtroManterMateria(true);
+$filtro  = new filtroManterPerfil(true);
 $filtro = filtroManter::verificaFiltroSessao($filtro);
 
 $nome = $filtro->descricao;

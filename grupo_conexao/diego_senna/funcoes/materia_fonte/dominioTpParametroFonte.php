@@ -6,10 +6,12 @@ include_once(caminho_util."dominio.class.php");
   	static $DS_ARTIGO = "Artigo";
   	static $DS_PAGINA = "Página";
   	static $DS_AULA= "Aula";
+  	static $DS_NENHUM = "Nenhum";
 
   	static $CD_ARTIGO = 1;
   	static $CD_PAGINA = 2;
   	static $CD_AULA= 3;
+  	static $CD_NENHUM = 99;
   	
   	
 // ...............................................................
@@ -23,6 +25,7 @@ include_once(caminho_util."dominio.class.php");
 				self::$CD_ARTIGO=> self::$DS_ARTIGO,
 				self::$CD_PAGINA=> self::$DS_PAGINA,
 				self::$CD_AULA=> self::$DS_AULA,
+				self::$CD_NENHUM => self::$DS_NENHUM,
 				
 		);
 	}
