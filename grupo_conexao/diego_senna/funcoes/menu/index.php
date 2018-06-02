@@ -31,6 +31,7 @@ setCabecalho("MENU");
 	f3 = new Tree('Serviço 03 (Perfil)');
     f3.adicionarItem(new Link('Perfis', '<?=caminho_funcoesHTML?>perfil', ''));
     f3.adicionarItem(new Link('Perfil x Matérias', '<?=caminho_funcoesHTML.voperfilmateria::getNmTabela()?>', ''));
+    f3.adicionarItem(new Link('Assuntos', '<?=caminho_funcoesHTML?>assunto', ''));
     f3.adicionarItem(new Link('Perfil x Alunos', '<?=caminho_funcoesHTML.voperfilaluno::getNmTabela()?>', ''));    
 	f.adicionarItem(f3);
 

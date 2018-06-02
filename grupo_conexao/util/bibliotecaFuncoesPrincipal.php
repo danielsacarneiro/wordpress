@@ -275,6 +275,18 @@ function array_merge_keys() {
 	}
 	return $result;
 }
+/**
+ *  *
+ * @param unknown $array1
+ * @param unknown $array2
+ * @return unknown[]
+ *
+ * funcao necessaria porque o array_merge funde as chaves
+ */
+function putElementoArray2NoArray1ComChaves($array1, $array2) {
+	return array_merge( $array1, $array2);
+	 //return $array1 + $array2;
+}
 function putElementoArrayComChaves($input, $elem) {
 	return array_merge_keys ( $input, $elem );
 }

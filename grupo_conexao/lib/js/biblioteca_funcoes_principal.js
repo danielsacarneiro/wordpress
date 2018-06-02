@@ -138,16 +138,44 @@ function limparCampoFormularioEConti(element){
 	}
 }
 
-function validaFormRequiredCheckBox(campoCheckBoxValidacao, colecaoIDCampos){
+function validaFormRequiredCheckBox(campoCheckBoxValidacao, colecaoIDCampos, pSetarVazio){
 	pIsRequired = !campoCheckBoxValidacao.checked;
 	tornarRequiredCamposColecaoFormulario(colecaoIDCampos, pIsRequired);
+	
+	if(pSetarVazio != null && pSetarVazio){
+		limparCamposColecaoFormulario(colecaoIDCampos);
+	}
 }
 
 function tornarRequiredCamposColecaoFormulario(colecaoIDCampos, pIsRequired){	
 	for(i=0;i<colecaoIDCampos.length;i++){					
 		id = colecaoIDCampos[i];		
 		element = document.getElementById(id);
-		element.required = pIsRequired;
+		//alert(id);
+		if(element != null){
+			element.required = pIsRequired;			
+			if(pIsRequired){
+				element.className="campoobrigatorio";
+			}else{
+				element.className="camponaoobrigatorio";
+			}
+		}
+		//alert(element.id + " " + pIsRequired);
+	}
+}
+
+function esconderDiv(pCampoDiv, pColecaoIDCamposRequired, pEsconder){
+	validarCamposRequired = pColecaoIDCamposRequired != null;
+	if(pEsconder){
+		pCampoDiv.style.display = "none";
+		if(validarCamposRequired){
+			tornarRequiredCamposColecaoFormulario(pColecaoIDCamposRequired, false);
+		}
+	}else{
+		pCampoDiv.style.display = "";
+		if(validarCamposRequired){
+			tornarRequiredCamposColecaoFormulario(pColecaoIDCamposRequired, true);
+		}
 	}
 }
 
@@ -177,7 +205,9 @@ function limparFormularioGeral(){
 						|| element.name == "utilizarSessao"
 						|| element.name == "consultar"
 						|| element.name == "cdHistorico"							
-						|| element.name == "cdOrdenacao"; 
+						|| element.name == "lupa"
+						|| element.name == "rdb_consulta"							
+						|| element.name == "cdOrdenacao";
 		if(!naoValidar){
 			//alert(element.type);
 			limparCampoFormularioEConti(element);
